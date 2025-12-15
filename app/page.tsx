@@ -1,17 +1,18 @@
-import { createClient } from "@/lib/supabase/server";
-import { Suspense } from "react";
+'use client';
+import { Button, HeroUIProvider } from "@heroui/react";
+import { Navbar } from "@heroui/react";
+import NextLink from "next/link";
 
-async function InstrumentsData() {
-  const supabase = await createClient();
-  const { data: instruments } = await supabase.from("children").select();
-
-  return <pre>{JSON.stringify(instruments, null, 2)}</pre>;
-}
-
-export default function Instruments() {
-  return (
-    <Suspense fallback={<div>Loading instruments...</div>}>
-      <InstrumentsData />
-    </Suspense>
-  );
+export default function Home(){
+  return(
+    <HeroUIProvider>
+      <div>
+        <h1>Hello World!</h1>
+        <Button color="primary" as={NextLink} href='www.google.com'>
+          Go to Google
+        </Button>
+      </div>
+    </HeroUIProvider>
+    
+  )
 }
