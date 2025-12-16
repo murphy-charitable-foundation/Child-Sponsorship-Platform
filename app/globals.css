@@ -155,113 +155,113 @@
     /*          TOKENS                */
     /* for referencing everywhere else*/
 
-    --background: var(--colors-common-white);
+    --background: var(--white);
     --foreground: #11181c; /* primary text color */
     --divider: #111111;
-    --focus: var(--colors-common-blue-500);
+    --focus: var(--blue-500);
 
-    --content1: var(--colors-common-white);
-    --content2: var(--colors-common-zinc-100);
-    --content3: var(--colors-common-zinc-300);
-    --content4: var(--colors-common-zinc-300);
+    --content1: var(--white);
+    --content2: var(--zinc-100);
+    --content3: var(--zinc-300);
+    --content4: var(--zinc-300);
 
-    --default: var(--colors-common-zinc-300);
-    --primary: var(--colors-common-blue-500); /* brand color */
-    --secondary: var(--colors-common-green-500);
-    --success: var(--colors-common-flat-secondary-500-flat);
-    --warning: var(--colors-common-yellow-500);
-    --danger: var(--colors-common-red-500);
+    --default: var(--zinc-300);
+    --primary: var(--blue-500); /* brand color */
+    --secondary: var(--green-500);
+    --success: var(--secondary-500-flat);
+    --warning: var(--yellow-500);
+    --danger: var(--red-500);
 
-    --foreground-50: var(--colors-common-zinc-50);
-    --foreground-100: var(--colors-common-zinc-100);
-    --foreground-200: var(--colors-common-zinc-200);
-    --foreground-300: var(--colors-common-zinc-300);
-    --foreground-400: var(--colors-common-zinc-400);
-    --foreground-500: var(--colors-common-zinc-500);
-    --foreground-600: var(--colors-common-zinc-600);
-    --foreground-700: var(--colors-common-zinc-700);
-    --foreground-800: var(--colors-common-zinc-800);
-    --foreground-900: var(--colors-common-zinc-900);
+    --foreground-50: var(--zinc-50);
+    --foreground-100: var(--zinc-100);
+    --foreground-200: var(--zinc-200);
+    --foreground-300: var(--zinc-300);
+    --foreground-400: var(--zinc-400);
+    --foreground-500: var(--zinc-500);
+    --foreground-600: var(--zinc-600);
+    --foreground-700: var(--zinc-700);
+    --foreground-800: var(--zinc-800);
+    --foreground-900: var(--zinc-900);
 
-    --content1-foreground: var(--colors-common-zinc-900);
-    --content2-foreground: var(--colors-common-zinc-800);
-    --content3-foreground: var(--colors-common-zinc-700);
-    --content4-foreground: var(--colors-common-zinc-600);
+    --content1-foreground: var(--zinc-900);
+    --content2-foreground: var(--zinc-800);
+    --content3-foreground: var(--zinc-700);
+    --content4-foreground: var(--zinc-600);
 
     --overlay: #000000;
 
-    --default-foreground: var(--colors-common-black);
-    --primary-foreground: var(--colors-common-white);
-    --secondary-foreground: var(--colors-common-white);
-    --success-foreground: var(--colors-common-black);
-    --warning-foreground: var(--colors-common-black);
-    --danger-foreground: var(--colors-common-white);
+    --default-foreground: var(--black);
+    --primary-foreground: var(--white);
+    --secondary-foreground: var(--white);
+    --success-foreground: var(--black);
+    --warning-foreground: var(--black);
+    --danger-foreground: var(--white);
 
-    --default-50: var(--colors-common-zinc-50);
-    --default-100: var(--colors-common-zinc-100);
-    --default-200: var(--colors-common-zinc-200);
-    --default-300: var(--colors-common-zinc-300);
-    --default-400: var(--colors-common-zinc-400);
-    --default-500: var(--colors-common-zinc-500);
-    --default-600: var(--colors-common-zinc-600);
-    --default-700: var(--colors-common-zinc-700);
-    --default-800: var(--colors-common-zinc-800);
-    --default-900: var(--colors-common-zinc-900);
+    --default-50: var(--zinc-50);
+    --default-100: var(--zinc-100);
+    --default-200: var(--zinc-200);
+    --default-300: var(--zinc-300);
+    --default-400: var(--zinc-400);
+    --default-500: var(--zinc-500);
+    --default-600: var(--zinc-600);
+    --default-700: var(--zinc-700);
+    --default-800: var(--zinc-800);
+    --default-900: var(--zinc-900);
 
-    --primary-50: var(--colors-common-blue-50);
-    --primary-100: var(--colors-common-blue-100);
-    --primary-200: var(--colors-common-blue-200);
-    --primary-300: var(--colors-common-blue-300);
-    --primary-400: var(--colors-common-blue-400);
-    --primary-500: var(--colors-common-blue-500);
-    --primary-600: var(--colors-common-blue-600);
-    --primary-700: var(--colors-common-blue-700);
-    --primary-800: var(--colors-common-blue-800);
-    --primary-900: var(--colors-common-blue-900);
+    --primary-50: var(--blue-50);
+    --primary-100: var(--blue-100);
+    --primary-200: var(--blue-200);
+    --primary-300: var(--blue-300);
+    --primary-400: var(--blue-400);
+    --primary-500: var(--blue-500);
+    --primary-600: var(--blue-600);
+    --primary-700: var(--blue-700);
+    --primary-800: var(--blue-800);
+    --primary-900: var(--blue-900);
 
-    --secondary-50: var(--colors-common-green-50);
-    --secondary-100: var(--colors-common-green-100);
-    --secondary-200: var(--colors-common-green-200);
-    --secondary-300: var(--colors-common-green-300);
-    --secondary-400: var(--colors-common-green-400);
-    --secondary-500: var(--colors-common-green-500);
-    --secondary-600: var(--colors-common-green-600);
-    --secondary-700: var(--colors-common-green-700);
-    --secondary-800: var(--colors-common-green-800);
-    --secondary-900: var(--colors-common-green-900);
+    --secondary-50: var(--green-50);
+    --secondary-100: var(--green-100);
+    --secondary-200: var(--green-200);
+    --secondary-300: var(--green-300);
+    --secondary-400: var(--green-400);
+    --secondary-500: var(--green-500);
+    --secondary-600: var(--green-600);
+    --secondary-700: var(--green-700);
+    --secondary-800: var(--green-800);
+    --secondary-900: var(--green-900);
 
-    --success-50: var(--colors-common-green-50);
-    --success-100: var(--colors-common-green-100);
-    --success-200: var(--colors-common-green-200);
-    --success-300: var(--colors-common-green-300);
-    --success-400: var(--colors-common-green-400);
-    --success-500: var(--colors-common-green-500);
-    --success-600: var(--colors-common-green-600);
-    --success-700: var(--colors-common-green-700);
-    --success-800: var(--colors-common-green-800);
-    --success-900: var(--colors-common-green-900);
+    --success-50: var(--green-50);
+    --success-100: var(--green-100);
+    --success-200: var(--green-200);
+    --success-300: var(--green-300);
+    --success-400: var(--green-400);
+    --success-500: var(--green-500);
+    --success-600: var(--green-600);
+    --success-700: var(--green-700);
+    --success-800: var(--green-800);
+    --success-900: var(--green-900);
 
-    --warning-50: var(--colors-common-yellow-50);
-    --warning-100: var(--colors-common-yellow-100);
-    --warning-200: var(--colors-common-yellow-200);
-    --warning-300: var(--colors-common-yellow-300);
-    --warning-400: var(--colors-common-yellow-400);
-    --warning-500: var(--colors-common-yellow-500);
-    --warning-600: var(--colors-common-yellow-600);
-    --warning-700: var(--colors-common-yellow-700);
-    --warning-800: var(--colors-common-yellow-800);
-    --warning-900: var(--colors-common-yellow-900);
+    --warning-50: var(--yellow-50);
+    --warning-100: var(--yellow-100);
+    --warning-200: var(--yellow-200);
+    --warning-300: var(--yellow-300);
+    --warning-400: var(--yellow-400);
+    --warning-500: var(--yellow-500);
+    --warning-600: var(--yellow-600);
+    --warning-700: var(--yellow-700);
+    --warning-800: var(--yellow-800);
+    --warning-900: var(--yellow-900);
 
-    --danger-50: var(--colors-common-red-50);
-    --danger-100: var(--colors-common-red-100);
-    --danger-200: var(--colors-common-red-200);
-    --danger-300: var(--colors-common-red-300);
-    --danger-400: var(--colors-common-red-400);
-    --danger-500: var(--colors-common-red-500);
-    --danger-600: var(--colors-common-red-600);
-    --danger-700: var(--colors-common-red-700);
-    --danger-800: var(--colors-common-red-800);
-    --danger-900: var(--colors-common-red-900);
+    --danger-50: var(--red-50);
+    --danger-100: var(--red-100);
+    --danger-200: var(--red-200);
+    --danger-300: var(--red-300);
+    --danger-400: var(--red-400);
+    --danger-500: var(--red-500);
+    --danger-600: var(--red-600);
+    --danger-700: var(--red-700);
+    --danger-800: var(--red-800);
+    --danger-900: var(--red-900);
 
     --disabled-opacity: 0.5px;
 
@@ -289,14 +289,14 @@
 
     --focus-op-20: #006fee;
 
-    --force-dark: var(--colors-layout-background);
+    --force-dark: var(--background);
 
-    --primary-flat: var(--colors-common-flat-primary-500-flat);
-    --secondary-flat: var(--colors-common-flat-secondary-500-flat);
-    --success-flat: var(--colors-common-flat-success-500-flat);
-    --warning-flat: var(--colors-common-flat-warning-500-flat);
-    --danger-flat: var(--colors-common-flat-danger-500-flat);
-    --default-flat: var(--colors-common-flat-default-300-flat);
+    --primary-flat: var(--primary-500-flat);
+    --secondary-flat: var(--secondary-500-flat);
+    --success-flat: var(--success-500-flat);
+    --warning-flat: var(--warning-500-flat);
+    --danger-flat: var(--danger-500-flat);
+    --default-flat: var(--default-300-flat);
 
     --link: var(--primary);
 
