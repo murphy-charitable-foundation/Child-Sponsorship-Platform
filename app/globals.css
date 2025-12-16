@@ -298,12 +298,12 @@
     --danger-flat: var(--colors-common-flat-danger-500-flat);
     --default-flat: var(--colors-common-flat-default-300-flat);
 
-    --link: primary;
+    --link: var(--primary);
 
   }
 }
 
-
+/*
 @layer base {
   * {
     @apply border-border;
@@ -312,3 +312,4 @@
     @apply bg-background text-foreground;
   }
 }
+*/
