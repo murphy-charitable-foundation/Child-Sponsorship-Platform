@@ -4,6 +4,7 @@ import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import React from "react";
 
+const COPYRIGHT_YEAR = new Date().getFullYear();
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -11,8 +12,8 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Next.js and Supabase Starter Kit",
-  description: "The fastest way to build apps with Next.js and Supabase",
+  title: "Child Sponsorship System",
+  description: "Sponsor a child and change a life.",
 };
 
 const geistSans = Geist({
@@ -38,9 +39,8 @@ export default function RootLayout({
           {children}
           <footer style={footerStyles}>
           <span style={copyStyles}>
-            © {new Date().getFullYear()} Child Sponsorship System
+            © {COPYRIGHT_YEAR} Child Sponsorship System
           </span>
-
           <div style={linksWrapperStyles}>
             <a href="/terms" style={linkStyles}>
               Terms of Use
@@ -55,16 +55,6 @@ export default function RootLayout({
     </html>
   );
 }
-
-const bodyStyles: React.CSSProperties = {
-  margin: 0,
-  backgroundColor: "#f3f4f6",
-  fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
-};
-
-const mainStyles: React.CSSProperties = {
-  minHeight: "calc(100vh - 80px)", 
-};
 
 const footerStyles: React.CSSProperties = {
   borderTop: "1px solid #e5e7eb",

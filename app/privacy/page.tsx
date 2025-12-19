@@ -1,11 +1,15 @@
 import React from "react";
-
+import Link from "next/link";
 export default function PrivacyPolicyPage() {
   return (
     <div style={styles.page}>
       <header style={styles.header}>
         <div style={styles.logo}>[LOGO]</div>
         <nav style={styles.nav}>
+          <Link href="/" style={styles.navLink}>
+            {" "}
+            Home
+          </Link>
           <a style={styles.navLink} href="#">
             Meet the Children ▼
           </a>
@@ -66,8 +70,7 @@ export default function PrivacyPolicyPage() {
 const styles: { [key: string]: React.CSSProperties } = {
   page: {
     minHeight: "100vh",
-    backgroundColor: "#f3f4f6",
-    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
+    backgroundColor: "#f9fafb",
   },
   header: {
     display: "flex",
@@ -104,7 +107,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   titleUnderline: {
     border: "none",
     borderTop: "2px solid #111827",
-    marginTop: "8px",      // small space under the title
+    marginTop: "8px", // small space under the title
     marginBottom: "16px",
   },
   card: {
