@@ -203,7 +203,7 @@ export default function CompleteSponsorshipPage() {
             variant="bordered"
             radius="md"
             className="rounded-[12px]"
-            onPress={() => router.back()}
+            onPress={() => router.push("/")}
           >
             ← Back
           </Button>
