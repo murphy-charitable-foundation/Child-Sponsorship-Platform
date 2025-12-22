@@ -24,7 +24,7 @@ export default function Home() {
           <a style={styles.navLink} href="#">
             Contact
           </a>
-          <a style={styles.navLink} href="#">
+          <a style={styles.navLink} href="auth/login">
             Login / Register
           </a>
         </nav>
