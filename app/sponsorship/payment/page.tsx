@@ -13,7 +13,7 @@ type PaymentType = "card" | "paypal";
 
 export default function PaymentInformationPage() {
   const router = useRouter();
-  const [paymentType, setPaymentType] = React.useState<PaymentType>("card");
+  const [paymentType, setPaymentType] = React.useState<PaymentType>("paypal");
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -38,16 +38,6 @@ export default function PaymentInformationPage() {
               <h2 className="text-base font-semibold">Payment Method</h2>
 
               <div className="mt-3 flex gap-3">
-                <Button
-                    radius="md"
-                    className="rounded-[12px]"
-                    disableAnimation
-                    variant={paymentType === "card" ? "solid" : "bordered"}
-                    color={paymentType === "card" ? "primary" : "default"}
-                    onPress={() => setPaymentType("card")}
-                >
-                    Credit / Debit Card
-                </Button>
 
                 <Button
                     radius="md"
@@ -58,6 +48,18 @@ export default function PaymentInformationPage() {
                     onPress={() => setPaymentType("paypal")}
                 >
                     PayPal
+                </Button>
+
+                <Button
+                    radius="md"
+                    className="rounded-[12px]"
+                    disableAnimation
+                    variant={paymentType === "card" ? "solid" : "bordered"}
+                    color={paymentType === "card" ? "primary" : "default"}
+                    onPress={() => setPaymentType("card")}
+                    isDisabled={true}
+                >
+                    Other (coming soon)
                 </Button>
               </div>
             </div>
