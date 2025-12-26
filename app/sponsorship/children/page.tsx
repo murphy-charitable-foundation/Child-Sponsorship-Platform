@@ -10,6 +10,7 @@ import {
   Card,
   CardBody,
   CardFooter,
+  Checkbox,
   Divider,
   Input,
   Select,
@@ -21,6 +22,7 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
+  Slider,
 } from "@heroui/react";
 
 
@@ -42,7 +44,7 @@ const children = [
 let names = [];
 let countries_set = new Set<string>();
 const genders = ["Male", "Female"];
-const gradeLevels = ["Kindergarten", "Pre-School", "1-3", "4-6", "7-9", "10-12", "College"];
+const gradeLevels = ["Infant", "Pre-School", "1-3", "4-6", "7-9", "10-12", "College"];
 
 for (const child of children) {
   if(child.name){
@@ -72,7 +74,15 @@ export default function MeetTheChildrenPage() {
         Meet the Children
       </h1>
       <Divider/>
-      <div id="filters">
+      <div id="filters" className="gap-2 grid grid-cols-2 sm:grid-cols-5 m-4 p-4 border border-default-200 rounded-[12px]">
+            <Input
+              label="Search"
+              labelPlacement="inside"
+              variant="bordered"
+              radius="md"
+              size="sm"
+              classNames={{ inputWrapper: "rounded-[12px]" }}
+            />
             <Dropdown>
               <DropdownTrigger>
                 <Button className="capitalize" variant="bordered">
@@ -93,6 +103,65 @@ export default function MeetTheChildrenPage() {
                 ))}
               </DropdownMenu>
             </Dropdown>
+            
+            <Slider
+              className="max-w-md"
+              defaultValue={[0, 25]}
+              label="Age Range"
+              marks={[
+                {
+                  value: 0,
+                  label: "0",
+                },{
+                  value: 5,
+                  label: "5",
+                },{
+                  value: 10,
+                  label: "10",
+                },{
+                  value: 15,
+                  label: "15",
+                },{
+                  value: 20,
+                  label: "20",
+                },{
+                  value: 25,
+                  label: "25",
+                }
+              ]}
+              maxValue={25}
+              minValue={0}
+              showTooltip={true}
+              step={1}
+            />  
+            <div className="flex gap-4">
+              <Checkbox defaultSelected radius="md">
+                Male
+              </Checkbox>
+              <Checkbox defaultSelected radius="md">
+                Female
+              </Checkbox>
+            </div>
+            <Dropdown>
+              <DropdownTrigger>
+                <Button className="capitalize" variant="bordered">
+                  Grade Levels
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Multiple selection example"
+                closeOnSelect={false}
+                selectedKeys={countries}
+                selectionMode="multiple"
+                variant="flat"
+                //onSelectionChange={setSelectedKeys}
+              >
+                {gradeLevels.map((gradeLevel) => (
+                  <DropdownItem key={gradeLevel}>{gradeLevel}</DropdownItem>
+                ))}
+              </DropdownMenu>
+                </Dropdown>
       </div>
 
       <div id="children-grid" className="gap-2 grid grid-cols-2 sm:grid-cols-4">
