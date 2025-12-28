@@ -20,12 +20,13 @@ export default function Page() {
               aria-label="Tabs form"
               selectedKey={selected}
               size="md"
+              color="primary"
               onSelectionChange={(key) => setSelected(key as string)}
             >
-              <Tab key="login" title="Login">
+              <Tab key="login" title="Log In">
                 <LoginForm />
               </Tab>
-              <Tab key="sign-up" title="Sign up">
+              <Tab key="sign-up" title="Sign Up">
                 <SignUpForm />
               </Tab>
             </Tabs>

@@ -52,10 +52,7 @@ export function LoginForm({
 
   return (
     <div className="">
-      <h1 className="text-center text-2xl font-semibold">
-          Login
-      </h1>
-      <Divider />
+
           <form onSubmit={handleLogin}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">

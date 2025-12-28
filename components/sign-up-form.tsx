@@ -20,12 +20,21 @@ import {
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+const sponsorOptions = [
+  { key: "individual", label: "Individual" },
+  { key: "family", label: "Family" },
+  { key: "company", label: "Company / Business" },
+  { key: "ngo", label: "Organization / NGO" },
+  { key: "religious", label: "Religious Institution" },
+];
+
 export function SignUpForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -62,16 +71,31 @@ export function SignUpForm({
 
   return (
     <div className="">
-      <h1 className="text-center text-2xl font-semibold">
-          Create Account
-      </h1>
-      <Divider />
-      
           <form onSubmit={handleSignUp}>
-            <h2 className="text-center text-xl text-default-500">
-                Personal Information
-            </h2>
-      <Divider />
+
+            <Select
+              label="Sponsor Type*"
+              labelPlacement="outside"
+              placeholder="Select sponsor type"
+              variant="bordered"
+              radius="md"
+              classNames={{
+                  trigger: "rounded-[12px]",
+              }}
+              defaultSelectedKeys={["individual"]}
+            >
+              {sponsorOptions.map((opt) => (
+                  <SelectItem
+                  key={opt.key}
+                  classNames={{
+                      selectedIcon: "hidden",
+                  }}
+                  >
+                  {opt.label}
+                  </SelectItem>
+              ))}
+            </Select>
+
             <div className="flex flex-col gap-6">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <Input
@@ -111,21 +135,19 @@ export function SignUpForm({
               <div className="grid gap-2">
                 <Input
                   id="phone-number"
+                  type="tel"
                   label="Phone Number*"
                   labelPlacement="outside"
                   variant="bordered"
                   radius="md"
                   required
-                  value={email}
+                  value={phone}
                   classNames={{ inputWrapper: "rounded-[12px]" }}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => setPhone(e.target.value)}
                 />
               </div>
               <div className="grid gap-2">
 
-                <h2 className="text-center text-xl text-default-500">
-                    Create Password
-                </h2>
                 <Divider />
                 <Input
                   id="password"
