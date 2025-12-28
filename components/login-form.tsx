@@ -51,13 +51,11 @@ export function LoginForm({
   };
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-10">
+    <div className="">
       <h1 className="text-center text-2xl font-semibold">
           Login
       </h1>
       <Divider />
-      <Card className="mt-6 rounded-[12px] border border-default-200 shadow-none">
-        <CardBody className="">
           <form onSubmit={handleLogin}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
@@ -117,8 +115,6 @@ export function LoginForm({
               </Link>
             </div>
           </form>
-        </CardBody>
-      </Card>
     </div>
   );
 }

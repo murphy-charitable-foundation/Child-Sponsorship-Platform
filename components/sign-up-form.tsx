@@ -61,13 +61,12 @@ export function SignUpForm({
   };
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-10">
+    <div className="">
       <h1 className="text-center text-2xl font-semibold">
           Create Account
       </h1>
       <Divider />
-      <Card className="mt-6 rounded-[12px] border border-default-200 shadow-none">
-        <CardBody>
+      
           <form onSubmit={handleSignUp}>
             <h2 className="text-center text-xl text-default-500">
                 Personal Information
@@ -179,8 +178,6 @@ export function SignUpForm({
               </Link>
             </div>
           </form>
-        </CardBody>
-      </Card>
     </div>
   );
 }
