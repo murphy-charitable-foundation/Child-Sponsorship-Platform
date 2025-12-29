@@ -1,30 +1,10 @@
 import React from "react";
-import Link from "next/link";
+
 
 export default function TermsPage() {
   return (
     <div style={styles.page}>
-      <header style={styles.header}>
-        <div style={styles.logo}>[LOGO]</div>
-        <nav style={styles.nav}>
-          <Link href="/" style={styles.navLink}>
-            {" "}
-            Home
-          </Link>
-          <a style={styles.navLink} href="#">
-            Meet the Children
-          </a>
-          <a style={styles.navLink} href="#">
-            About the Program
-          </a>
-          <a style={styles.navLink} href="#">
-            Contact
-          </a>
-          <a style={styles.navLink} href="#">
-            Login / Register
-          </a>
-        </nav>
-      </header>
+      
 
       <main style={styles.main}>
         <h1 style={styles.title}>Terms of Use</h1>
