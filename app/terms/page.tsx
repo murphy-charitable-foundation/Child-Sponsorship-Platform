@@ -1,11 +1,8 @@
 import React from "react";
 
-
 export default function TermsPage() {
   return (
     <div style={styles.page}>
-      
-
       <main style={styles.main}>
         <h1 style={styles.title}>Terms of Use</h1>
         <hr style={styles.titleUnderline} />
@@ -50,19 +47,19 @@ export default function TermsPage() {
 const styles: { [key: string]: React.CSSProperties } = {
   page: {
     minHeight: "100vh",
-    backgroundColor: "#f9fafb",
+    backgroundColor: "bg-default-50",
   },
   header: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
     padding: "16px 40px",
-    borderBottom: "1px solid #e5e7eb",
-    backgroundColor: "#ffffff",
+    borderBottom: "1px solid border-default-200",
+    backgroundColor: "bg-white",
   },
   logo: {
     fontWeight: 600,
-    color: "#111827",
+    color: "text-default-900",
   },
   nav: {
     display: "flex",
@@ -71,7 +68,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   navLink: {
     textDecoration: "none",
-    color: "#111827",
+    color: "text-default-900",
   },
   main: {
     maxWidth: "960px",
@@ -81,18 +78,18 @@ const styles: { [key: string]: React.CSSProperties } = {
   title: {
     fontSize: "2rem",
     marginBottom: "8px",
-    color: "#111827",
+    color: "text-default-900",
   },
   titleUnderline: {
     border: "none",
-    borderTop: "2px solid #111827",
+    borderTop: "2px solid text-default-900",
     marginTop: "8px",
     marginBottom: "24px",
   },
   card: {
-    backgroundColor: "#ffffff",
+    backgroundColor: "bg-white",
     borderRadius: "6px",
-    border: "1px solid #e5e7eb",
+    border: "1px solid border-default-200",
     padding: "16px 20px",
     marginBottom: "16px",
   },
@@ -103,7 +100,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   cardBody: {
     fontSize: "0.95rem",
-    color: "#4b5563",
+    color: "text-default-600",
     lineHeight: 1.5,
   },
 };

@@ -30,7 +30,7 @@ export default function RootLayout({
         <HeroUIProvider>
           <AppNavbar />
           {children}
-          <footer style={footerStyles.footer}>
+          <footer className="bg-primary text-white py-12 px-10">
             <div style={footerStyles.inner}>
               <div style={footerStyles.left}>
                 <h3 style={footerStyles.orgTitle}>
@@ -45,8 +45,12 @@ export default function RootLayout({
                 <p style={footerStyles.orgText}>Permit Number: INDP0005654NB</p>
 
                 <div style={footerStyles.badgesRow}>
-                  <div style={footerStyles.badgePlaceholder}>Badge 1</div>
-                  <div style={footerStyles.badgePlaceholder}>Badge 2</div>
+                  <div className="bg-primary border-2 border-white rounded-full w-20 h-20 flex items-center justify-center text-[0.7rem]">
+                    Badge 1
+                  </div>
+                  <div className="bg-primary border-2 border-white rounded-full w-20 h-20 flex items-center justify-center text-[0.7rem]">
+                    Badge 2
+                  </div>
                 </div>
               </div>
 
@@ -77,7 +81,9 @@ export default function RootLayout({
                     placeholder="Search for..."
                     style={footerStyles.searchInput}
                   />
-                  <button style={footerStyles.searchButton}>🔍</button>
+                  <button className="bg-primary text-white px-4 rounded-r-full cursor-pointer">
+                    🔍
+                  </button>
                 </div>
               </div>
             </div>
@@ -90,8 +96,7 @@ export default function RootLayout({
 
 const footerStyles: { [key: string]: React.CSSProperties } = {
   footer: {
-    backgroundColor: "#0052A3",
-    color: "#ffffff",
+    color: "bg-white",
     padding: "48px 40px",
   },
   inner: {
@@ -124,12 +129,12 @@ const footerStyles: { [key: string]: React.CSSProperties } = {
     width: "80px",
     height: "80px",
     borderRadius: "50%",
-    backgroundColor: "#0b63c7",
+
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     fontSize: "0.7rem",
-    border: "2px solid #ffffff",
+    border: "border-2 border-white",
   },
   middle: {
     flex: 1,
@@ -144,7 +149,7 @@ const footerStyles: { [key: string]: React.CSSProperties } = {
   },
   link: {
     display: "block",
-    color: "#ffffff",
+    color:"inherit",
     textDecoration: "none",
     fontSize: "0.9rem",
     marginBottom: "8px",
@@ -158,7 +163,7 @@ const footerStyles: { [key: string]: React.CSSProperties } = {
     width: "28px",
     height: "28px",
     borderRadius: "999px",
-    border: "1px solid #ffffff",
+    border: "border border-white",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -179,8 +184,8 @@ const footerStyles: { [key: string]: React.CSSProperties } = {
     padding: "8px 14px",
     borderRadius: "0 999px 999px 0",
     border: "none",
-    backgroundColor: "#003a73",
-    color: "#ffffff",
+
+    color: "inherit",
     cursor: "pointer",
   },
 };

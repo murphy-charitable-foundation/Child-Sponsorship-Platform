@@ -58,24 +58,26 @@ export function AppNavbar() {
         </NavbarItem>
       </NavbarContent>
 
-      <NavbarContent justify="end" className="gap-3">
+      <NavbarContent justify="end" className="gap-4 pr-4">
         <NavbarItem>
           <Button
             as={NextLink}
             href="#"
             variant="bordered"
-            radius="full"
+            color="primary"
+            radius="md"
             size="sm"
           >
             Login
           </Button>
         </NavbarItem>
+
         <NavbarItem>
           <Button
             as={NextLink}
             href="#"
-            color="success"
-            radius="full"
+            color="secondary"
+            radius="md"
             size="sm"
           >
             Donate

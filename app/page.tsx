@@ -29,22 +29,27 @@ const featuredChildren = [
 
 export default function Home() {
   return (
-    <div style={styles.page}>
+    <div className="min-h-screen bg-default-50">
       <main>
-        <section style={styles.heroSection}>
-          <div style={styles.heroOverlay} />
-          <div style={styles.heroContent}>
-            <h1 style={styles.heroTitle}>
+        <section
+          className="relative min-h-[70vh] flex items-center justify-center text-center px-6 py-20 bg-cover bg-center"
+          style={{ backgroundImage: "url('/children/image.jpg')" }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-black/35 to-black/65" />
+
+          <div className="relative max-w-[900px] z-10">
+            <h1 className="text-5xl font-bold leading-tight text-white mb-8">
               Change a Child’s Story,
               <br />
               Sponsor from as Little as $25 a Month
             </h1>
-
-            <div style={styles.heroButtonsRow}>
+            <div className="flex justify-center gap-4 flex-wrap">
               <Button
                 as={Link}
                 href="#sponsor"
-                className="bg-[#00C853] text-white px-14 py-8 rounded-[14px] text-[18px] font-semibold shadow-md hover:opacity-90"
+                color="secondary"
+                radius="md"
+                className="px-14 py-8 text-[18px] font-semibold shadow-md hover:opacity-90"
               >
                 Sponsor a Child
               </Button>
@@ -53,19 +58,20 @@ export default function Home() {
                 as={Link}
                 href="#how-it-works"
                 variant="flat"
-                className="bg-white/90 text-[#00C853] px-14 py-8 rounded-[14px] text-[18px] font-semibold shadow-md hover:bg-white"
+                radius="md"
+                className="bg-white/85 px-14 py-8 text-[18px] font-semibold shadow-md hover:bg-white text-secondary"
               >
                 How It Works
               </Button>
             </div>
           </div>
         </section>
-        <section className="py-16 bg-[#f4f7fb]">
+        <section className="py-16 bg-default-50">
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-10">
               <h2 className="text-4xl font-extrabold">
-                <span className="text-[#0070F3]">Meet the </span>
-                <span className="text-[#16A34A]">Children</span>
+                <span className="text-primary">Meet the </span>
+                <span className="text-secondary">Children</span>
               </h2>
               <p className="mt-3 text-sm text-gray-600 max-w-2xl mx-auto">
                 Each child is verified and profiled by our field officers. You
@@ -103,9 +109,9 @@ export default function Home() {
 
                   <CardFooter className="pb-8 flex justify-center">
                     <Button
-                      color="success"
-                      radius="full"
-                      className="bg-[#00C853] text-white px-8 py-2 rounded-[14px] text-[14px] shadow-md hover:opacity-90"
+                      color="secondary"
+                      radius="md"
+                      className="px-8 py-2 text-[14px] shadow-md hover:opacity-90"
                     >
                       Sponsor Now
                     </Button>
@@ -117,9 +123,9 @@ export default function Home() {
             <div className="mt-10 flex justify-center">
               <Button
                 variant="bordered"
-                color="success"
-                radius="full"
-                className="bg-white/90 text-[#00C853] px-14 py-8 rounded-[14px] text-[18px] font-semibold shadow-md hover:bg-white"
+                color="secondary"
+                radius="md"
+                className="bg-white/90 px-14 py-8 text-[18px] font-semibold shadow-md hover:bg-white"
               >
                 View All Children
               </Button>
@@ -127,8 +133,8 @@ export default function Home() {
           </div>
         </section>
 
-        <section style={styles.storySection}>
-          <div style={styles.storyImageWrapper}>
+        <section className="py-16 bg-default-50">
+          <div className="relative max-w-6xl mx-auto h-[380px] rounded-[20px] overflow-hidden">
             <Image
               src="/children/group.jpg"
               alt="Our story"
@@ -138,14 +144,14 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="py-16 bg-[#f4f7fb]">
+        <section className="py-16 bg-default-50">
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-10">
               <h2 className="text-4xl font-extrabold">
-                <span className="text-[#0070F3]">Our </span>
-                <span className="text-[#16A34A]">Story</span>
+                <span className="text-primary">Our </span>
+                <span className="text-secondary">Story</span>
               </h2>
-              
+
               <p className="mt-3 text-sm text-gray-600 max-w-2xl mx-auto">
                 How your sponsorship supports each child and keeps you
                 connected.
@@ -211,14 +217,14 @@ export default function Home() {
             </div>
           </div>
         </section>
-        <section className="relative bg-[#cfe0f5] py-16 overflow-hidden">
+        <section className="relative bg-primary-50 py-16 overflow-hidden">
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-10">
               <h2 className="text-4xl font-extrabold">
-                <span className="text-[#0b3b6f]">How It </span>
-                <span className="text-[#16A34A]">Works</span>
+                <span className="text-primary">How It </span>
+                <span className="text-secondary">Works</span>
               </h2>
-              <p className="mt-3 text-sm text-[#0b3b6f] max-w-2xl mx-auto">
+              <p className="mt-3 text-sm text-primary max-w-2xl mx-auto">
                 At Murphy Charitable Foundation, we believe every child deserves
                 a chance to learn, dream, and succeed.
               </p>
@@ -227,12 +233,12 @@ export default function Home() {
             <div className="hidden md:block absolute left-0 right-0 top-[160px] pointer-events-none">
               <svg
                 viewBox="0 0 1200 260"
-                className="w-full h-[260px]"
+                className="w-full h-[260px] text-primary"
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
                   d="M0,200 C80,60 100,270 320,110 C370,40 620,220 740,120 C860,40 920,100 1050,100"
-                  stroke="#0B3D74"
+                  stroke="currentColor"
                   strokeWidth="3"
                   strokeDasharray="6 10"
                   fill="none"
@@ -250,8 +256,9 @@ export default function Home() {
                     cx={p.cx}
                     cy={p.cy}
                     r="10"
-                    fill="#cfe0f5"
-                    stroke="#16A34A"
+                    fill="white"
+                    className="text-secondary"
+                    stroke="currentColor"
                     strokeWidth="4"
                   />
                 ))}
@@ -260,56 +267,56 @@ export default function Home() {
 
             <div className="relative grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-10 mt-8 md:mt-20">
               <div className="text-center md:text-left md:mt-14">
-                <span className="inline-block bg-[#16A34A] text-white text-xs font-semibold px-4 py-2 rounded-md">
+                <span className="inline-block bg-secondary text-white text-xs font-semibold px-4 py-2 rounded-md">
                   Step 1
                 </span>
-                <h3 className="mt-4 text-lg font-extrabold text-[#1f2937]">
+                <h3 className="mt-4 text-lg font-extrabold text-default-900">
                   Choose a Child
                 </h3>
-                <p className="mt-2 text-sm text-[#4b5563]">
+                <p className="mt-2 text-sm text-default-600">
                   Browse profiles and select a child to sponsor
                 </p>
               </div>
 
               <div className="text-center md:text-left md:mt-0">
-                <span className="inline-block bg-[#16A34A] text-white text-xs font-semibold px-4 py-2 rounded-md">
+                <span className="inline-block bg-secondary text-white text-xs font-semibold px-4 py-2 rounded-md">
                   Step 2
                 </span>
-                <h3 className="mt-4 text-lg font-extrabold text-[#1f2937]">
+                <h3 className="mt-4 text-lg font-extrabold text-default-900">
                   Start Sponsorship
                 </h3>
-                <p className="mt-2 text-sm text-[#4b5563]">
+                <p className="mt-2 text-sm text-default-600">
                   Complete your sponsorship setup and payment
                 </p>
               </div>
 
               <div className="text-center md:text-left md:mt-14">
-                <span className="inline-block bg-[#16A34A] text-white text-xs font-semibold px-4 py-2 rounded-md">
+                <span className="inline-block bg-secondary text-white text-xs font-semibold px-4 py-2 rounded-md">
                   Step 3
                 </span>
-                <h3 className="mt-4 text-lg font-extrabold text-[#1f2937]">
+                <h3 className="mt-4 text-lg font-extrabold text-default-900">
                   Connect &amp; Communicate
                 </h3>
-                <p className="mt-2 text-sm text-[#4b5563]">
+                <p className="mt-2 text-sm text-default-600">
                   Exchange letters and updates with your child
                 </p>
               </div>
 
               <div className="text-center md:text-left md:mt-0">
-                <span className="inline-block bg-[#16A34A] text-white text-xs font-semibold px-4 py-2 rounded-md">
+                <span className="inline-block bg-secondary text-white text-xs font-semibold px-4 py-2 rounded-md">
                   Step 4
                 </span>
-                <h3 className="mt-4 text-lg font-extrabold text-[#1f2937]">
+                <h3 className="mt-4 text-lg font-extrabold text-default-900">
                   Track Progress
                 </h3>
-                <p className="mt-2 text-sm text-[#4b5563]">
+                <p className="mt-2 text-sm text-default-600">
                   See the impact of your support over time
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="hidden md:block absolute top-10 right-10 text-[#0b3b6f] opacity-20 pointer-events-none">
+          <div className="hidden md:block absolute top-10 right-10 text-primary opacity-20 pointer-events-none">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
               <path
                 d="M21.5 2.5L2.5 10.5L10.5 13.5L13.5 21.5L21.5 2.5Z"
@@ -327,13 +334,13 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="py-14 bg-[#f4f7fb]">
+        <section className="py-14 bg-default-50">
           <div className="max-w-6xl mx-auto px-4 text-center">
             <h2 className="text-4xl font-extrabold">
-              <span className="text-[#0B3D74]">Sponsor a Child </span>
-              <span className="text-[#16A34A]">Today</span>
+              <span className="text-primary">Sponsor a Child </span>
+              <span className="text-secondary">Today</span>
             </h2>
-            <p className="mt-2 text-sm text-[#0B3D74]">
+            <p className="mt-2 text-sm text-primary">
               Be the Reason a Child Stays in School
             </p>
 
@@ -450,10 +457,11 @@ export default function Home() {
             </p>
 
             <div className="mt-8 flex justify-center gap-6">
-              <button className="px-8 py-3 rounded-[12px] bg-[#16A34A] text-white font-semibold shadow-md">
+              <button className="px-8 py-3 rounded-[12px] bg-secondary text-white font-semibold shadow-md">
                 Sponsor a Child
               </button>
-              <button className="px-11 py-3 rounded-[12px] border-2 border-[#16A34A] text-[#16A34A] font-semibold bg-transparent">
+
+              <button className="px-11 py-3 rounded-[12px] border-2 border-secondary text-secondary font-semibold bg-transparent">
                 Contact Us
               </button>
             </div>
@@ -463,292 +471,3 @@ export default function Home() {
     </div>
   );
 }
-
-const styles: { [key: string]: React.CSSProperties } = {
-  page: {
-    minHeight: "100vh",
-    backgroundColor: "#f9fafb",
-  },
-
-  header: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "16px 40px",
-    borderBottom: "1px solid #d1d5db",
-    backgroundColor: "#ffffff",
-  },
-
-  logo: {
-    fontWeight: 600,
-    color: "#111827",
-  },
-
-  nav: {
-    display: "flex",
-    gap: "24px",
-    fontSize: "0.95rem",
-  },
-
-  navLink: {
-    textDecoration: "none",
-    color: "#111827",
-    cursor: "pointer",
-  },
-
-  heroOverlay: {
-    position: "absolute",
-    inset: 0,
-    background:
-      "linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.65) 100%)",
-  },
-
-  heroContent: {
-    position: "relative",
-    maxWidth: "900px",
-    zIndex: 1,
-  },
-
-  heroTitle: {
-    fontSize: "3rem",
-    fontWeight: 700,
-    lineHeight: 1.2,
-    marginBottom: "32px",
-  },
-
-  heroButtonsRow: {
-    display: "flex",
-    justifyContent: "center",
-    gap: "16px",
-    flexWrap: "wrap",
-  },
-
-  hero: {
-    minHeight: "80vh",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    textAlign: "center",
-    padding: "40px 24px",
-    gap: "24px",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-  },
-  heroSection: {
-    position: "relative",
-    minHeight: "70vh",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    textAlign: "center",
-    padding: "80px 24px",
-    backgroundImage: "url('/children/image.jpg')",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    color: "#ffffff",
-  },
-
-  storySection: {
-    position: "relative",
-    maxWidth: "2500px",
-    margin: "0 auto",
-
-    textAlign: "left",
-    alignItems: "center",
-    gap: "32px",
-    padding: "0",
-    backgroundColor: "#f3f4f6",
-  },
-
-  sectionTitle: {
-    fontSize: "2rem",
-    fontWeight: 700,
-    marginBottom: "8px",
-    color: "#111827",
-    textAlign: "center",
-  },
-
-  sectionUnderline: {
-    border: "none",
-    borderTop: "2px solid #111827",
-    margin: "0 auto 24px",
-  },
-  storyImageWrapper: {
-    position: "relative",
-    maxWidth: "1120px",
-    margin: "0 auto",
-
-    width: "2500px",
-    height: "380px",
-    borderRadius: "20px",
-    overflow: "hidden",
-  },
-
-  videoPlaceholder: {
-    height: "320px",
-    backgroundColor: "#d1d5db",
-    border: "2px solid #111827",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontWeight: 500,
-    position: "relative",
-    overflow: "hidden",
-  },
-
-  childrenSection: {
-    maxWidth: "1100px",
-    margin: "40px auto 60px",
-    padding: "0 40px",
-  },
-
-  childrenGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-    gap: "24px",
-    marginTop: "24px",
-  },
-
-  childCard: {
-    backgroundColor: "#ffffff",
-    border: "1px solid #e5e7eb",
-    borderRadius: "4px",
-    overflow: "hidden",
-    display: "flex",
-    flexDirection: "column",
-  },
-
-  childPhoto: {
-    backgroundColor: "#d1d5db",
-    height: "230px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "0.9rem",
-    position: "relative",
-    overflow: "hidden",
-  },
-
-  childBody: {
-    padding: "12px 16px 16px",
-  },
-
-  childName: {
-    fontWeight: 600,
-    marginBottom: "4px",
-  },
-
-  childMeta: {
-    fontSize: "0.9rem",
-    color: "#4b5563",
-  },
-
-  childButton: {
-    marginTop: "12px",
-    width: "100%",
-    padding: "10px 0",
-    backgroundColor: "#111827",
-    color: "#ffffff",
-    border: "none",
-    borderRadius: "2px",
-    fontSize: "0.95rem",
-    cursor: "pointer",
-  },
-
-  viewAllButton: {
-    marginTop: "28px",
-    padding: "10px 24px",
-    border: "1px solid #111827",
-    backgroundColor: "#ffffff",
-    cursor: "pointer",
-    borderRadius: "4px",
-    fontSize: "0.95rem",
-    display: "block",
-    marginLeft: "auto",
-    marginRight: "auto",
-  },
-
-  howItWorksSection: {
-    backgroundColor: "#f9fafb",
-    borderTop: "1px solid #d1d5db",
-    borderBottom: "1px solid #d1d5db",
-    padding: "40px 40px 60px",
-  },
-
-  stepsGrid: {
-    maxWidth: "1100px",
-    margin: "0 auto",
-    display: "grid",
-    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-    gap: "32px",
-    marginTop: "32px",
-  },
-
-  stepCard: {
-    textAlign: "center",
-    padding: "16px",
-  },
-
-  stepNumber: {
-    width: "80px",
-    height: "80px",
-    border: "2px solid #111827",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "2rem",
-    margin: "0 auto 16px",
-  },
-
-  stepTitle: {
-    fontWeight: 600,
-    marginBottom: "8px",
-  },
-
-  stepText: {
-    fontSize: "0.95rem",
-    color: "#4b5563",
-  },
-
-  main: {
-    maxWidth: "960px",
-    margin: "40px auto",
-    padding: "0 40px",
-  },
-  title: {
-    fontSize: "2rem",
-    marginBottom: "8px",
-    color: "#111827",
-  },
-  titleUnderline: {
-    border: "none",
-    borderTop: "2px solid #111827",
-    marginTop: "8px",
-    marginBottom: "16px",
-  },
-  card: {
-    backgroundColor: "#f9fafb",
-    border: "1px solid #d1d5db",
-    borderRadius: "4px",
-    padding: "20px",
-    color: "#111827",
-    marginBottom: "16px",
-  },
-  cardTitle: {
-    margin: 0,
-    fontSize: "1.1rem",
-    marginBottom: "8px",
-  },
-  cardBody: {
-    margin: 0,
-    color: "#4b5563",
-    fontSize: "0.95rem",
-  },
-
-  childrenFooter: {
-    marginTop: "24px",
-    display: "flex",
-    justifyContent: "center",
-  },
-};
