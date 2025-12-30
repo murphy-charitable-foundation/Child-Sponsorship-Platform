@@ -2,19 +2,31 @@
 
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
 import {
+  Tabs,
+  Tab,
   Card,
-  CardContent,
-  CardDescription,
+  CardBody,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Link from "next/link";
+  Checkbox,
+  Input,
+  Select,
+  SelectItem,
+  Textarea,
+  Button,
+  Link,
+  Divider,
+} from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+
+const sponsorOptions = [
+  { key: "individual", label: "Individual" },
+  { key: "family", label: "Family" },
+  { key: "company", label: "Company / Business" },
+  { key: "ngo", label: "Organization / NGO" },
+  { key: "religious", label: "Religious Institution" },
+];
 
 export function SignUpForm({
   className,
@@ -22,6 +34,7 @@ export function SignUpForm({
 }: React.ComponentPropsWithoutRef<"div">) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -57,64 +70,136 @@ export function SignUpForm({
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">Sign up</CardTitle>
-          <CardDescription>Create a new account</CardDescription>
-        </CardHeader>
-        <CardContent>
+    <div className="">
           <form onSubmit={handleSignUp}>
+
+            <Select
+              label="Sponsor Type*"
+              labelPlacement="outside"
+              placeholder="Select sponsor type"
+              variant="bordered"
+              radius="md"
+              classNames={{
+                  trigger: "rounded-[12px]",
+              }}
+              defaultSelectedKeys={["individual"]}
+            >
+              {sponsorOptions.map((opt) => (
+                  <SelectItem
+                  key={opt.key}
+                  classNames={{
+                      selectedIcon: "hidden",
+                  }}
+                  >
+                  {opt.label}
+                  </SelectItem>
+              ))}
+            </Select>
+
             <div className="flex flex-col gap-6">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
+                  id="first-name"
+                  label="First Name*"
+                  labelPlacement="outside"
+                  variant="bordered"
+                  radius="md"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  classNames={{ inputWrapper: "rounded-[12px]" }}
+                />
+                <Input
+                  id="last-name"
+                  label="Last Name*"
+                  labelPlacement="outside"
+                  variant="bordered"
+                  radius="md"
+                  required
+                  classNames={{ inputWrapper: "rounded-[12px]" }}
                 />
               </div>
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                </div>
+                <Input
+                  id="email"
+                  type="email"
+                  label="Email*"
+                  labelPlacement="outside"
+                  variant="bordered"
+                  radius="md"
+                  required
+                  value={email}
+                  classNames={{ inputWrapper: "rounded-[12px]" }}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Input
+                  id="phone-number"
+                  type="tel"
+                  label="Phone Number*"
+                  labelPlacement="outside"
+                  variant="bordered"
+                  radius="md"
+                  required
+                  value={phone}
+                  classNames={{ inputWrapper: "rounded-[12px]" }}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+              </div>
+              <div className="grid gap-2">
+
+                <Divider />
                 <Input
                   id="password"
                   type="password"
+                  label="Password*"
+                  labelPlacement="outside"
+                  variant="bordered"
+                  radius="md"
                   required
                   value={password}
+                  classNames={{ inputWrapper: "rounded-[12px]" }}
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="repeat-password">Repeat Password</Label>
-                </div>
+
                 <Input
                   id="repeat-password"
                   type="password"
+                  label="Repeat Password*"
+                  labelPlacement="outside"
+                  variant="bordered"
+                  radius="md"
                   required
                   value={repeatPassword}
+                  classNames={{ inputWrapper: "rounded-[12px]" }}
                   onChange={(e) => setRepeatPassword(e.target.value)}
                 />
               </div>
               {error && <p className="text-sm text-red-500">{error}</p>}
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Checkbox
+                id="terms"
+                required
+              >
+                <p className="text-sm">I agree to the Terms of Use and Privacy Policy</p>
+              </Checkbox>
+             <Button type="submit" 
+                color="primary" 
+                radius="md" 
+                className="rounded-[12px]" 
+                disabled={isLoading}
+              >
                 {isLoading ? "Creating an account..." : "Sign up"}
               </Button>
             </div>
             <div className="mt-4 text-center text-sm">
               Already have an account?{" "}
-              <Link href="/auth/login" className="underline underline-offset-4">
+              <Link href="/auth/login" className="underline underline-offset-4 text-sm">
                 Login
               </Link>
             </div>
           </form>
-        </CardContent>
-      </Card>
     </div>
   );
 }
