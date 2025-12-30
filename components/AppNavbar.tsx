@@ -19,7 +19,7 @@ export function AppNavbar() {
     >
       <NavbarBrand>
         <Image
-          src="/children/logo.jpg"
+          src="/children/logo.png"
           alt="Murphy Charitable Foundation"
           width={48}
           height={48}
