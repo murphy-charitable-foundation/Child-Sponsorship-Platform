@@ -212,7 +212,7 @@ export default function CompleteSponsorshipPage() {
             color="primary"
             radius="md"
             className="rounded-[12px]"
-            onPress={() => router.push("/sponsorship/payment")}
+            onPress={() => router.push(`/sponsorship/payment?plan=${planType}`)}
           >
             Continue to Payment
           </Button>
