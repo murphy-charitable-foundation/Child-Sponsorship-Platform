@@ -1,174 +1,469 @@
 "use client";
-import { Button, Navbar } from "@heroui/react";
-import NextLink from "next/link";
+
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Card, CardBody, CardFooter, Button } from "@heroui/react";
+
+// Replace with real data from Supabase once backend is ready
+const featuredChildren = [
+  {
+    name: "Apio Hellen",
+    meta: "10 years old, Guatemala",
+    description: "A cheerful girl who enjoys football and reading.",
+    image: "/children/Kid3.png",
+  },
+  {
+    name: "Okiror Daniel",
+    meta: "10 years old, Guatemala",
+    description: "A cheerful boy who enjoys football and reading.",
+    image: "/children/Kid1.png",
+  },
+  {
+    name: "Samuel",
+    meta: "9 years old",
+    description: "A cheerful boy who enjoys football and reading.",
+    image: "/children/Kid2.png",
+  },
+];
 
 export default function Home() {
   return (
-    <div style={styles.page}>
-      {/* HEADER */}
-      <header style={styles.header}>
-        <div style={styles.logo}>[LOGO]</div>
-        <nav style={styles.nav}>
-          <Link href="/" style={styles.navLink}>
-            Home
-          </Link>
-          <a style={styles.navLink} href="#">
-            Meet the Children ▼
-          </a>
-          <a style={styles.navLink} href="#">
-            About the Program
-          </a>
-          <a style={styles.navLink} href="#">
-            Contact
-          </a>
-          <a style={styles.navLink} href="#">
-            Login / Register
-          </a>
-        </nav>
-      </header>
+    <div className="min-h-screen bg-default-50">
       <main>
-        <section style={styles.hero}>
-          <h1 style={styles.heroTitle}>
-            Change a Child&apos;s Story, Sponsor from as Little as $25 a Month
-          </h1>
-          <Button
-            as={NextLink}
-            href="#"
-            className="bg-black text-white hover:bg-black/80"
-            style={styles.heroButton}
-          >
-            Sponsor a Child
-          </Button>
+        <section
+          className="relative min-h-[70vh] flex items-center justify-center text-center px-6 py-20 bg-cover bg-center"
+          style={{ backgroundImage: "url('/children/image.jpg')" }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-black/35 to-black/65" />
+
+          <div className="relative max-w-[900px] z-10">
+            <h1 className="text-5xl font-bold leading-tight text-white mb-8">
+              Change a Child’s Story,
+              <br />
+              Sponsor from as Little as $25 a Month
+            </h1>
+            <div className="flex justify-center gap-4 flex-wrap">
+              <Button
+                as={Link}
+                href="#sponsor"
+                color="secondary"
+                radius="md"
+                className="px-14 py-8 text-[18px] font-semibold shadow-md hover:opacity-90"
+              >
+                Sponsor a Child
+              </Button>
+
+              <Button
+                as={Link}
+                href="#how-it-works"
+                variant="flat"
+                radius="md"
+                className="bg-white/85 px-14 py-8 text-[18px] font-semibold shadow-md hover:bg-white text-secondary"
+              >
+                How It Works
+              </Button>
+            </div>
+          </div>
+        </section>
+        <section className="py-16 bg-default-50">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="text-center mb-10">
+              <h2 className="text-4xl font-extrabold">
+                <span className="text-primary">Meet the </span>
+                <span className="text-secondary">Children</span>
+              </h2>
+              <p className="mt-3 text-sm text-gray-600 max-w-2xl mx-auto">
+                Each child is verified and profiled by our field officers. You
+                can browse their stories and choose the one you wish to sponsor.
+              </p>
+            </div>
+
+            <div className="grid gap-8 md:grid-cols-3">
+              {featuredChildren.map((child) => (
+                <Card
+                  key={child.name}
+                  shadow="md"
+                  className="rounded-[32px] border-none bg-white"
+                >
+                  <CardBody className="p-0">
+                    <div className="relative w-full h-64 rounded-[32px] overflow-hidden">
+                      <Image
+                        src={child.image}
+                        alt={child.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+
+                    <div className="px-8 pt-6 pb-2 text-center">
+                      <h3 className="text-lg font-extrabold text-gray-900">
+                        {child.name}
+                      </h3>
+                      <p className="mt-1 text-sm text-gray-500">{child.meta}</p>
+                      <p className="mt-3 text-sm text-gray-700 leading-relaxed">
+                        {child.description}
+                      </p>
+                    </div>
+                  </CardBody>
+
+                  <CardFooter className="pb-8 flex justify-center">
+                    <Button
+                      color="secondary"
+                      radius="md"
+                      className="px-8 py-2 text-[14px] shadow-md hover:opacity-90"
+                    >
+                      Sponsor Now
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+
+            <div className="mt-10 flex justify-center">
+              <Button
+                variant="bordered"
+                color="secondary"
+                radius="md"
+                className="bg-white/90 px-14 py-8 text-[18px] font-semibold shadow-md hover:bg-white"
+              >
+                View All Children
+              </Button>
+            </div>
+          </div>
         </section>
 
-        <section style={styles.storySection}>
-          <h2 style={styles.sectionTitle}>Our Story</h2>
-          <hr style={styles.sectionUnderline} />
-          <div style={styles.videoPlaceholder}>
+        <section className="py-16 bg-default-50">
+          <div className="relative max-w-6xl mx-auto h-[380px] rounded-[20px] overflow-hidden">
             <Image
-              src="/children/group1.jpg"
-              alt="Child profile"
+              src="/children/group.jpg"
+              alt="Our story"
               fill
               style={{ objectFit: "cover" }}
             />
           </div>
         </section>
 
-        <section style={styles.childrenSection}>
-          <h2 style={styles.sectionTitle}>Meet the Children</h2>
-          <hr style={styles.sectionUnderline} />
+        <section className="py-16 bg-default-50">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="text-center mb-10">
+              <h2 className="text-4xl font-extrabold">
+                <span className="text-primary">Our </span>
+                <span className="text-secondary">Story</span>
+              </h2>
 
-          <div style={styles.childrenGrid}>
-            <div style={styles.childCard}>
-              <div style={styles.childPhoto}>
-                <Image
-                  src="/children/girl2.jpg"
-                  alt="Child profile"
-                  fill
-                  style={{ objectFit: "cover" }}
-                />
-              </div>
-              <div style={styles.childBody}>
-                <div style={styles.childName}>Maria</div>
-                <div style={styles.childMeta}>Age: 8</div>
-                <div style={styles.childMeta}>Guatemala</div>
-                <button style={styles.childButton}>Sponsor Me</button>
-              </div>
+              <p className="mt-3 text-sm text-gray-600 max-w-2xl mx-auto">
+                How your sponsorship supports each child and keeps you
+                connected.
+              </p>
             </div>
 
-            <div style={styles.childCard}>
-              <div style={styles.childPhoto}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
+              <div className="relative h-[420px] w-full rounded-[28px] overflow-hidden shadow-sm">
                 <Image
-                  src="/children/boy1.png"
-                  alt="Child profile"
+                  src="/children/Rectangle 6.png"
+                  alt="Children"
                   fill
-                  style={{ objectFit: "cover" }}
+                  className="object-cover"
+                  priority={false}
                 />
               </div>
-              <div style={styles.childBody}>
-                <div style={styles.childName}>Carlos</div>
-                <div style={styles.childMeta}>Age: 7</div>
-                <div style={styles.childMeta}>Guatemala</div>
-                <button style={styles.childButton}>Sponsor Me</button>
+
+              <div className="space-y-10">
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-5">
+                    For the child, your support provides
+                  </h3>
+
+                  <ul className="space-y-4">
+                    {[
+                      "School fees, uniforms and essential supplies",
+                      "Daily meals and basic healthcare",
+                      "Safe after-school programs, mentoring and community activities",
+                    ].map((item) => (
+                      <li
+                        key={item}
+                        className="flex items-start gap-3 text-gray-800"
+                      >
+                        <span className="mt-2 h-2 w-2 rounded-full bg-green-600 shrink-0" />
+                        <span className="leading-relaxed">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-5">
+                    As a sponsor, you’ll receive
+                  </h3>
+
+                  <ul className="space-y-4">
+                    {[
+                      "A welcome profile and photo of your sponsored child",
+                      "Regular letters, photos and progress updates",
+                      "An annual impact report showing how your support changes lives",
+                    ].map((item) => (
+                      <li
+                        key={item}
+                        className="flex items-start gap-3 text-gray-800"
+                      >
+                        <span className="mt-2 h-2 w-2 rounded-full bg-green-600 shrink-0" />
+                        <span className="leading-relaxed">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
-
-            <div style={styles.childCard}>
-              <div style={styles.childPhoto}>
-                <Image
-                  src="/children/girl1.jpg"
-                  alt="Child profile"
-                  fill
-                  style={{ objectFit: "cover" }}
-                />
-              </div>
-              <div style={styles.childBody}>
-                <div style={styles.childName}>Sofia</div>
-                <div style={styles.childMeta}>Age: 9</div>
-                <div style={styles.childMeta}>Guatemala</div>
-                <button style={styles.childButton}>Sponsor Me</button>
-              </div>
+          </div>
+        </section>
+        <section className="relative bg-primary-50 py-16 overflow-hidden">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="text-center mb-10">
+              <h2 className="text-4xl font-extrabold">
+                <span className="text-primary">How It </span>
+                <span className="text-secondary">Works</span>
+              </h2>
+              <p className="mt-3 text-sm text-primary max-w-2xl mx-auto">
+                At Murphy Charitable Foundation, we believe every child deserves
+                a chance to learn, dream, and succeed.
+              </p>
             </div>
 
-            <div style={styles.childCard}>
-              <div style={styles.childPhoto}>
-                <Image
-                  src="/children/boy2.jpg"
-                  alt="Child profile"
-                  fill
-                  style={{ objectFit: "cover" }}
+            <div className="hidden md:block absolute left-0 right-0 top-[160px] pointer-events-none">
+              <svg
+                viewBox="0 0 1200 260"
+                className="w-full h-[260px] text-primary"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M0,200 C80,60 100,270 320,110 C370,40 620,220 740,120 C860,40 920,100 1050,100"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeDasharray="6 10"
+                  fill="none"
+                  transform="translate(0,-60)"
                 />
+
+                {[
+                  { cx: 70, cy: 90 },
+                  { cx: 363, cy: 30 },
+                  { cx: 655, cy: 90 },
+                  { cx: 950, cy: 30 },
+                ].map((p, i) => (
+                  <circle
+                    key={i}
+                    cx={p.cx}
+                    cy={p.cy}
+                    r="10"
+                    fill="white"
+                    className="text-secondary"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                ))}
+              </svg>
+            </div>
+
+            <div className="relative grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-10 mt-8 md:mt-20">
+              <div className="text-center md:text-left md:mt-14">
+                <span className="inline-block bg-secondary text-white text-xs font-semibold px-4 py-2 rounded-md">
+                  Step 1
+                </span>
+                <h3 className="mt-4 text-lg font-extrabold text-default-900">
+                  Choose a Child
+                </h3>
+                <p className="mt-2 text-sm text-default-600">
+                  Browse profiles and select a child to sponsor
+                </p>
               </div>
-              <div style={styles.childBody}>
-                <div style={styles.childName}>Juan</div>
-                <div style={styles.childMeta}>Age: 6</div>
-                <div style={styles.childMeta}>Guatemala</div>
-                <button style={styles.childButton}>Sponsor Me</button>
+
+              <div className="text-center md:text-left md:mt-0">
+                <span className="inline-block bg-secondary text-white text-xs font-semibold px-4 py-2 rounded-md">
+                  Step 2
+                </span>
+                <h3 className="mt-4 text-lg font-extrabold text-default-900">
+                  Start Sponsorship
+                </h3>
+                <p className="mt-2 text-sm text-default-600">
+                  Complete your sponsorship setup and payment
+                </p>
+              </div>
+
+              <div className="text-center md:text-left md:mt-14">
+                <span className="inline-block bg-secondary text-white text-xs font-semibold px-4 py-2 rounded-md">
+                  Step 3
+                </span>
+                <h3 className="mt-4 text-lg font-extrabold text-default-900">
+                  Connect &amp; Communicate
+                </h3>
+                <p className="mt-2 text-sm text-default-600">
+                  Exchange letters and updates with your child
+                </p>
+              </div>
+
+              <div className="text-center md:text-left md:mt-0">
+                <span className="inline-block bg-secondary text-white text-xs font-semibold px-4 py-2 rounded-md">
+                  Step 4
+                </span>
+                <h3 className="mt-4 text-lg font-extrabold text-default-900">
+                  Track Progress
+                </h3>
+                <p className="mt-2 text-sm text-default-600">
+                  See the impact of your support over time
+                </p>
               </div>
             </div>
           </div>
 
-          <button style={styles.viewAllButton}>View All Children</button>
+          <div className="hidden md:block absolute top-10 right-10 text-primary opacity-20 pointer-events-none">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M21.5 2.5L2.5 10.5L10.5 13.5L13.5 21.5L21.5 2.5Z"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M21.5 2.5L10.5 13.5"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
         </section>
 
-        <section style={styles.howItWorksSection}>
-          <h2 style={styles.sectionTitle}>How It Works</h2>
-          <hr style={styles.sectionUnderline} />
+        <section className="py-14 bg-default-50">
+          <div className="max-w-6xl mx-auto px-4 text-center">
+            <h2 className="text-4xl font-extrabold">
+              <span className="text-primary">Sponsor a Child </span>
+              <span className="text-secondary">Today</span>
+            </h2>
+            <p className="mt-2 text-sm text-primary">
+              Be the Reason a Child Stays in School
+            </p>
 
-          <div style={styles.stepsGrid}>
-            <div style={styles.stepCard}>
-              <div style={styles.stepNumber}>1</div>
-              <div style={styles.stepTitle}>Choose a Child</div>
-              <div style={styles.stepText}>
-                Browse profiles and select a child to sponsor.
+            <div className="mt-10 flex justify-center gap-8">
+              <div className="flex flex-col gap-6">
+                <div className="relative w-[180px] h-[250px] rounded-[22px] overflow-hidden shadow-md bg-white  mt-11">
+                  <Image
+                    src="/children/image1.png"
+                    alt=""
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+
+                <div className="relative w-[180px] h-[250px] rounded-[22px] overflow-hidden shadow-md bg-white  mt-3">
+                  <Image
+                    src="/children/image2.png"
+                    alt=""
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-6">
+                <div className="flex flex-col gap-6">
+                  <div className="relative w-[180px] h-[180px] rounded-[22px] overflow-hidden shadow-md bg-white">
+                    <Image
+                      src="/children/image3.png"
+                      alt=""
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+
+                  <div className="relative w-[180px] h-[180px] rounded-[22px] overflow-hidden shadow-md bg-white">
+                    <Image
+                      src="/children/image4.png"
+                      alt=""
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-6">
+                <div className="flex flex-col gap-6">
+                  <div className="relative w-[190px] h-[350px] rounded-[26px] overflow-hidden shadow-md bg-white mt-14">
+                    <Image
+                      src="/children/image5.png"
+                      alt=""
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-6 ">
+                <div className="relative w-[190px] h-[350px] rounded-[26px] overflow-hidden shadow-md bg-white mt-14">
+                  <Image
+                    src="/children/image6.png"
+                    alt=""
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-6">
+                <div className="flex gap-6">
+                  <div className="relative w-[180px] h-[180px] rounded-[22px] overflow-hidden shadow-md bg-white">
+                    <Image
+                      src="/children/image7.png"
+                      alt=""
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                </div>
+                <div className="relative w-[180px] h-[180px] rounded-[22px] overflow-hidden shadow-md bg-white">
+                  <Image
+                    src="/children/group.jpg"
+                    alt=""
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col gap-6">
+                <div className="relative w-[180px] h-[250px] rounded-[22px] overflow-hidden shadow-md bg-white mt-11">
+                  <Image
+                    src="/children/image1.png"
+                    alt=""
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+
+                <div className="relative w-[180px] h-[250px] rounded-[22px] overflow-hidden shadow-md bg-white mt-3">
+                  <Image
+                    src="/children/image.jpg"
+                    alt=""
+                    fill
+                    className="object-cover"
+                  />
+                </div>
               </div>
             </div>
 
-            <div style={styles.stepCard}>
-              <div style={styles.stepNumber}>2</div>
-              <div style={styles.stepTitle}>Start Sponsorship</div>
-              <div style={styles.stepText}>
-                Complete your sponsorship setup and payment.
-              </div>
-            </div>
+            <p className="mt-10 text-gray-700 max-w-xl mx-auto font-semibold text-lg">
+              Your support gives children safe classrooms, warm meals,
+              <br />
+              and a chance to dream.
+            </p>
 
-            <div style={styles.stepCard}>
-              <div style={styles.stepNumber}>3</div>
-              <div style={styles.stepTitle}>Connect &amp; Communicate</div>
-              <div style={styles.stepText}>
-                Exchange letters and updates with your child.
-              </div>
-            </div>
+            <div className="mt-8 flex justify-center gap-6">
+              <button className="px-8 py-3 rounded-[12px] bg-secondary text-white font-semibold shadow-md">
+                Sponsor a Child
+              </button>
 
-            <div style={styles.stepCard}>
-              <div style={styles.stepNumber}>4</div>
-              <div style={styles.stepTitle}>Track Progress</div>
-              <div style={styles.stepText}>
-                See the impact of your support over time.
-              </div>
+              <button className="px-11 py-3 rounded-[12px] border-2 border-secondary text-secondary font-semibold bg-transparent">
+                Contact Us
+              </button>
             </div>
           </div>
         </section>
@@ -176,242 +471,3 @@ export default function Home() {
     </div>
   );
 }
-
-const styles: { [key: string]: React.CSSProperties } = {
-  page: {
-    minHeight: "100vh",
-    backgroundColor: "#f9fafb",
-  },
-
-  header: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "16px 40px",
-    borderBottom: "1px solid #d1d5db",
-    backgroundColor: "#ffffff",
-  },
-
-  logo: {
-    fontWeight: 600,
-    color: "#111827",
-  },
-
-  nav: {
-    display: "flex",
-    gap: "24px",
-    fontSize: "0.95rem",
-  },
-
-  navLink: {
-    textDecoration: "none",
-    color: "#111827",
-    cursor: "pointer",
-  },
-
-  hero: {
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  textAlign: "center",
-  padding: "40px 40px 20px",
-  gap: "20px", 
-},
-
-
-  heroTitle: {
-    fontSize: "2.8rem",
-    marginBottom: "20px",
-    color: "#111827",
-    maxWidth: "900px",
-  },
-
-  heroButton: {
-    fontSize: "1.05rem",
-    padding: "14px 28px",
-    borderRadius: "999px",
-  },
-
-  storySection: {
-    maxWidth: "1100px",
-    margin: "20px auto 80px",
-    padding: "0 40px",
-    textAlign: "center",
-  },
-
-  sectionTitle: {
-    fontSize: "2rem",
-    fontWeight: 600,
-    marginBottom: "8px",
-    color: "#111827",
-  },
-
-  sectionUnderline: {
-    border: "none",
-    borderTop: "2px solid #111827",
-    margin: "0 auto 24px",
-  },
-
-  videoPlaceholder: {
-    height: "320px",
-    backgroundColor: "#d1d5db",
-    border: "2px solid #111827",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontWeight: 500,
-    position: "relative", // 👈 needed for fill
-    overflow: "hidden",
-  },
-
-  // ---------- MEET THE CHILDREN ----------
-  childrenSection: {
-    maxWidth: "1100px",
-    margin: "40px auto 60px",
-    padding: "0 40px",
-  },
-
-  childrenGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-    gap: "24px",
-    marginTop: "24px",
-  },
-
-  childCard: {
-    backgroundColor: "#ffffff",
-    border: "1px solid #e5e7eb",
-    borderRadius: "4px",
-    overflow: "hidden",
-    display: "flex",
-    flexDirection: "column",
-  },
-
-  childPhoto: {
-    backgroundColor: "#d1d5db",
-    height: "230px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "0.9rem",
-
-    position: "relative", // 👈 required for Image with `fill`
-    overflow: "hidden",
-  },
-
-  childBody: {
-    padding: "12px 16px 16px",
-  },
-
-  childName: {
-    fontWeight: 600,
-    marginBottom: "4px",
-  },
-
-  childMeta: {
-    fontSize: "0.9rem",
-    color: "#4b5563",
-  },
-
-  childButton: {
-    marginTop: "12px",
-    width: "100%",
-    padding: "10px 0",
-    backgroundColor: "#111827",
-    color: "#ffffff",
-    border: "none",
-    borderRadius: "2px",
-    fontSize: "0.95rem",
-    cursor: "pointer",
-  },
-
-  viewAllButton: {
-    marginTop: "28px",
-    padding: "10px 24px",
-    border: "1px solid #111827",
-    backgroundColor: "#ffffff",
-    cursor: "pointer",
-    borderRadius: "4px",
-    fontSize: "0.95rem",
-    display: "block",
-    marginLeft: "auto",
-    marginRight: "auto",
-  },
-
-  // ---------- HOW IT WORKS ----------
-  howItWorksSection: {
-    backgroundColor: "#f9fafb",
-    borderTop: "1px solid #d1d5db",
-    borderBottom: "1px solid #d1d5db",
-    padding: "40px 40px 60px",
-  },
-
-  stepsGrid: {
-    maxWidth: "1100px",
-    margin: "0 auto",
-    display: "grid",
-    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-    gap: "32px",
-    marginTop: "32px",
-  },
-
-  stepCard: {
-    textAlign: "center",
-  },
-
-  stepNumber: {
-    width: "80px",
-    height: "80px",
-    border: "2px solid #111827",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "2rem",
-    margin: "0 auto 16px",
-  },
-
-  stepTitle: {
-    fontWeight: 600,
-    marginBottom: "8px",
-  },
-
-  stepText: {
-    fontSize: "0.95rem",
-    color: "#4b5563",
-  },
-
-  main: {
-    maxWidth: "960px",
-    margin: "40px auto",
-    padding: "0 40px",
-  },
-  title: {
-    fontSize: "2rem",
-    marginBottom: "8px",
-    color: "#111827",
-  },
-  titleUnderline: {
-    border: "none",
-    borderTop: "2px solid #111827",
-    marginTop: "8px",
-    marginBottom: "16px",
-  },
-  card: {
-    backgroundColor: "#f9fafb",
-    border: "1px solid #d1d5db",
-    borderRadius: "4px",
-    padding: "20px",
-    color: "#111827",
-    marginBottom: "16px",
-  },
-  cardTitle: {
-    margin: 0,
-    fontSize: "1.1rem",
-    marginBottom: "8px",
-  },
-  cardBody: {
-    margin: 0,
-    color: "#4b5563",
-    fontSize: "0.95rem",
-  },
-};

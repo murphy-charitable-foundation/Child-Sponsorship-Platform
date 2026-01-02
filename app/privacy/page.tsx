@@ -1,30 +1,8 @@
 import React from "react";
-import Link from "next/link";
+
 export default function PrivacyPolicyPage() {
   return (
     <div style={styles.page}>
-      <header style={styles.header}>
-        <div style={styles.logo}>[LOGO]</div>
-        <nav style={styles.nav}>
-          <Link href="/" style={styles.navLink}>
-            {" "}
-            Home
-          </Link>
-          <a style={styles.navLink} href="#">
-            Meet the Children ▼
-          </a>
-          <a style={styles.navLink} href="#">
-            About the Program
-          </a>
-          <a style={styles.navLink} href="#">
-            Contact
-          </a>
-          <a style={styles.navLink} href="#">
-            Login / Register
-          </a>
-        </nav>
-      </header>
-
       <main style={styles.main}>
         <h1 style={styles.title}>Privacy Policy</h1>
         <hr style={styles.titleUnderline} />
@@ -70,19 +48,19 @@ export default function PrivacyPolicyPage() {
 const styles: { [key: string]: React.CSSProperties } = {
   page: {
     minHeight: "100vh",
-    backgroundColor: "#f9fafb",
+    backgroundColor: "bg-default-50",
   },
   header: {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
     padding: "16px 40px",
-    borderBottom: "1px solid #d1d5db",
-    backgroundColor: "#ffffff",
+    borderBottom: "1px solid border-default-200",
+    backgroundColor: "bg-white",
   },
   logo: {
     fontWeight: 600,
-    color: "#111827",
+    color: "text-default-900",
   },
   nav: {
     display: "flex",
@@ -91,7 +69,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   navLink: {
     textDecoration: "none",
-    color: "#111827",
+    color: "text-default-900",
     cursor: "pointer",
   },
   main: {
@@ -102,20 +80,20 @@ const styles: { [key: string]: React.CSSProperties } = {
   title: {
     fontSize: "2rem",
     marginBottom: "8px",
-    color: "#111827",
+    color: "text-default-900",
   },
   titleUnderline: {
     border: "none",
-    borderTop: "2px solid #111827",
+    borderTop: "2px solid text-default-900",
     marginTop: "8px", // small space under the title
     marginBottom: "16px",
   },
   card: {
-    backgroundColor: "#f9fafb",
-    border: "1px solid #d1d5db",
+    backgroundColor: "bg-default-50",
+    border: "1px solid border-default-200",
     borderRadius: "4px",
     padding: "20px",
-    color: "#111827",
+    color: "text-default-900",
     marginBottom: "16px",
   },
   cardTitle: {
@@ -125,7 +103,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   cardBody: {
     margin: 0,
-    color: "#4b5563",
+    color: "text-default-600",
     fontSize: "0.95rem",
   },
 };
