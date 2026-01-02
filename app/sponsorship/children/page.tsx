@@ -23,6 +23,9 @@ import {
   DropdownMenu,
   DropdownItem,
   Slider,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
 } from "@heroui/react";
 
 
@@ -74,6 +77,8 @@ export default function MeetTheChildrenPage() {
         Meet the Children
       </h1>
       <Divider/>
+      <p className="text-default-500">Browse children waiting for sponsorship</p>
+      
       <div id="filters" className="gap-2 grid grid-cols-2 sm:grid-cols-5 m-4 p-4 border border-default-200 rounded-[12px]">
             <Input
               label="Search"
@@ -103,45 +108,61 @@ export default function MeetTheChildrenPage() {
                 ))}
               </DropdownMenu>
             </Dropdown>
+
+            <Popover placement="bottom" showArrow={true}>
+              <PopoverTrigger>
+                <Button className="capitalize" variant="bordered">Age Range</Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80 p-4">
+                <Slider
+                  className="w-full"
+                  defaultValue={[0, 25]}
+                  label="Age Range"
+                  marks={[
+                    {
+                      value: 0,
+                      label: "0",
+                    },{
+                      value: 5,
+                      label: "5",
+                    },{
+                      value: 10,
+                      label: "10",
+                    },{
+                      value: 15,
+                      label: "15",
+                    },{
+                      value: 20,
+                      label: "20",
+                    },{
+                      value: 25,
+                      label: "25",
+                    }
+                  ]}
+                  maxValue={25}
+                  minValue={0}
+                  showTooltip={true}
+                  step={1}
+                />  
+              </PopoverContent>
+            </Popover>
             
-            <Slider
-              className="max-w-md"
-              defaultValue={[0, 25]}
-              label="Age Range"
-              marks={[
-                {
-                  value: 0,
-                  label: "0",
-                },{
-                  value: 5,
-                  label: "5",
-                },{
-                  value: 10,
-                  label: "10",
-                },{
-                  value: 15,
-                  label: "15",
-                },{
-                  value: 20,
-                  label: "20",
-                },{
-                  value: 25,
-                  label: "25",
-                }
-              ]}
-              maxValue={25}
-              minValue={0}
-              showTooltip={true}
-              step={1}
-            />  
-            <div className="flex gap-4">
-              <Checkbox defaultSelected radius="md">
-                Male
-              </Checkbox>
-              <Checkbox defaultSelected radius="md">
-                Female
-              </Checkbox>
-            </div>
+            
+            <Popover placement="bottom" showArrow={true}>
+              <PopoverTrigger>
+                <Button className="capitalize" variant="bordered">Gender</Button>
+              </PopoverTrigger>
+              <PopoverContent className="p-4">
+                <div className="flex gap-4">
+                  <Checkbox defaultSelected radius="md">
+                    Male
+                  </Checkbox>
+                  <Checkbox defaultSelected radius="md">
+                    Female
+                  </Checkbox>
+                </div>
+              </PopoverContent>
+            </Popover>
             <Dropdown>
               <DropdownTrigger>
                 <Button className="capitalize" variant="bordered">
@@ -163,6 +184,7 @@ export default function MeetTheChildrenPage() {
               </DropdownMenu>
                 </Dropdown>
       </div>
+      <p className="text-default-500 text-sm">Showing {children.length} children</p>
 
       <div id="children-grid" className="gap-2 grid grid-cols-2 sm:grid-cols-4">
         {children.map((item, index) => (
