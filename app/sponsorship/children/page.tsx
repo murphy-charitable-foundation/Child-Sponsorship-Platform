@@ -24,6 +24,7 @@ import {
   DropdownMenu,
   DropdownItem,
   Slider,
+  Pagination,
   Popover,
   PopoverTrigger,
   PopoverContent,
@@ -220,6 +221,7 @@ export default function MeetTheChildrenPage() {
             </Card>
           ))}
         </div>
+        <Pagination showControls initialPage={1} total={10} className="my-4 flex justify-center" color="primary" variant="bordered"/>
       </div>
     </main>
   );
