@@ -24,6 +24,7 @@ import {
   DropdownMenu,
   DropdownItem,
   Slider,
+  Skeleton,
   Pagination,
   Popover,
   PopoverTrigger,
@@ -43,6 +44,7 @@ const children = [
   { id: 9, name: "John Doe9", img: "/children/girl2.jpg", gender: "Male", age: 12, country: "Uganda2" , grade: 12, bioText: "Short biography about the child goes here."},
 
 ];
+
 
 
 
@@ -72,6 +74,8 @@ export default function MeetTheChildrenPage() {
   const [selectedGradeLevels, setGradeLevels] = React.useState<Selection>(
     new Set(gradeLevels)
   );
+
+  const [isLoaded, setIsLoaded] = React.useState(true);
 
   /*const selectedValue = React.useMemo(
     () => Array.from(selectedKeys).join(", ").replaceAll("_", " "),
@@ -200,24 +204,27 @@ export default function MeetTheChildrenPage() {
           {children.map((item, index) => (
             /* eslint-disable no-console */
             <Card key={item.id} isPressable shadow="sm" onPress={() => console.log("item pressed")}>
-              <CardBody className="overflow-visible p-0">
-                <Image
-                  alt={item.name}
-                  className="w-full object-cover h-[140px]"
-                  radius="lg"
-                  shadow="sm"
-                  src={item.img}
-                  width="100%"
-                />
-              </CardBody>
-              <CardFooter className="text-small">
-                <div className="text-left">
-                <b>{item.name}</b>
-                <p className="text-default-500">{"Age: "+(item.age).toString()+", "+item.country}</p>
-                <p className="text-default-500">{"Grade: "+(item.grade).toString()}</p>
-                <p className="text-default-500">{item.bioText}</p>
-                </div>
-              </CardFooter>
+              <Skeleton className="rounded-lg" isLoaded={isLoaded}>
+                <CardBody className="overflow-visible p-0">
+                  <Image
+                    alt={item.name}
+                    className="w-full object-cover h-[140px]"
+                    radius="lg"
+                    shadow="sm"
+                    src={item.img}
+                    width="100%"
+                  />
+                </CardBody>
+                <CardFooter className="text-small">
+                  <div className="text-left">
+                  <b>{item.name}</b>
+                  <p className="text-default-500">{"Age: "+(item.age).toString()+", "+item.country}</p>
+                  <p className="text-default-500">{"Grade: "+(item.grade).toString()}</p>
+                  <p className="text-default-500">{item.bioText}</p>
+                  </div>
+                </CardFooter>
+              </Skeleton>
+              
             </Card>
           ))}
         </div>
