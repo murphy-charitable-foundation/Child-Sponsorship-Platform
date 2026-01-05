@@ -44,7 +44,7 @@ export default function ChildProfilePage() {
             color="secondary"
             radius="md"
           >
-            ← Back
+            ← Back to All Children
           </Button>
         </div>
 
