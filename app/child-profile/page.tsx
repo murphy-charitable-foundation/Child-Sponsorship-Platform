@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Button, Chip } from "@heroui/react";
+import { Button, Chip, Card, CardBody } from "@heroui/react";
 import Image from "next/image";
 
 export default function ChildProfilePage() {
@@ -126,20 +126,24 @@ export default function ChildProfilePage() {
 
         <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-4">
           {provides.map((item) => (
-            <div
+            <Card
               key={item.title}
-              className="rounded-medium border border-default-300 bg-default-100 p-7 text-center"
+              radius="md"
+              shadow="sm"
+              className="border border-default-300 bg-default-100"
             >
-              <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-medium border-2 border-default-900 text-default-900 font-semibold">
-                [ICON]
-              </div>
+              <CardBody className="p-7 text-center">
+                <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-medium border-2 border-default-900 text-default-900 font-semibold">
+                  [ICON]
+                </div>
 
-              <h3 className="text-lg font-semibold text-foreground">
-                {item.title}
-              </h3>
+                <h3 className="text-lg font-semibold text-foreground">
+                  {item.title}
+                </h3>
 
-              <p className="mt-3 text-default-600">{item.desc}</p>
-            </div>
+                <p className="mt-3 text-default-600">{item.desc}</p>
+              </CardBody>
+            </Card>
           ))}
         </div>
       </div>
