@@ -7,12 +7,6 @@ import "./globals.css";
 import React from "react";
 import { AppNavbar } from "@/components/AppNavbar";
 
-/*export const metadata: Metadata = {
-  metadataBase: new URL(defaultUrl),
-  title: "Child Sponsorship System",
-  description: "Sponsor a child and change a life.",
-};*/
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   display: "swap",
@@ -149,7 +143,7 @@ const footerStyles: { [key: string]: React.CSSProperties } = {
   },
   link: {
     display: "block",
-    color:"inherit",
+    color: "inherit",
     textDecoration: "none",
     fontSize: "0.9rem",
     marginBottom: "8px",
