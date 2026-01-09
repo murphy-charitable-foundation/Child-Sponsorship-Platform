@@ -1,7 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import RootLayout from "@/components/root-layout";
-
+import ClientProviders from "@/components/ClientProviders";
+import { Geist } from "next/font/google";
 
 const defaultUrl = "https://murphy-child-sponsorship-platform.netlify.app/";
 
@@ -11,13 +11,23 @@ export const metadata: Metadata = {
   description: "Sponsor a child and change a life.",
 };
 
-export default function Layout({
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  display: "swap",
+  subsets: ["latin"],
+});
+
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <RootLayout>{children}</RootLayout>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${geistSans.className} antialiased`}>
+        <ClientProviders>{children}</ClientProviders>
+      </body>
+    </html>
   );
 }
 
