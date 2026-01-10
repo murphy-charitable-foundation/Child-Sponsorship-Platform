@@ -35,9 +35,12 @@ export function SignUpForm({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [sponsorType, setSponsorType] = useState<string>("individual");
   const router = useRouter();
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -58,6 +61,13 @@ export function SignUpForm({
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/protected`,
+          data: {
+            role: "sponsor",
+            sponsor_type: sponsorType,
+            first_name: firstName,
+            last_name: lastName,
+            active: true,
+          },
         },
       });
       if (error) throw error;
@@ -79,6 +89,13 @@ export function SignUpForm({
               placeholder="Select sponsor type"
               variant="bordered"
               radius="md"
+              selectedKeys={[sponsorType]}
+              onSelectionChange={(keys) => {
+              if (keys === "all") return;   // satisfy TS
+
+                const value = Array.from(keys)[0] as string;
+                setSponsorType(value);
+              }}
               classNames={{
                   trigger: "rounded-[12px]",
               }}
@@ -105,6 +122,8 @@ export function SignUpForm({
                   variant="bordered"
                   radius="md"
                   required
+                  onChange={(e) => setFirstName(e.target.value)}
+                  value={firstName}
                   classNames={{ inputWrapper: "rounded-[12px]" }}
                 />
                 <Input
@@ -114,6 +133,8 @@ export function SignUpForm({
                   variant="bordered"
                   radius="md"
                   required
+                  onChange={(e) => setLastName(e.target.value)}
+                  value={lastName}
                   classNames={{ inputWrapper: "rounded-[12px]" }}
                 />
               </div>
@@ -193,12 +214,7 @@ export function SignUpForm({
                 {isLoading ? "Creating an account..." : "Sign up"}
               </Button>
             </div>
-            <div className="mt-4 text-center text-sm">
-              Already have an account?{" "}
-              <Link href="/auth/login" className="underline underline-offset-4 text-sm">
-                Login
-              </Link>
-            </div>
+
           </form>
     </div>
   );
