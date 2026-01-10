@@ -1,23 +1,7 @@
-'use client'
-
-import type { Metadata } from "next";
-import { Geist } from "next/font/google";
-import { ThemeProvider } from "next-themes";
-import { HeroUIProvider } from "@heroui/react";
 import "./globals.css";
-import React from "react";
-
-const COPYRIGHT_YEAR = new Date().getFullYear();
-
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
-
-/*export const metadata: Metadata = {
-  metadataBase: new URL(defaultUrl),
-  title: "Child Sponsorship System",
-  description: "Sponsor a child and change a life.",
-};*/
+import type { Metadata } from "next";
+import ClientProviders from "@/components/ClientProviders";
+import { Geist } from "next/font/google";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,48 +17,104 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.className} antialiased`}>
-        <HeroUIProvider>
-          {children}
-          <footer style={footerStyles}>
-          <span style={copyStyles}>
-            © {COPYRIGHT_YEAR} Child Sponsorship System
-          </span>
-          <div style={linksWrapperStyles}>
-            <a href="/terms" style={linkStyles}>
-              Terms of Use
-            </a>
-            <a href="/privacy" style={linkStyles}>
-              Privacy Policy
-            </a>
-          </div>
-        </footer>
-        </HeroUIProvider>
+        <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
   );
 }
 
-const footerStyles: React.CSSProperties = {
-  borderTop: "1px solid #e5e7eb",
-  padding: "12px 40px",
-  fontSize: "0.9rem",
-  color: "#6b7280",
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-};
+const footerStyles: { [key: string]: React.CSSProperties } = {
+  footer: {
+    color: "bg-white",
+    padding: "48px 40px",
+  },
+  inner: {
+    maxWidth: "1120px",
+    margin: "0 auto",
+    display: "flex",
+    gap: "64px",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+  },
+  left: {
+    flex: 2,
+  },
+  orgTitle: {
+    fontSize: "1.1rem",
+    fontWeight: 700,
+    marginBottom: "12px",
+  },
+  orgText: {
+    margin: "2px 0",
+    fontSize: "0.85rem",
+    opacity: 0.9,
+  },
+  badgesRow: {
+    display: "flex",
+    gap: "16px",
+    marginTop: "20px",
+  },
+  badgePlaceholder: {
+    width: "80px",
+    height: "80px",
+    borderRadius: "50%",
 
-const copyStyles: React.CSSProperties = {
-  color: "#060606ff",
-};
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "0.7rem",
+    border: "border-2 border-white",
+  },
+  middle: {
+    flex: 1,
+  },
+  right: {
+    flex: 1,
+  },
+  columnTitle: {
+    fontSize: "1rem",
+    fontWeight: 600,
+    marginBottom: "12px",
+  },
+  link: {
+    display: "block",
+    color: "inherit",
+    textDecoration: "none",
+    fontSize: "0.9rem",
+    marginBottom: "8px",
+  },
+  socialRow: {
+    display: "flex",
+    gap: "8px",
+    marginBottom: "16px",
+  },
+  socialIcon: {
+    width: "28px",
+    height: "28px",
+    borderRadius: "999px",
+    border: "border border-white",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "0.8rem",
+  },
+  searchRow: {
+    display: "flex",
+    marginTop: "8px",
+  },
+  searchInput: {
+    flex: 1,
+    padding: "8px 10px",
+    borderRadius: "999px 0 0 999px",
+    border: "none",
+    fontSize: "0.85rem",
+  },
+  searchButton: {
+    padding: "8px 14px",
+    borderRadius: "0 999px 999px 0",
+    border: "none",
 
-const linksWrapperStyles: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-};
-
-const linkStyles: React.CSSProperties = {
-  textDecoration: "none",
-  color: "#060606ff",
-  marginLeft: "16px", 
+    color: "inherit",
+    cursor: "pointer",
+  },
 };
