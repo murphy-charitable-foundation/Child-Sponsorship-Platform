@@ -40,7 +40,7 @@ export function SignUpForm({
   const [repeatPassword, setRepeatPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [sponsorType, setSponsorType] = useState<Set<string>>(new Set([]));
+  const [sponsorType, setSponsorType] = useState<string>("individual");
   const router = useRouter();
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -89,8 +89,13 @@ export function SignUpForm({
               placeholder="Select sponsor type"
               variant="bordered"
               radius="md"
-              selectedKeys={sponsorType}
-              onSelectionChange={setSponsorType}
+              selectedKeys={[sponsorType]}
+              onSelectionChange={(keys) => {
+              if (keys === "all") return;   // satisfy TS
+
+                const value = Array.from(keys)[0] as string;
+                setSponsorType(value);
+              }}
               classNames={{
                   trigger: "rounded-[12px]",
               }}
