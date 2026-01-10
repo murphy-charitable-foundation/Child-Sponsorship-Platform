@@ -35,9 +35,12 @@ export function SignUpForm({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [sponsorType, setSponsorType] = useState<Set<string>>(new Set([]));
   const router = useRouter();
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -58,6 +61,13 @@ export function SignUpForm({
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/protected`,
+          data: {
+            role: "sponsor",
+            sponsor_type: sponsorType,
+            first_name: firstName,
+            last_name: lastName,
+            active: true,
+          },
         },
       });
       if (error) throw error;
@@ -79,6 +89,8 @@ export function SignUpForm({
               placeholder="Select sponsor type"
               variant="bordered"
               radius="md"
+              selectedKeys={sponsorType}
+              onSelectionChange={setSponsorType}
               classNames={{
                   trigger: "rounded-[12px]",
               }}
@@ -105,6 +117,8 @@ export function SignUpForm({
                   variant="bordered"
                   radius="md"
                   required
+                  onChange={(e) => setFirstName(e.target.value)}
+                  value={firstName}
                   classNames={{ inputWrapper: "rounded-[12px]" }}
                 />
                 <Input
@@ -114,6 +128,8 @@ export function SignUpForm({
                   variant="bordered"
                   radius="md"
                   required
+                  onChange={(e) => setLastName(e.target.value)}
+                  value={lastName}
                   classNames={{ inputWrapper: "rounded-[12px]" }}
                 />
               </div>
