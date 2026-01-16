@@ -5,7 +5,8 @@ import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 type PlanType = "monthly" | "annual" | "onetime";
 
-export default function PayPalCheckout({ planType }: { planType: PlanType }) {
+export default function PayPalCheckout({ planType, onPaymentError, }: { planType: PlanType; onPaymentError?: (message: string) => void;}) {
+  
   const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
 
   if (!clientId) {
@@ -24,6 +25,7 @@ export default function PayPalCheckout({ planType }: { planType: PlanType }) {
         currency: "USD",
         intent: "capture",
         components: "buttons",
+        disableFunding: "card,credit,paylater,venmo",
       }}
     >
       <div className="w-full">
@@ -53,13 +55,22 @@ export default function PayPalCheckout({ planType }: { planType: PlanType }) {
             const res = await fetch("/api/paypal/capture-order", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ orderId: data.orderID }),
+              body: JSON.stringify({ orderId: data.orderID, planType }),
             });
 
-            if (!res.ok) throw new Error("Capture failed");
+            if (!res.ok) {
+              onPaymentError?.("Payment failed. Please try again.");
+              return;
+            }
             window.location.href = "/sponsorship/success";
           }}
-          onError={(err) => console.error(err)}
+          onCancel={() => {
+            onPaymentError?.("Payment was cancelled.");
+          }}
+          onError={(err) => {
+            console.error("PayPal error:", err);
+            onPaymentError?.("Payment failed. Please try again.");
+          }}
         />
       </div>
     </PayPalScriptProvider>

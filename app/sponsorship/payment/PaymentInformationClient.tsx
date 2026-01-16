@@ -42,6 +42,7 @@ export default function PaymentInformationClient() {
   const planType = resolvePlanType(searchParams.get("plan"));
   const { label, amountText, chargeText } = planDetails[planType];
   const [paymentType, setPaymentType] = React.useState<PaymentType>("paypal");
+  const [paymentError, setPaymentError] = React.useState<string | null>(null);
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -71,7 +72,7 @@ export default function PaymentInformationClient() {
               <div className="mt-3 flex items-center gap-3">
                 {paymentType === "paypal" && (
                   <div className="h-10 w-[220px]">
-                    <PayPalCheckout planType={planType} />
+                    <PayPalCheckout planType={planType} onPaymentError={(msg) => setPaymentError(msg)} />
                   </div>
                 )}
 
@@ -127,6 +128,10 @@ export default function PaymentInformationClient() {
                   <p className="text-sm text-default-500">
                     You’ll be redirected to PayPal to complete your payment.
                   </p>
+                )}
+
+                {paymentError && (
+                  <p className="mt-3 text-sm text-danger">{paymentError}</p>
                 )}
               </div>
             </div>
