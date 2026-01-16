@@ -1,4 +1,7 @@
 import { NextResponse } from "next/server";
+import { createClient as createSupabaseServerClient } from "@/lib/supabase/server";
+
+type PlanType = "monthly" | "annual" | "onetime";
 
 async function getAccessToken() {
   const clientId = process.env.PAYPAL_CLIENT_ID;
@@ -27,7 +30,11 @@ async function getAccessToken() {
 
 export async function POST(req: Request) {
   try {
-    const { orderId } = (await req.json()) as { orderId: string };
+    const { orderId, planType } = (await req.json()) as {
+      orderId: string;
+      planType?: PlanType;
+    };
+
     if (!orderId) {
       return NextResponse.json({ error: "Missing orderId" }, { status: 400 });
     }
@@ -51,7 +58,71 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: capture }, { status: 500 });
     }
 
-    // Phase 2: insert payment + update sponsorship in DB here
+    const status = capture?.status as string | undefined;
+    if (status !== "COMPLETED") {
+      return NextResponse.json({ capture }, { status: 200 });
+    }
+
+    const purchaseUnit = capture?.purchase_units?.[0];
+    const captureItem = purchaseUnit?.payments?.captures?.[0];
+
+    const amount =
+      captureItem?.amount ??
+      purchaseUnit?.amount ?? {
+        value: "",
+        currency_code: "",
+      };
+
+    const providerCaptureId = captureItem?.id ?? null;
+    const amountValue = amount?.value ?? "";
+    const currencyCode = amount?.currency_code ?? "";
+
+    const payerEmail = capture?.payer?.email_address ?? null;
+    const payerId = capture?.payer?.payer_id ?? null;
+    const supabase = await createSupabaseServerClient();
+    const { data: userData, error: userErr } = await supabase.auth.getUser();
+
+    if (userErr || !userData?.user?.id) {
+      return NextResponse.json(
+        { error: "User not authenticated for persistence", capture },
+        { status: 401 }
+      );
+    }
+
+    const userId = userData.user.id;
+    const paymentMethodId = 1;
+
+    const validatedPlanType: PlanType | null = (planType && ["monthly", "annual", "onetime"].includes(planType)) ? planType : null;
+
+    const { error: dbError } = await supabase
+      .from("payments")
+      .upsert(
+        {
+          user_id: userId,
+          sponsorship_id: null, // add after sponsorship_id is passed through
+          donation_id: null, // add after sponsor_id mapping exists and we create donations
+          payment_method_id: paymentMethodId,
+          provider: "paypal",
+          provider_order_id: orderId,
+          provider_capture_id: providerCaptureId,
+          status,
+          amount_value: String(amountValue),
+          currency_code: String(currencyCode),
+          plan_type: validatedPlanType,
+          payer_email: payerEmail,
+          payer_id: payerId,
+          raw: capture,
+        },
+        { onConflict: "provider,provider_order_id" }
+      );
+
+    if (dbError) {
+      return NextResponse.json(
+        { error: "Payment captured but DB insert failed", details: dbError.message },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json({ capture });
   } catch {
     return NextResponse.json({ error: "Capture failed" }, { status: 500 });
