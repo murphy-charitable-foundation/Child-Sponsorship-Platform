@@ -2,6 +2,8 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import {createClient} from "@/lib/supabase/client";
 
 
 import {
@@ -32,24 +34,107 @@ import {
 } from "@heroui/react";
 import { get } from "http";
 import { unique } from "next/dist/build/utils";
+import { SupabaseAuthClient } from "@supabase/supabase-js/dist/module/lib/SupabaseAuthClient.js";
 
 
 
 const genders = ["Male", "Female"];
 const gradeLevels = ["Infant", "Pre-School", "1-3", "4-6", "7-9", "10-12", "College"];
+const pageCapacities = ["20", "50", "100"];
 
 
 
 
-export default function MeetTheChildrenUI({children, uniqueCountries}) {
+
+export default function MeetTheChildrenUI() {
   const router = useRouter(); // currently unused
+
+  const supabase = createClient();
+ 
+
+  
+  const [selectedGradeLevels, setGradeLevels] = React.useState<Selection>(
+    new Set(gradeLevels)
+  );
+  const [selectedPageCapacity, setPageCapacity] = React.useState<Selection>(
+    new Set(pageCapacities)
+  );
+  const [page, setPage] = React.useState(1);
+
+  const [children, setChildren] = React.useState<any[]>([]); // TODO: type properly
+  const [count, setCount] = React.useState(0);
+  const [uniqueCountries, setUniqueCountries] = React.useState<string[]>([]);
+
+
+
+  function calculateRange(){
+    let from = (page - 1) * Number(Array.from(selectedPageCapacity)[0]); 
+    let to = from + Number(Array.from(selectedPageCapacity)[0]) - 1;
+
+    return {from, to};
+  }
+
+  
+
+   const fetchData = async () => {
+
+    const { from, to } = calculateRange();
+
+    const {data: newChildren, childrenError} = await supabase
+      .from('children')
+      .select(`id, first_name, last_name, gender, date_of_birth, location, school_grade, photo_path, favorite_activity, dream_job`)
+      .eq('active', true)
+      .range(from, to);
+
+      if (childrenError) {
+        console.log(childrenError);
+        throw childrenError;
+      }
+      setChildren(newChildren || []);
+
+    // TODO: also fetch countries
+    const { data: countries, error: countriesError } = await supabase
+        .from('children')
+        .select('location')
+        .neq('location', null)
+        .eq('active', true);
+
+    if (countriesError) {
+        console.log(countriesError)
+        throw countriesError
+    }
+    
+
+    const uniqueCountries = Array.from(
+        new Set(countries.map(row => row.location))
+    ).sort();
+
+    setUniqueCountries(uniqueCountries);
+
+    const { count, error: countError } = await supabase
+        .from('children')
+        .select('id', { count: 'exact', head: true })
+        .eq('active', true);
+
+    if (countError) {
+        console.log(countError)
+        throw countError
+    }
+    setCount(count || 0);
+
+    
+  };
 
   const [selectedCountries, setCountries] = React.useState<Selection>(
     new Set(uniqueCountries)
   );
-  const [selectedGradeLevels, setGradeLevels] = React.useState<Selection>(
-    new Set(gradeLevels)
-  );
+
+  useEffect(() => { // TODO: apply filters
+    // Fetch new data when page or filters change
+    fetchData();
+  }, [page, selectedCountries, selectedGradeLevels, selectedPageCapacity]); // TODO: add age range and search filters
+
+  let pageCapacity = 20; // default
 
   const [isLoaded, setIsLoaded] = React.useState(true);
 
@@ -170,7 +255,7 @@ export default function MeetTheChildrenUI({children, uniqueCountries}) {
                 </DropdownMenu>
                   </Dropdown>
         </div>
-        <p className="text-default-500 text-sm py-2">Showing {children.length} children</p>
+        <p className="text-default-500 text-sm py-2">Showing {count} children</p>
 
         <div id="children-grid" className="gap-2 grid grid-cols-2 sm:grid-cols-4">
           {children.map((item, index) => (
@@ -201,7 +286,15 @@ export default function MeetTheChildrenUI({children, uniqueCountries}) {
             </Card>
           ))}
         </div>
-        <Pagination showControls initialPage={1} total={10} className="my-4 flex justify-center" color="primary" variant="bordered"/>
+        <Pagination 
+          showControls 
+          onChange={setPage}
+          initialPage={1} // TODO: check indexing
+          total={Math.ceil(count/pageCapacity)} 
+          className="my-4 flex justify-center" 
+          color="primary" 
+          variant="bordered"
+        />{/*TODO: allow user to select page capacity*/}
       </div>
     </main>
   );

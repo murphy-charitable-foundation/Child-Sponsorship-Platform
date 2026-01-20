@@ -1,9 +1,8 @@
 
 
 import React from "react";
-import { createClient } from "@/lib/supabase/server";
 //import {fetchChildren, getUniqueCountries} from "./fetch-children";
-import ChildrenClient from "./ChildrenClient";
+import MeetTheChildrenUI from "@/components/meet-the-children-ui";
 import { Suspense } from "react";
 
 
@@ -34,7 +33,7 @@ export default async function MeetTheChildrenPage() {
   return(
   <main>
     <Suspense fallback={<div className="p-10">Loading children…</div>}>
-      <ChildrenClient />
+      <MeetTheChildrenUI />
     </Suspense>
     </main>
   );
