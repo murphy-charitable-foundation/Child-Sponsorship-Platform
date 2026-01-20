@@ -81,8 +81,8 @@ export default function MeetTheChildrenUI() {
     const { from, to } = calculateRange();
 
     const {data: newChildren, childrenError} = await supabase
-      .from('children')
-      .select(`id, first_name, last_name, gender, date_of_birth, location, school_grade, photo_path, favorite_activity, dream_job`)
+      .from('children_with_ages')
+      .select('*')
       .eq('active', true)
       .range(from, to);
 
@@ -91,10 +91,11 @@ export default function MeetTheChildrenUI() {
         throw childrenError;
       }
       setChildren(newChildren || []);
+      console.log(newChildren);
 
     // TODO: also fetch countries
     const { data: countries, error: countriesError } = await supabase
-        .from('children')
+        .from('children_with_ages')
         .select('location')
         .neq('location', null)
         .eq('active', true);
@@ -112,7 +113,7 @@ export default function MeetTheChildrenUI() {
     setUniqueCountries(uniqueCountries);
 
     const { count, error: countError } = await supabase
-        .from('children')
+        .from('children_with_ages')
         .select('id', { count: 'exact', head: true })
         .eq('active', true);
 
@@ -275,7 +276,7 @@ export default function MeetTheChildrenUI() {
                 <CardFooter className="text-small">
                   <div className="text-left">
                   <b>{item.first_name+" "+item.last_name}</b>
-                  <p className="text-default-500"> Age: X{item.location ? `, ${item.location}` : ""/*TODO: calculate age */}</p>
+                  <p className="text-default-500"> Age: {item.age}{item.location ? `, ${item.location}` : ""/*TODO: calculate age */}</p>
                   <p className="text-default-500">{"Grade: "+(item.school_grade ?? "N/A")}</p>
                   <p className="text-default-500">{"Dream job: "+item.dream_job/* TODO: check for null*/}</p> 
                   <p className="text-default-500">{"Favorite activity: "+item.favorite_activity/* TODO: check for null*/}</p> 
