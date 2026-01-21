@@ -280,7 +280,7 @@ export default function MeetTheChildrenUI() {
               <Skeleton className="rounded-lg" isLoaded={isLoaded}>
                 <CardBody className="overflow-visible p-0">
 
-                  <Avatar radius="none" className="w-full object-cover h-[140px]"/>
+                  <Avatar radius="none" color="primary" className="w-full object-cover h-[140px]"/>
                 </CardBody>
                 <CardFooter className="text-small">
                   <div className="text-left">
