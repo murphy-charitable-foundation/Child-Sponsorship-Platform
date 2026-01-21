@@ -7,6 +7,7 @@ import {createClient} from "@/lib/supabase/client";
 
 
 import {
+  Avatar,
   Tabs,
   Tab,
   Card,
@@ -37,8 +38,6 @@ import { unique } from "next/dist/build/utils";
 import { SupabaseAuthClient } from "@supabase/supabase-js/dist/module/lib/SupabaseAuthClient.js";
 
 
-
-const genders = ["Male", "Female"];
 const gradeLevels = ["Infant", "Pre-School", "1-3", "4-6", "7-9", "10-12", "College"];
 const pageCapacities = ["20", "50", "100"];
 
@@ -63,8 +62,10 @@ export default function MeetTheChildrenUI() {
 
   const [children, setChildren] = React.useState<any[]>([]); // TODO: type properly
   const [count, setCount] = React.useState(0);
+  const [ageRange, setAgeRange] = React.useState<number[]>([0, 25]);
+  const [genders, setGenders] = React.useState<string[]>(["Male", "Female"]);
   const [uniqueCountries, setUniqueCountries] = React.useState<string[]>([]);
-
+  const [searchTerm, setSearchTerm] = React.useState("");
 
 
   function calculateRange(){
@@ -74,27 +75,8 @@ export default function MeetTheChildrenUI() {
     return {from, to};
   }
 
-  
-
-   const fetchData = async () => {
-
-    const { from, to } = calculateRange();
-
-    const {data: newChildren, childrenError} = await supabase
-      .from('children_with_ages')
-      .select('*')
-      .eq('active', true)
-      .range(from, to);
-
-      if (childrenError) {
-        console.log(childrenError);
-        throw childrenError;
-      }
-      setChildren(newChildren || []);
-      console.log(newChildren);
-
-    // TODO: also fetch countries
-    const { data: countries, error: countriesError } = await supabase
+  const fetchUniqueCountries = async () => {
+      const { data: countries, error: countriesError } = await supabase
         .from('children_with_ages')
         .select('location')
         .neq('location', null)
@@ -104,18 +86,56 @@ export default function MeetTheChildrenUI() {
         console.log(countriesError)
         throw countriesError
     }
+  
+
+    setUniqueCountries(
+      Array.from(
+          new Set(countries.map(row => row.location))
+      ).sort());
+
+      setSelectedCountries(
+        new Set(
+          Array.from(
+            new Set(countries.map(row => row.location))
+          )
+        )
+      );
+  };
+
+   const fetchData = async () => {
+
+    const { from, to } = calculateRange();
+
+    const {data: newChildren, error: childrenError} = await supabase
+      .from('children_with_ages')
+      .select('*')
+      .eq('active', true)
+      .in('location', Array.from(selectedCountries))
+      .gte('age', ageRange[0])
+      .lte('age', ageRange[1])
+      .in('gender', genders)
+      .ilike('full_name', `%${searchTerm}%`)
+      .range(from, to);
+
+      if (childrenError) {
+        console.log(childrenError);
+        throw childrenError;
+      }
+      setChildren(newChildren || []);
+      console.log(newChildren);
+
+
     
-
-    const uniqueCountries = Array.from(
-        new Set(countries.map(row => row.location))
-    ).sort();
-
-    setUniqueCountries(uniqueCountries);
 
     const { count, error: countError } = await supabase
         .from('children_with_ages')
         .select('id', { count: 'exact', head: true })
-        .eq('active', true);
+        .eq('active', true)
+        .in('location', Array.from(selectedCountries))
+        .gte('age', ageRange[0])
+        .lte('age', ageRange[1])
+        .in('gender', genders)
+        .ilike('full_name', `%${searchTerm}%`)
 
     if (countError) {
         console.log(countError)
@@ -126,14 +146,20 @@ export default function MeetTheChildrenUI() {
     
   };
 
-  const [selectedCountries, setCountries] = React.useState<Selection>(
+  const [selectedCountries, setSelectedCountries] = React.useState(
     new Set(uniqueCountries)
   );
 
   useEffect(() => { // TODO: apply filters
     // Fetch new data when page or filters change
     fetchData();
-  }, [page, selectedCountries, selectedGradeLevels, selectedPageCapacity]); // TODO: add age range and search filters
+  }, [page, selectedCountries, selectedGradeLevels, selectedPageCapacity, ageRange, searchTerm]); // TODO: add age range and search filters
+
+  useEffect(() => {
+    
+    fetchUniqueCountries();
+  }, []); // Fetch unique countries on component mount
+    
 
   let pageCapacity = 20; // default
 
@@ -146,12 +172,13 @@ export default function MeetTheChildrenUI() {
         <h1 className="text-2xl font-semibold">
           Meet the Children
         </h1>
+        
         <Divider/>
         <p className="text-default-500 py-4">
           Browse children waiting for sponsorship
         </p>
         
-        <div id="filters" className="gap-2 grid grid-cols-2 sm:grid-cols-5 my-4 p-4 border border-default-200 rounded-[12px]">
+        <div id="filters" className="gap-2 grid grid-cols-2 sm:grid-cols-4 my-4 p-4 border border-default-200 rounded-[12px]">
               <Input
                 label="Search"
                 labelPlacement="inside"
@@ -159,31 +186,30 @@ export default function MeetTheChildrenUI() {
                 radius="md"
                 size="sm"
                 classNames={{ inputWrapper: "rounded-[12px]" }}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                value={searchTerm}
               />
-              <Dropdown>
-                <DropdownTrigger>
-                  <Button className="capitalize" variant="bordered">
-                    Countries
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="Multiple selection example"
-                  closeOnSelect={false}
-                  selectedKeys={selectedCountries}
-                  selectionMode="multiple"
-                  variant="flat"
-                  onSelectionChange={setCountries}
-                >
+              <Select
+                label="Countries"
+                labelPlacement="inside"
+                variant="bordered"
+                radius="md"
+                size="sm"
+                classNames={{ trigger: "rounded-[12px]" }}
+                selectedKeys={selectedCountries}
+                selectionMode="multiple"
+                onSelectionChange={(keys) => setSelectedCountries(keys as Set<string>)}
+                defaultSelectedKeys={uniqueCountries}
+              >
                   {uniqueCountries.map((country) => (
-                    <DropdownItem key={country}>{country}</DropdownItem>
+                    <SelectItem key={country}>{country}</SelectItem>
                   ))}
-                </DropdownMenu>
-              </Dropdown>
+              </Select>
 
-              <Popover placement="bottom" showArrow={true}>
+              <Popover placement="bottom" showArrow={true} classNames={{ trigger: "rounded-[12px]" }}>
                 <PopoverTrigger>
-                  <Button className="capitalize" variant="bordered">Age Range</Button>
+                  <Button className="capitalize" variant="bordered"
+                radius="md">Age Range: {ageRange[0]}-{ageRange[1]}</Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-80 p-4">
                   <Slider
@@ -215,46 +241,35 @@ export default function MeetTheChildrenUI() {
                     minValue={0}
                     showTooltip={true}
                     step={1}
+                    onChange={setAgeRange}
+                    value={ageRange}
                   />  
                 </PopoverContent>
               </Popover>
               
               
-              <Popover placement="bottom" showArrow={true}>
-                <PopoverTrigger>
-                  <Button className="capitalize" variant="bordered">Gender</Button>
-                </PopoverTrigger>
-                <PopoverContent className="p-4">
-                  <div className="flex gap-4">
-                    <Checkbox defaultSelected radius="md">
-                      Male
-                    </Checkbox>
-                    <Checkbox defaultSelected radius="md">
-                      Female
-                    </Checkbox>
-                  </div>
-                </PopoverContent>
-              </Popover>
-              <Dropdown>
-                <DropdownTrigger>
-                  <Button className="capitalize" variant="bordered">
-                    Grade Levels
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="Multiple selection example"
-                  closeOnSelect={false}
-                  selectedKeys={selectedGradeLevels}
-                  selectionMode="multiple"
-                  variant="flat"
-                  onSelectionChange={setGradeLevels}
-                >
-                  {gradeLevels.map((gradeLevel) => (
-                    <DropdownItem key={gradeLevel}>{gradeLevel}</DropdownItem>
-                  ))}
-                </DropdownMenu>
-                  </Dropdown>
+              <Select
+                onSelectionChange={setGenders}
+                selectedKeys={genders}
+                selectionMode="multiple"
+                label="Genders"
+                labelPlacement="inside"
+                variant="bordered"
+                radius="md"
+                size="sm"
+                classNames={{ trigger: "rounded-[12px]" }}>
+                <SelectItem
+                  key="Male"
+                  >
+                    Male
+                </SelectItem>
+                <SelectItem
+                  key="Female"
+                  >
+                    Female
+                </SelectItem>
+              </Select>
+              
         </div>
         <p className="text-default-500 text-sm py-2">Showing {count} children</p>
 
@@ -264,14 +279,8 @@ export default function MeetTheChildrenUI() {
             <Card key={item.id} isPressable shadow="sm" onPress={() => console.log("item pressed")}>
               <Skeleton className="rounded-lg" isLoaded={isLoaded}>
                 <CardBody className="overflow-visible p-0">
-                  <Image
-                    alt={item.first_name+" "+item.last_name}
-                    className="w-full object-cover h-[140px]"
-                    radius="lg"
-                    shadow="sm"
-                    src="/children/girl2.jpg"
-                    width="100%"
-                  />
+
+                  <Avatar radius="none" className="w-full object-cover h-[140px]"/>
                 </CardBody>
                 <CardFooter className="text-small">
                   <div className="text-left">
