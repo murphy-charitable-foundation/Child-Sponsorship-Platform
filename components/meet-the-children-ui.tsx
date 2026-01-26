@@ -143,6 +143,7 @@ export default function MeetTheChildrenUI() {
     }
     setCount(count || 0);
 
+
     
   };
 
@@ -164,6 +165,7 @@ export default function MeetTheChildrenUI() {
   let pageCapacity = 20; // default
 
   const [isLoaded, setIsLoaded] = React.useState(true);
+
 
 
   return (
@@ -198,7 +200,8 @@ export default function MeetTheChildrenUI() {
                 classNames={{ trigger: "rounded-[12px]" }}
                 selectedKeys={selectedCountries}
                 selectionMode="multiple"
-                onSelectionChange={(keys) => setSelectedCountries(keys as Set<string>)}
+                onSelectionChange={
+                  (keys) => setSelectedCountries(keys as Set<string>)}
                 defaultSelectedKeys={uniqueCountries}
               >
                   {uniqueCountries.map((country) => (
@@ -271,7 +274,8 @@ export default function MeetTheChildrenUI() {
                 </SelectItem>
               </Select>
               <Button
-                color="primary"
+                variant="bordered"
+                color="danger"
                 radius="md"
                 size="md"
                 onPress={
