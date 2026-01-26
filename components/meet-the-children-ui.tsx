@@ -178,7 +178,7 @@ export default function MeetTheChildrenUI() {
           Browse children waiting for sponsorship
         </p>
         
-        <div id="filters" className="gap-2 grid grid-cols-2 sm:grid-cols-4 my-4 p-4 border border-default-200 rounded-[12px]">
+        <div id="filters" className="gap-2 grid grid-cols-2 sm:grid-cols-5 my-4 p-4 border border-default-200 rounded-[12px]">
               <Input
                 label="Search"
                 labelPlacement="inside"
@@ -204,6 +204,7 @@ export default function MeetTheChildrenUI() {
                   {uniqueCountries.map((country) => (
                     <SelectItem key={country}>{country}</SelectItem>
                   ))}
+
               </Select>
 
               <Popover placement="bottom" showArrow={true} classNames={{ trigger: "rounded-[12px]" }}>
@@ -269,6 +270,24 @@ export default function MeetTheChildrenUI() {
                     Female
                 </SelectItem>
               </Select>
+              <Button
+                color="primary"
+                radius="md"
+                size="md"
+                onPress={
+                  () => {
+                    setSelectedCountries(new Set(uniqueCountries));
+                    setAgeRange([0, 25]);
+                    setSearchTerm("");
+                    setGenders(["Male", "Female"]);
+                  }
+                }>
+                Clear Filters
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+
+              </Button>
               
         </div>
         <p className="text-default-500 text-sm py-2">Showing {count} children</p>
