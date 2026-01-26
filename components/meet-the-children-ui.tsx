@@ -153,7 +153,7 @@ export default function MeetTheChildrenUI() {
   useEffect(() => { // TODO: apply filters
     // Fetch new data when page or filters change
     fetchData();
-  }, [page, selectedCountries, selectedGradeLevels, selectedPageCapacity, ageRange, searchTerm]); // TODO: add age range and search filters
+  }, [page, selectedCountries, selectedGradeLevels, selectedPageCapacity, ageRange, genders, searchTerm]); // TODO: add age range and search filters
 
   useEffect(() => {
     
