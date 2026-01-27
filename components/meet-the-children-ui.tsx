@@ -144,6 +144,8 @@ export default function MeetTheChildrenUI(groupSponsorship) {
     }
     setCount(count || 0);
 
+    setIsLoaded(true);
+
 
     
   };
@@ -170,7 +172,7 @@ export default function MeetTheChildrenUI(groupSponsorship) {
   }, []); // Fetch unique countries on component mount
     
 
-  const [isLoaded, setIsLoaded] = React.useState(true);
+  const [isLoaded, setIsLoaded] = React.useState(false);
 
 
 
