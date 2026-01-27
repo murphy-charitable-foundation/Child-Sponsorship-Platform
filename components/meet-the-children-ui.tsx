@@ -100,6 +100,7 @@ export default function MeetTheChildrenUI(groupSponsorship) {
   };
 
    const fetchData = async () => {
+    setIsLoaded(false);
     
 
     const { from, to } = calculateRange();
