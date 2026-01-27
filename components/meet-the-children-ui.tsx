@@ -22,6 +22,7 @@ import {
   Textarea,
   Button,
   Image,
+  Drawer,
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
@@ -44,7 +45,7 @@ const pageCapacities = ["20","60","100"];
 
 
 
-export default function MeetTheChildrenUI() {
+export default function MeetTheChildrenUI(groupSponsorship) {
   const router = useRouter(); // currently unused
 
   const supabase = createClient();
