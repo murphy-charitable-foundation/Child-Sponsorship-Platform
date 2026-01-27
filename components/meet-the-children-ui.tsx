@@ -38,8 +38,7 @@ import { unique } from "next/dist/build/utils";
 import { SupabaseAuthClient } from "@supabase/supabase-js/dist/module/lib/SupabaseAuthClient.js";
 
 
-const gradeLevels = ["Infant", "Pre-School", "1-3", "4-6", "7-9", "10-12", "College"];
-const pageCapacities = ["20", "50", "100"];
+const pageCapacities = ["20","60","100"];
 
 
 
@@ -52,15 +51,12 @@ export default function MeetTheChildrenUI() {
  
 
   
-  const [selectedGradeLevels, setGradeLevels] = React.useState<Selection>(
-    new Set(gradeLevels)
-  );
   const [selectedPageCapacity, setPageCapacity] = React.useState<Selection>(
-    new Set(pageCapacities)
+    new Set(["20"])
   );
   const [page, setPage] = React.useState(1);
 
-  const [children, setChildren] = React.useState<any[]>([]); // TODO: type properly
+  const [children, setChildren] = React.useState<any[]>([]); 
   const [count, setCount] = React.useState(0);
   const [ageRange, setAgeRange] = React.useState<number[]>([0, 25]);
   const [genders, setGenders] = React.useState<string[]>(["Male", "Female"]);
@@ -103,8 +99,12 @@ export default function MeetTheChildrenUI() {
   };
 
    const fetchData = async () => {
+    
 
     const { from, to } = calculateRange();
+
+    if (selectedCountries.size === 0) return; // to resolve race condition between fetchData and fetchUniqueCountries, resulting in list being inaccurately filtered
+
 
     const {data: newChildren, error: childrenError} = await supabase
       .from('children_with_ages')
@@ -151,18 +151,23 @@ export default function MeetTheChildrenUI() {
     new Set(uniqueCountries)
   );
 
-  useEffect(() => { // TODO: apply filters
+  useEffect(() => { 
     // Fetch new data when page or filters change
+    //fetchUniqueCountries();
     fetchData();
-  }, [page, selectedCountries, selectedGradeLevels, selectedPageCapacity, ageRange, genders, searchTerm]); // TODO: add age range and search filters
+  }, [page]); 
+
+  useEffect(() => {
+    setPage(1); // Reset to first page on filter change
+    fetchData();
+  }, [selectedCountries, ageRange, genders, searchTerm, selectedPageCapacity]);
+
 
   useEffect(() => {
     
     fetchUniqueCountries();
   }, []); // Fetch unique countries on component mount
     
-
-  let pageCapacity = 20; // default
 
   const [isLoaded, setIsLoaded] = React.useState(true);
 
@@ -202,7 +207,7 @@ export default function MeetTheChildrenUI() {
                 selectionMode="multiple"
                 onSelectionChange={
                   (keys) => setSelectedCountries(keys as Set<string>)}
-                defaultSelectedKeys={uniqueCountries}
+                //defaultSelectedKeys={uniqueCountries} // redundant
               >
                   {uniqueCountries.map((country) => (
                     <SelectItem key={country}>{country}</SelectItem>
@@ -253,7 +258,9 @@ export default function MeetTheChildrenUI() {
               
               
               <Select
-                onSelectionChange={setGenders}
+                onSelectionChange={(keys) =>
+                  setGenders(Array.from(keys) as string[])
+                }
                 selectedKeys={genders}
                 selectionMode="multiple"
                 label="Genders"
@@ -307,8 +314,8 @@ export default function MeetTheChildrenUI() {
                 </CardBody>
                 <CardFooter className="text-small">
                   <div className="text-left">
-                  <b>{item.first_name+" "+item.last_name}</b>
-                  <p className="text-default-500"> Age: {item.age}{item.location ? `, ${item.location}` : ""/*TODO: calculate age */}</p>
+                  <b>{item.full_name}</b>
+                  <p className="text-default-500"> Age: {item.age}{item.location ? `, ${item.location}` : ""}</p>
                   <p className="text-default-500">{"Grade: "+(item.school_grade ?? "N/A")}</p>
                   <p className="text-default-500">{"Dream job: "+item.dream_job/* TODO: check for null*/}</p> 
                   <p className="text-default-500">{"Favorite activity: "+item.favorite_activity/* TODO: check for null*/}</p> 
@@ -319,15 +326,34 @@ export default function MeetTheChildrenUI() {
             </Card>
           ))}
         </div>
-        <Pagination 
-          showControls 
-          onChange={setPage}
-          initialPage={1} // TODO: check indexing
-          total={Math.ceil(count/pageCapacity)} 
-          className="my-4 flex justify-center" 
-          color="primary" 
-          variant="bordered"
-        />{/*TODO: allow user to select page capacity*/}
+        <div className="flex items-center mt-4 justify-center">
+          <Pagination 
+            showControls 
+            onChange={setPage}
+            page={page}
+            initialPage={1} 
+            total={Math.ceil(count/Number(Array.from(selectedPageCapacity)[0]))} 
+            className="my-4 flex justify-center" 
+            color="primary" 
+            variant="bordered"
+          />{}
+          <span className="text-sm text-default-500 whitespace-nowrap mx-4">
+            Items per page: 
+          </span>
+          <Select
+            aria-label="Items per page"
+            variant="bordered"
+            fullWidth={false}
+            defaultSelectedKeys={[20]}
+            selectedKeys={selectedPageCapacity}
+            onSelectionChange={
+                  (keys) => setPageCapacity(keys as Set<string>)}
+                  >
+            {pageCapacities.map((capacity) => (
+              <SelectItem key={capacity.toString()}>{capacity.toString()}</SelectItem>
+            ))}
+          </Select>
+        </div>
       </div>
     </main>
   );
