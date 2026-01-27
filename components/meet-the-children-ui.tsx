@@ -45,7 +45,7 @@ const pageCapacities = ["20","60","100"];
 
 
 
-export default function MeetTheChildrenUI(groupSponsorship) {
+export default function MeetTheChildrenUI({groupSponsorship}: {groupSponsorship: boolean}) {
   const router = useRouter(); // currently unused
 
   const supabase = createClient();
@@ -254,7 +254,8 @@ export default function MeetTheChildrenUI(groupSponsorship) {
                     minValue={0}
                     showTooltip={true}
                     step={1}
-                    onChange={setAgeRange}
+                    //onChange={setAgeRange}
+                    onChange={(keys) => setAgeRange(keys as number[])}
                     value={ageRange}
                   />  
                 </PopoverContent>
