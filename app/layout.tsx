@@ -1,17 +1,7 @@
-"use client";
-
-import { Geist } from "next/font/google";
-import Link from "next/link";
-import { HeroUIProvider } from "@heroui/react";
 import "./globals.css";
-import React from "react";
-import { AppNavbar } from "@/components/AppNavbar";
-
-/*export const metadata: Metadata = {
-  metadataBase: new URL(defaultUrl),
-  title: "Child Sponsorship System",
-  description: "Sponsor a child and change a life.",
-};*/
+import type { Metadata } from "next";
+import ClientProviders from "@/components/ClientProviders";
+import { Geist } from "next/font/google";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,68 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.className} antialiased`}>
-        <HeroUIProvider>
-          <AppNavbar />
-          {children}
-          <footer className="bg-primary text-white py-12 px-10">
-            <div style={footerStyles.inner}>
-              <div style={footerStyles.left}>
-                <h3 style={footerStyles.orgTitle}>
-                  MURPHY CHARITABLE FOUNDATION
-                  <br />
-                  UGANDA
-                </h3>
-                <p style={footerStyles.orgText}>
-                  REGISTERED UNDER THE UGANDA NATIONAL NGO BUREAU
-                </p>
-                <p style={footerStyles.orgText}>Number: INDR163215654NB</p>
-                <p style={footerStyles.orgText}>Permit Number: INDP0005654NB</p>
-
-                <div style={footerStyles.badgesRow}>
-                  <div className="bg-primary border-2 border-white rounded-full w-20 h-20 flex items-center justify-center text-[0.7rem]">
-                    Badge 1
-                  </div>
-                  <div className="bg-primary border-2 border-white rounded-full w-20 h-20 flex items-center justify-center text-[0.7rem]">
-                    Badge 2
-                  </div>
-                </div>
-              </div>
-
-              <div style={footerStyles.middle}>
-                <h4 style={footerStyles.columnTitle}>About</h4>
-                <Link href="/privacy" style={footerStyles.link}>
-                  Privacy Policy
-                </Link>
-                <Link href="/terms" style={footerStyles.link}>
-                  Terms of Use
-                </Link>
-                <Link href="/contact" style={footerStyles.link}>
-                  Contact
-                </Link>
-              </div>
-
-              <div style={footerStyles.right}>
-                <h4 style={footerStyles.columnTitle}>Follow Us</h4>
-                <div style={footerStyles.socialRow}>
-                  <span style={footerStyles.socialIcon}>in</span>
-                  <span style={footerStyles.socialIcon}>f</span>
-                  <span style={footerStyles.socialIcon}>▶</span>
-                </div>
-
-                <div style={footerStyles.searchRow}>
-                  <input
-                    type="text"
-                    placeholder="Search for..."
-                    style={footerStyles.searchInput}
-                  />
-                  <button className="bg-primary text-white px-4 rounded-r-full cursor-pointer">
-                    🔍
-                  </button>
-                </div>
-              </div>
-            </div>
-          </footer>
-        </HeroUIProvider>
+        <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
   );
@@ -149,7 +78,7 @@ const footerStyles: { [key: string]: React.CSSProperties } = {
   },
   link: {
     display: "block",
-    color:"inherit",
+    color: "inherit",
     textDecoration: "none",
     fontSize: "0.9rem",
     marginBottom: "8px",

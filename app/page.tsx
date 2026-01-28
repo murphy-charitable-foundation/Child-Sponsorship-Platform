@@ -46,10 +46,10 @@ export default function Home() {
             <div className="flex justify-center gap-4 flex-wrap">
               <Button
                 as={Link}
-                href="#sponsor"
+                href="#sponsor-now"
                 color="secondary"
                 radius="md"
-                className="px-14 py-8 text-[18px] font-semibold shadow-md hover:opacity-90"
+                className="px-14 py-8 text-[18px] shadow-md hover:opacity-90 font-semibold"
               >
                 Sponsor a Child
               </Button>
@@ -108,13 +108,15 @@ export default function Home() {
                   </CardBody>
 
                   <CardFooter className="pb-8 flex justify-center">
-                    <Button
-                      color="secondary"
-                      radius="md"
-                      className="px-8 py-2 text-[14px] shadow-md hover:opacity-90"
-                    >
-                      Sponsor Now
-                    </Button>
+                    <Link href="/child-profile">
+                      <Button
+                        color="secondary"
+                        radius="md"
+                        className="px-8 py-2 text-[14px] shadow-md hover:opacity-90"
+                      >
+                        Sponsor Now
+                      </Button>
+                    </Link>
                   </CardFooter>
                 </Card>
               ))}
