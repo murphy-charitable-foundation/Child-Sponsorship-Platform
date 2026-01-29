@@ -322,8 +322,8 @@ export default function MeetTheChildrenUI({groupSponsorship}: {groupSponsorship:
                   <b>{item.full_name}</b>
                   <p className="text-default-500"> Age: {item.age}{item.location ? `, ${item.location}` : ""}</p>
                   <p className="text-default-500">{"Grade: "+(item.school_grade ?? "N/A")}</p>
-                  <p className="text-default-500">{"Dream job: "+item.dream_job/* TODO: check for null*/}</p> 
-                  <p className="text-default-500">{"Favorite activity: "+item.favorite_activity/* TODO: check for null*/}</p> 
+                  <p className="text-default-500">{"Dream job: " + (item.dream_job ?? "N/A")}</p>
+                  <p className="text-default-500">{"Favorite activity: " + (item.favorite_activity ?? "N/A")}</p>
                   </div>
                 </CardFooter>
               </Skeleton>
