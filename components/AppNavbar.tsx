@@ -34,7 +34,7 @@ export function AppNavbar() {
         </NavbarItem>
 
         <NavbarItem>
-          <NextLink href="#" className="text-sm text-foreground">
+          <NextLink href="/sponsorship/children" className="text-sm text-foreground">
             Meet the Children ▾
           </NextLink>
         </NavbarItem>
