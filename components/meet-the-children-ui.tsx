@@ -349,7 +349,7 @@ export default function MeetTheChildrenUI({groupSponsorship}: {groupSponsorship:
             aria-label="Items per page"
             variant="bordered"
             fullWidth={false}
-            defaultSelectedKeys={[20]}
+            defaultSelectedKeys={["20"]}
             selectedKeys={selectedPageCapacity}
             onSelectionChange={
                   (keys) => setPageCapacity(keys as Set<string>)}
