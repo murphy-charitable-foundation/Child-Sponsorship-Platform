@@ -105,7 +105,13 @@ export default function MeetTheChildrenUI({groupSponsorship}: {groupSponsorship:
 
     const { from, to } = calculateRange();
 
-    if (selectedCountries.size === 0) return; // to resolve race condition between fetchData and fetchUniqueCountries, resulting in list being inaccurately filtered
+    if (selectedCountries.size === 0) {
+      console.log("no countries selected, skipping fetch");
+      setChildren([]);
+      setCount(0);
+      setIsLoaded(true);
+      return; // to resolve race condition between fetchData and fetchUniqueCountries, resulting in list being inaccurately filtered
+    }
 
 
     const {data: newChildren, error: childrenError} = await supabase
@@ -158,18 +164,23 @@ export default function MeetTheChildrenUI({groupSponsorship}: {groupSponsorship:
   useEffect(() => { 
     // Fetch new data when page or filters change
     //fetchUniqueCountries();
+    console.log("fetching data for page ", page);
     fetchData();
-  }, [page]); 
+    console.log("fetched data");
+  }, [page, uniqueCountries]); 
 
   useEffect(() => {
+    console.log("switching to page ", page);
     setPage(1); // Reset to first page on filter change
-    fetchData();
+    console.log("switched to page ", page);
+    //fetchData();
   }, [selectedCountries, ageRange, genders, searchTerm, selectedPageCapacity]);
 
 
   useEffect(() => {
-    
+    console.log("fetching unique countries");
     fetchUniqueCountries();
+    console.log("fetched unique countries");
   }, []); // Fetch unique countries on component mount
     
 
