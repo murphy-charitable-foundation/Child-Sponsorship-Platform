@@ -165,16 +165,15 @@ export default function MeetTheChildrenUI({groupSponsorship}: {groupSponsorship:
     // Fetch new data when page or filters change
     //fetchUniqueCountries();
     console.log("fetching data for page ", page);
-    fetchData();
-    console.log("fetched data");
-  }, [page, uniqueCountries]); 
-
   useEffect(() => {
-    console.log("switching to page ", page);
-    setPage(1); // Reset to first page on filter change
-    console.log("switched to page ", page);
-    //fetchData();
-  }, [selectedCountries, ageRange, genders, searchTerm, selectedPageCapacity]);
+  // Fetch new data when page or filters change
+  //fetchUniqueCountries();
+  fetchData();
+}, [page, selectedCountries, ageRange, genders, searchTerm, selectedPageCapacity]);
+
+useEffect(() => {
+  setPage(1); // Reset to first page on filter change
+}, [selectedCountries, ageRange, genders, searchTerm, selectedPageCapacity]);
 
 
   useEffect(() => {
