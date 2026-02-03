@@ -62,7 +62,7 @@ export function AppNavbar() {
         <NavbarItem>
           <Button
             as={NextLink}
-            href="#"
+            href="/auth/login"
             variant="bordered"
             color="primary"
             radius="md"
