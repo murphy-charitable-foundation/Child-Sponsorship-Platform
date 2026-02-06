@@ -33,7 +33,7 @@ export default function Home() {
       <main>
         <section
           className="relative min-h-[70vh] flex items-center justify-center text-center px-6 py-20 bg-cover bg-center"
-          style={{ backgroundImage: "url('/public-images/PXL_20250719_153910398.jpg')" }}
+          style={{ backgroundImage: "url('/public-images/PXL_20250408_135756972-cropped.jpg')" }}
         >
           <div className="absolute inset-0 bg-gradient-to-b from-black/35 to-black/65" />
 
@@ -371,7 +371,7 @@ export default function Home() {
                 <div className="flex flex-col gap-6">
                   <div className="relative w-[180px] h-[180px] rounded-[22px] overflow-hidden shadow-md bg-white">
                     <Image
-                      src="/public-images/PXL_20250408_135756972.jpg"
+                      src="/public-images/PXL_20250719_153910398.jpg"
                       alt=""
                       fill
                       className="object-cover"
