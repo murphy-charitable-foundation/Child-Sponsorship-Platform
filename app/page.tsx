@@ -33,7 +33,7 @@ export default function Home() {
       <main>
         <section
           className="relative min-h-[70vh] flex items-center justify-center text-center px-6 py-20 bg-cover bg-center"
-          style={{ backgroundImage: "url('/children/image.jpg')" }}
+          style={{ backgroundImage: "url('/public-images/PXL_20250408_135756972-cropped.jpg')" }}
         >
           <div className="absolute inset-0 bg-gradient-to-b from-black/35 to-black/65" />
 
@@ -136,9 +136,9 @@ export default function Home() {
         </section>
 
         <section className="py-16 bg-default-50">
-          <div className="relative max-w-6xl mx-auto h-[380px] rounded-[20px] overflow-hidden">
+          <div className="relative max-w-6xl mx-auto h-[500px] rounded-[20px] overflow-hidden">
             <Image
-              src="/children/group.jpg"
+              src="/public-images/PXL_20250411_144950068.jpg"
               alt="Our story"
               fill
               style={{ objectFit: "cover" }}
@@ -163,7 +163,7 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
               <div className="relative h-[420px] w-full rounded-[28px] overflow-hidden shadow-sm">
                 <Image
-                  src="/children/Rectangle 6.png"
+                  src="/public-images/PXL_20250408_133752400.MP.jpg"
                   alt="Children"
                   fill
                   className="object-cover"
@@ -350,7 +350,7 @@ export default function Home() {
               <div className="flex flex-col gap-6">
                 <div className="relative w-[180px] h-[250px] rounded-[22px] overflow-hidden shadow-md bg-white  mt-11">
                   <Image
-                    src="/children/image1.png"
+                    src="/public-images/IMG_20230228_175853_171.jpg"
                     alt=""
                     fill
                     className="object-cover"
@@ -359,7 +359,7 @@ export default function Home() {
 
                 <div className="relative w-[180px] h-[250px] rounded-[22px] overflow-hidden shadow-md bg-white  mt-3">
                   <Image
-                    src="/children/image2.png"
+                    src="/public-images/DSC_1362.jpg"
                     alt=""
                     fill
                     className="object-cover"
@@ -371,7 +371,7 @@ export default function Home() {
                 <div className="flex flex-col gap-6">
                   <div className="relative w-[180px] h-[180px] rounded-[22px] overflow-hidden shadow-md bg-white">
                     <Image
-                      src="/children/image3.png"
+                      src="/public-images/PXL_20250719_153910398.jpg"
                       alt=""
                       fill
                       className="object-cover"
@@ -380,7 +380,7 @@ export default function Home() {
 
                   <div className="relative w-[180px] h-[180px] rounded-[22px] overflow-hidden shadow-md bg-white">
                     <Image
-                      src="/children/image4.png"
+                      src="/public-images/PXL_20240911_131444972.MP.jpg"
                       alt=""
                       fill
                       className="object-cover"
@@ -392,7 +392,7 @@ export default function Home() {
                 <div className="flex flex-col gap-6">
                   <div className="relative w-[190px] h-[350px] rounded-[26px] overflow-hidden shadow-md bg-white mt-14">
                     <Image
-                      src="/children/image5.png"
+                      src="/public-images/PXL_20250409_141347137.jpg"
                       alt=""
                       fill
                       className="object-cover"
@@ -403,7 +403,7 @@ export default function Home() {
               <div className="flex gap-6 ">
                 <div className="relative w-[190px] h-[350px] rounded-[26px] overflow-hidden shadow-md bg-white mt-14">
                   <Image
-                    src="/children/image6.png"
+                    src="/public-images/PXL_20250406_151810493.jpg"
                     alt=""
                     fill
                     className="object-cover"
@@ -415,7 +415,7 @@ export default function Home() {
                 <div className="flex gap-6">
                   <div className="relative w-[180px] h-[180px] rounded-[22px] overflow-hidden shadow-md bg-white">
                     <Image
-                      src="/children/image7.png"
+                      src="/public-images/PXL_20240910_143742078.jpg"
                       alt=""
                       fill
                       className="object-cover"
@@ -424,7 +424,7 @@ export default function Home() {
                 </div>
                 <div className="relative w-[180px] h-[180px] rounded-[22px] overflow-hidden shadow-md bg-white">
                   <Image
-                    src="/children/group.jpg"
+                    src="/public-images/PXL_20240911_125937252.MP.jpg"
                     alt=""
                     fill
                     className="object-cover"
@@ -434,7 +434,7 @@ export default function Home() {
               <div className="flex flex-col gap-6">
                 <div className="relative w-[180px] h-[250px] rounded-[22px] overflow-hidden shadow-md bg-white mt-11">
                   <Image
-                    src="/children/image1.png"
+                    src="/public-images/PXL_20240910_113753245.MP.jpg"
                     alt=""
                     fill
                     className="object-cover"
@@ -443,7 +443,7 @@ export default function Home() {
 
                 <div className="relative w-[180px] h-[250px] rounded-[22px] overflow-hidden shadow-md bg-white mt-3">
                   <Image
-                    src="/children/image.jpg"
+                    src="/public-images/DSC_1627 (1).jpg"
                     alt=""
                     fill
                     className="object-cover"
