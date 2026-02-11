@@ -5,11 +5,11 @@ import AdminTopActions from "@/components/admin/layout/AdminTopActions";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-default-50">
-      <div className="flex min-h-screen">
+    <div className="h-screen bg-default-50 overflow-hidden">
+      <div className="flex h-full">
         <AdminSidebar />
 
-        <div className="flex-1 px-6 py-6">
+        <div className="flex-1 overflow-auto px-6 py-6">
           {/* Top-right actions (shows on ALL admin pages) */}
           <div className="flex justify-end mb-6">
             <AdminTopActions />
