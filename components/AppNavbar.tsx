@@ -8,9 +8,36 @@ import {
   NavbarContent,
   NavbarItem,
   Button,
+  Avatar,
 } from "@heroui/react";
+import { createClient as createSupabaseClient } from "@/lib/supabase/client";
+import React, { useEffect, useState } from "react";
 
 export function AppNavbar() {
+
+  const supabase = createSupabaseClient();
+
+  const [userAuthenticated, setUserAuthenticated] = useState(false);
+  const [userFirstName, setUserFirstName] = useState("");
+  const [userLastName, setUserLastName] = useState("");
+  
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data, error } = await supabase.auth.getUser();
+
+      if (error || !data?.user?.id) {
+        setUserAuthenticated(false);
+        return;
+      }
+
+      setUserFirstName(data.user.user_metadata.first_name || "");
+      setUserLastName(data.user.user_metadata.last_name || "");
+      setUserAuthenticated(true);
+    };
+
+    fetchUser();
+  }, []);
+
   return (
     <Navbar
       maxWidth="full"
@@ -60,7 +87,7 @@ export function AppNavbar() {
 
       <NavbarContent justify="end" className="gap-4 pr-4">
         <NavbarItem>
-          <Button
+          {!userAuthenticated && <Button
             as={NextLink}
             href="/auth/login"
             variant="bordered"
@@ -69,7 +96,12 @@ export function AppNavbar() {
             size="sm"
           >
             Login
-          </Button>
+          </Button>}
+          {userAuthenticated && <Avatar
+            name={`${userFirstName} ${userLastName}`}
+            size="sm"
+            color="primary"
+          />}
         </NavbarItem>
 
         <NavbarItem>
