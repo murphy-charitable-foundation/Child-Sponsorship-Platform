@@ -9,17 +9,30 @@ import {
   NavbarItem,
   Button,
   Avatar,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownSection,
+  DropdownTrigger
 } from "@heroui/react";
 import { createClient as createSupabaseClient } from "@/lib/supabase/client";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export function AppNavbar() {
+  const router = useRouter();
 
   const supabase = createSupabaseClient();
 
   const [userAuthenticated, setUserAuthenticated] = useState(false);
   const [userFirstName, setUserFirstName] = useState("");
   const [userLastName, setUserLastName] = useState("");
+
+  const logout = async () => {
+    await supabase.auth.signOut();
+    setUserAuthenticated(false);
+    //router.push("/auth/login");
+  };
   
   useEffect(() => {
     const fetchUser = async () => {
@@ -32,6 +45,9 @@ export function AppNavbar() {
 
       setUserFirstName(data.user.user_metadata.first_name || "");
       setUserLastName(data.user.user_metadata.last_name || "");
+      if(userFirstName==""){
+        setUserFirstName(data.user.email?.split("@")[0] || "User");
+      }
       setUserAuthenticated(true);
     };
 
@@ -97,11 +113,28 @@ export function AppNavbar() {
           >
             Login
           </Button>}
-          {userAuthenticated && <Avatar
+          {userAuthenticated && 
+          <Dropdown>
+            <DropdownTrigger>
+          <Button isIconOnly radius="full" variant="light">
+          <Avatar
             name={`${userFirstName} ${userLastName}`}
             size="sm"
             color="primary"
-          />}
+            
+          />
+          </Button>
+          </DropdownTrigger>
+            <DropdownMenu>
+              <DropdownItem
+                key="logout"
+                onClick={logout}
+              >
+                Logout
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+          }
         </NavbarItem>
 
         <NavbarItem>
