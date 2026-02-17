@@ -42,16 +42,11 @@ import { SupabaseAuthClient } from "@supabase/supabase-js/dist/module/lib/Supaba
 const pageCapacities = ["20","60","100"];
 
 
-
-
-
 export default function MeetTheChildrenUI({groupSponsorship}: {groupSponsorship: boolean}) {
   const router = useRouter(); // currently unused
 
   const supabase = createClient();
  
-
-  
   const [selectedPageCapacity, setPageCapacity] = React.useState<Selection>(
     new Set(["20"])
   );
@@ -63,11 +58,13 @@ export default function MeetTheChildrenUI({groupSponsorship}: {groupSponsorship:
   const [genders, setGenders] = React.useState<string[]>(["Male", "Female"]);
   const [uniqueCountries, setUniqueCountries] = React.useState<string[]>([]);
   const [searchTerm, setSearchTerm] = React.useState("");
+  const pageSize = Number(Array.from(selectedPageCapacity)[0] ?? "20");
+  const requestIdRef = React.useRef(0);
 
 
   function calculateRange(){
-    let from = (page - 1) * Number(Array.from(selectedPageCapacity)[0]); 
-    let to = from + Number(Array.from(selectedPageCapacity)[0]) - 1;
+    let from = (page - 1) * pageSize; 
+    let to = from + pageSize - 1;
 
     return {from, to};
   }
@@ -100,6 +97,8 @@ export default function MeetTheChildrenUI({groupSponsorship}: {groupSponsorship:
   };
 
    const fetchData = async () => {
+    const requestId = ++requestIdRef.current;
+
     setIsLoaded(false);
     
 
@@ -125,15 +124,15 @@ export default function MeetTheChildrenUI({groupSponsorship}: {groupSponsorship:
       .ilike('full_name', `%${searchTerm}%`)
       .range(from, to);
 
+      if (requestId !== requestIdRef.current) return;
+
       if (childrenError) {
         console.log(childrenError);
         throw childrenError;
       }
       setChildren(newChildren || []);
       console.log(newChildren);
-
-
-    
+          
 
     const { count, error: countError } = await supabase
         .from('children_with_ages')
@@ -144,7 +143,9 @@ export default function MeetTheChildrenUI({groupSponsorship}: {groupSponsorship:
         .lte('age', ageRange[1])
         .in('gender', genders)
         .ilike('full_name', `%${searchTerm}%`)
-
+    
+    if (requestId !== requestIdRef.current) return;
+    
     if (countError) {
         console.log(countError)
         throw countError
@@ -152,30 +153,21 @@ export default function MeetTheChildrenUI({groupSponsorship}: {groupSponsorship:
     setCount(count || 0);
 
     setIsLoaded(true);
-
-
-    
+      
   };
 
-  const [selectedCountries, setSelectedCountries] = React.useState(
-    new Set(uniqueCountries)
+  const [selectedCountries, setSelectedCountries] = React.useState<Set<string>>(
+    new Set()
   );
 
   useEffect(() => { 
     // Fetch new data when page or filters change
     //fetchUniqueCountries();
     console.log("fetching data for page ", page);
-    fetchData();
-    console.log("fetched data");
-  }, [page, uniqueCountries, selectedCountries, ageRange, genders, searchTerm, selectedPageCapacity]); 
-
-  useEffect(() => {
-    console.log("switching to page ", page);
-    setPage(1); // Reset to first page on filter change
-    console.log("switched to page ", page);
-    //fetchData();
-  }, [selectedCountries, ageRange, genders, searchTerm, selectedPageCapacity]);
-
+    fetchData()
+      .then(() => console.log("fetched data"))
+      .catch(console.log);
+  }, [page, selectedCountries, ageRange, genders, searchTerm, selectedPageCapacity]); 
 
   useEffect(() => {
     console.log("fetching unique countries");
@@ -185,7 +177,6 @@ export default function MeetTheChildrenUI({groupSponsorship}: {groupSponsorship:
     
 
   const [isLoaded, setIsLoaded] = React.useState(false);
-
 
 
   return (
@@ -307,6 +298,7 @@ export default function MeetTheChildrenUI({groupSponsorship}: {groupSponsorship:
                     setAgeRange([0, 25]);
                     setSearchTerm("");
                     setGenders(["Male", "Female"]);
+                    setPage(1);
                   }
                 }>
                 Clear Filters
@@ -348,7 +340,7 @@ export default function MeetTheChildrenUI({groupSponsorship}: {groupSponsorship:
             onChange={setPage}
             page={page}
             initialPage={1} 
-            total={Math.ceil(count/Number(Array.from(selectedPageCapacity)[0]))} 
+            total={Math.ceil(count/pageSize)} 
             className="my-4 flex justify-center" 
             color="primary" 
             variant="bordered"
@@ -362,8 +354,10 @@ export default function MeetTheChildrenUI({groupSponsorship}: {groupSponsorship:
             fullWidth={false}
             defaultSelectedKeys={["20"]}
             selectedKeys={selectedPageCapacity}
-            onSelectionChange={
-                  (keys) => setPageCapacity(keys as Set<string>)}
+            onSelectionChange={(keys) => {
+              setPageCapacity(keys as Set<string>);
+              setPage(1);
+            }}
                   >
             {pageCapacities.map((capacity) => (
               <SelectItem key={capacity.toString()}>{capacity.toString()}</SelectItem>
