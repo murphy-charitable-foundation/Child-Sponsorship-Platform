@@ -18,23 +18,26 @@ import {
 import { createClient as createSupabaseClient } from "@/lib/supabase/client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import {useAuth} from "@/components/AuthProvider";
+import { createClient } from "@/lib/supabase/client";
+
 
 export function AppNavbar() {
   const router = useRouter();
 
-  const supabase = createSupabaseClient();
+  const { user, loading } = useAuth();
 
-  const [userAuthenticated, setUserAuthenticated] = useState(false);
-  const [userFirstName, setUserFirstName] = useState("");
-  const [userLastName, setUserLastName] = useState("");
+  //const [userAuthenticated, setUserAuthenticated] = useState(false);
+  //const [userFirstName, setUserFirstName] = useState("");
+  //const [userLastName, setUserLastName] = useState("");
 
   const logout = async () => {
-    await supabase.auth.signOut();
-    setUserAuthenticated(false);
-    //router.push("/auth/login");
+    const supabase = createClient();
+    //setUserAuthenticated(false);
+    router.push("/auth/login");
   };
   
-  useEffect(() => {
+  /*useEffect(() => {
     const fetchUser = async () => {
       const { data, error } = await supabase.auth.getUser();
 
@@ -52,7 +55,10 @@ export function AppNavbar() {
     };
 
     fetchUser();
-  }, []);
+  }, []);*/
+
+  const userFirstName = user?.user_metadata.first_name || user?.email?.split("@")[0] || "User";
+  const userLastName = user?.user_metadata.last_name || "";
 
   return (
     <Navbar
@@ -103,7 +109,7 @@ export function AppNavbar() {
 
       <NavbarContent justify="end" className="gap-4 pr-4">
         <NavbarItem>
-          {!userAuthenticated && <Button
+          {!user && <Button
             as={NextLink}
             href="/auth/login"
             variant="bordered"
@@ -113,7 +119,7 @@ export function AppNavbar() {
           >
             Login
           </Button>}
-          {userAuthenticated && 
+          {user && 
           <Dropdown>
             <DropdownTrigger>
           <Button isIconOnly radius="full" variant="light">

@@ -3,12 +3,15 @@ import "./globals.css";
 
 import { Geist } from "next/font/google";
 import PublicShell from "@/components/admin/layout/PublicShell";
+import {AuthProvider} from "@/components/AuthProvider";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   display: "swap",
   subsets: ["latin"],
 });
+
 
 export default function RootLayout({
   children,
@@ -18,7 +21,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.className} antialiased`}>
-                <PublicShell>{children}</PublicShell>
+                <AuthProvider>
+                  <PublicShell>
+                    {children}
+                  </PublicShell>
+                </AuthProvider>
 
         
       </body>
