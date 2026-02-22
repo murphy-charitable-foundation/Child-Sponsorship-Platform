@@ -27,10 +27,6 @@ export function AppNavbar() {
 
   const { user, loading } = useAuth();
 
-  //const [userAuthenticated, setUserAuthenticated] = useState(false);
-  //const [userFirstName, setUserFirstName] = useState("");
-  //const [userLastName, setUserLastName] = useState("");
-
   const logout = async () => {
     const supabase = createClient();
     //setUserAuthenticated(false);
@@ -38,26 +34,7 @@ export function AppNavbar() {
     router.push("/auth/login");
     
   };
-  
-  /*useEffect(() => {
-    const fetchUser = async () => {
-      const { data, error } = await supabase.auth.getUser();
 
-      if (error || !data?.user?.id) {
-        setUserAuthenticated(false);
-        return;
-      }
-
-      setUserFirstName(data.user.user_metadata.first_name || "");
-      setUserLastName(data.user.user_metadata.last_name || "");
-      if(userFirstName==""){
-        setUserFirstName(data.user.email?.split("@")[0] || "User");
-      }
-      setUserAuthenticated(true);
-    };
-
-    fetchUser();
-  }, []);*/
 
   const userFirstName = user?.user_metadata.first_name || user?.email?.split("@")[0] || "User";
   const userLastName = user?.user_metadata.last_name || "";
