@@ -34,7 +34,9 @@ export function AppNavbar() {
   const logout = async () => {
     const supabase = createClient();
     //setUserAuthenticated(false);
+    await supabase.auth.signOut();
     router.push("/auth/login");
+    
   };
   
   /*useEffect(() => {

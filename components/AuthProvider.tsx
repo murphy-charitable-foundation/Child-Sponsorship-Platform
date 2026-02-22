@@ -38,7 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
 
         return () => subscription.unsubscribe();
-    }, [supabase]);
+    }, []); // Empty dependency array - auth should only be set up once
 
     return (
         <AuthContext.Provider value={{ user, loading }}>
