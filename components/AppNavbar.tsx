@@ -15,7 +15,6 @@ import {
   DropdownSection,
   DropdownTrigger
 } from "@heroui/react";
-import { createClient as createSupabaseClient } from "@/lib/supabase/client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {useAuth} from "@/components/AuthProvider";
