@@ -1,7 +1,14 @@
+'use client';
+
 import { KpiCard } from "@/components/admin/dashboard/KpiCard";
-import { PanelCard } from "@/components/admin/dashboard/PanelCard";
+import { SponsorsFilter } from "./SponsorsFilter";
+import { SponsorsTable } from "./SponsorsTable";
+import { TabSelection } from "./TabSelection";
+import { useState } from "react";
 
 export default function SponsorPage() {
+  const [activeTab, setActiveTab] = useState<'individuals' | 'groups'>('individuals');
+
   return (
     <div className="space-y-8 w-full">
       <div className="flex items-center justify-between">
@@ -10,29 +17,25 @@ export default function SponsorPage() {
 
       <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-3">
         <KpiCard
-          title="Total Sponsors"
+          title="Active Sponsorships"
           subtitle="Need KPI visualization"
         />
         <KpiCard
-          title="Active Sponsors"
+          title="Unique Sponsors"
           subtitle="Need KPI visualization"
         />
         <KpiCard
-          title="New Sponsors This Month"
+          title="Children Awaiting Sponsorship"
           subtitle="Need KPI visualization"
         />
       </div>
 
-      <PanelCard title="" className="w-full">
-        <div className="space-y-8">
-          <div className="text-center text-default-500 py-8">
-            Sponsor filters will go here
-          </div>
-          <div className="text-center text-default-500 py-8">
-            Sponsor table will go here
-          </div>
-        </div>
-      </PanelCard>
+      <TabSelection activeTab={activeTab} onTabChange={setActiveTab} />
+
+      <div className="space-y-6">
+        <SponsorsFilter activeTab={activeTab} />
+        <SponsorsTable activeTab={activeTab} />
+      </div>
     </div>
   );
 }
