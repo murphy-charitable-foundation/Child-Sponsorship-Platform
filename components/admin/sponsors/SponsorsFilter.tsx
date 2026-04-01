@@ -60,28 +60,28 @@ export function SponsorsFilter({
   const isGroupsTab = activeTab === 'groups';
 
   return (
-    <div className="bg-gray-100 dark:bg-gray-900 p-6 rounded-md">
+    <div className="bg-gray-100 p-6 rounded-md">
       <div className="space-y-3">
         <div className="flex gap-4">
           <div className={isGroupsTab ? "flex-1" : "flex-1"}>
-            <label className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+            <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
               Search
             </label>
           </div>
           {isGroupsTab && (
             <div className="w-1/5">
-              <label className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+              <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Type
               </label>
             </div>
           )}
           <div className={isGroupsTab ? "w-1/5" : "w-1/4"}>
-            <label className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+            <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
               Location
             </label>
           </div>
           <div className={isGroupsTab ? "w-1/5" : "w-1/4"}>
-            <label className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+            <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
               Status
             </label>
           </div>
@@ -95,9 +95,9 @@ export function SponsorsFilter({
               onChange={handleSearchChange}
               className="w-full"
               classNames={{
-                input: 'bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 placeholder-gray-500',
+                input: 'bg-white text-gray-900 placeholder-gray-500',
                 mainWrapper: 'w-full',
-                inputWrapper: 'h-10 bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700',
+                inputWrapper: 'h-10 bg-white border-gray-200 hover:border-gray-300',
               }}
             />
           </div>
@@ -109,7 +109,7 @@ export function SponsorsFilter({
                 onChange={handleTypeChange}
                 className="w-full"
                 classNames={{
-                  trigger: 'h-10 bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700',
+                  trigger: 'h-10 bg-white border-gray-200 hover:border-gray-300',
                 }}
               >
                 <SelectItem key="all">All types</SelectItem>
@@ -126,7 +126,7 @@ export function SponsorsFilter({
               onChange={handleLocationChange}
               className="w-full"
               classNames={{
-                trigger: 'h-10 bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700',
+                trigger: 'h-10 bg-white border-gray-200 hover:border-gray-300',
               }}
             >
               <SelectItem key="all">All locations</SelectItem>
@@ -144,7 +144,7 @@ export function SponsorsFilter({
               onChange={handleStatusChange}
               className="w-full"
               classNames={{
-                trigger: 'h-10 bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700',
+                trigger: 'h-10 bg-white border-gray-200 hover:border-gray-300',
               }}
             >
               <SelectItem key="all">All statuses</SelectItem>
@@ -156,7 +156,7 @@ export function SponsorsFilter({
         <div className="flex-1 pt-2">
           <button
             onClick={handleReset}
-            className="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer transition-all"
+            className="text-sm font-semibold text-blue-600 hover:underline cursor-pointer transition-all"
           >
             Reset filters
           </button>

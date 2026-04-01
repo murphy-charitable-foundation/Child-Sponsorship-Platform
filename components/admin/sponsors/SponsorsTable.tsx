@@ -200,39 +200,39 @@ export function SponsorsTable({ activeTab }: SponsorsTableProps) {
     <div className="w-full overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-gray-200 dark:border-gray-800 bg-gray-100 dark:bg-gray-900">
+          <tr className="border-b border-gray-200 bg-gray-100">
             {isGroupsTab ? (
               <>
-                <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">
+                <th className="px-4 py-3 text-left font-semibold text-gray-700">
                   GROUP NAME
                 </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">
+                <th className="px-4 py-3 text-left font-semibold text-gray-700">
                   TYPE
                 </th>
               </>
             ) : (
               <>
-                <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">
+                <th className="px-4 py-3 text-left font-semibold text-gray-700">
                   LAST NAME
                 </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">
+                <th className="px-4 py-3 text-left font-semibold text-gray-700">
                   FIRST NAME
                 </th>
               </>
             )}
-            <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">
+            <th className="px-4 py-3 text-left font-semibold text-gray-700">
               ID
             </th>
-            <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">
+            <th className="px-4 py-3 text-left font-semibold text-gray-700">
               LOCATION
             </th>
-            <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">
+            <th className="px-4 py-3 text-left font-semibold text-gray-700">
               STATUS
             </th>
-            <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">
+            <th className="px-4 py-3 text-left font-semibold text-gray-700">
               CHILDREN
             </th>
-            <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">
+            <th className="px-4 py-3 text-left font-semibold text-gray-700">
               ACTIONS
             </th>
           </tr>
@@ -242,41 +242,41 @@ export function SponsorsTable({ activeTab }: SponsorsTableProps) {
             ? GROUPS_DATA.map((group) => (
                 <tr
                   key={group.id}
-                  className="border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-950 hover:bg-gray-50 dark:hover:bg-gray-900/30 transition-colors"
+                  className="border-b border-gray-100 bg-white hover:bg-gray-50 transition-colors"
                 >
-                  <td className="px-4 py-3 text-gray-900 dark:text-gray-100">
+                  <td className="px-4 py-3 text-gray-900">
                     {group.groupName}
                   </td>
-                  <td className="px-4 py-3 text-gray-900 dark:text-gray-100">
+                  <td className="px-4 py-3 text-gray-900">
                     {group.type}
                   </td>
-                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
+                  <td className="px-4 py-3 text-gray-600">
                     {group.groupId}
                   </td>
-                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
+                  <td className="px-4 py-3 text-gray-600">
                     {group.location}
                   </td>
                   <td className="px-4 py-3">
                     <span
                       className={`inline-block px-2 py-1 rounded text-xs font-medium ${
                         group.status === 'Active'
-                          ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400'
-                          : 'bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-gray-200 text-gray-700'
                       }`}
                     >
                       {group.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-gray-900 dark:text-gray-100">
+                  <td className="px-4 py-3 text-gray-900">
                     {group.childrenCount}
                   </td>
                   <td className="px-4 py-3 text-sm">
                     <div className="flex gap-3">
-                      <button className="text-blue-600 dark:text-blue-400 hover:underline font-medium cursor-pointer transition-all">
+                      <button className="text-blue-600 hover:underline font-medium cursor-pointer transition-all">
                         View
                       </button>
-                      <span className="text-gray-300 dark:text-gray-700">|</span>
-                      <button className="text-blue-600 dark:text-blue-400 hover:underline font-medium cursor-pointer transition-all">
+                      <span className="text-gray-300">|</span>
+                      <button className="text-blue-600 hover:underline font-medium cursor-pointer transition-all">
                         Edit
                       </button>
                     </div>
@@ -286,41 +286,41 @@ export function SponsorsTable({ activeTab }: SponsorsTableProps) {
             : SPONSORS_DATA.map((sponsor) => (
                 <tr
                   key={sponsor.id}
-                  className="border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-950 hover:bg-gray-50 dark:hover:bg-gray-900/30 transition-colors"
+                  className="border-b border-gray-100 bg-white hover:bg-gray-50 transition-colors"
                 >
-                  <td className="px-4 py-3 text-gray-900 dark:text-gray-100">
+                  <td className="px-4 py-3 text-gray-900">
                     {sponsor.lastName}
                   </td>
-                  <td className="px-4 py-3 text-gray-900 dark:text-gray-100">
+                  <td className="px-4 py-3 text-gray-900">
                     {sponsor.firstName}
                   </td>
-                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
+                  <td className="px-4 py-3 text-gray-600">
                     {sponsor.sponsorId}
                   </td>
-                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
+                  <td className="px-4 py-3 text-gray-600">
                     {sponsor.location}
                   </td>
                   <td className="px-4 py-3">
                     <span
                       className={`inline-block px-2 py-1 rounded text-xs font-medium ${
                         sponsor.status === 'Active'
-                          ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400'
-                          : 'bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-gray-200 text-gray-700'
                       }`}
                     >
                       {sponsor.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-gray-900 dark:text-gray-100">
+                  <td className="px-4 py-3 text-gray-900">
                     {sponsor.childrenCount}
                   </td>
                   <td className="px-4 py-3 text-sm">
                     <div className="flex gap-3">
-                      <button className="text-blue-600 dark:text-blue-400 hover:underline font-medium cursor-pointer transition-all">
+                      <button className="text-blue-600 hover:underline font-medium cursor-pointer transition-all">
                         View
                       </button>
-                      <span className="text-gray-300 dark:text-gray-700">|</span>
-                      <button className="text-blue-600 dark:text-blue-400 hover:underline font-medium cursor-pointer transition-all">
+                      <span className="text-gray-300">|</span>
+                      <button className="text-blue-600 hover:underline font-medium cursor-pointer transition-all">
                         Edit
                       </button>
                     </div>
