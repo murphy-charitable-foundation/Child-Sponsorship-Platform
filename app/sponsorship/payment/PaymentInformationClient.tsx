@@ -32,7 +32,8 @@ const planDetails: Record<
 };
 
 function resolvePlanType(plan: string | null): PlanType {
-  if (plan === "annual" || plan === "onetime" || plan === "monthly") return plan;
+  if (plan === "annual" || plan === "onetime" || plan === "monthly")
+    return plan;
   return "monthly";
 }
 
@@ -72,7 +73,10 @@ export default function PaymentInformationClient() {
               <div className="mt-3 flex items-center gap-3">
                 {paymentType === "paypal" && (
                   <div className="h-10 w-[220px]">
-                    <PayPalCheckout planType={planType} onPaymentError={(msg) => setPaymentError(msg)} />
+                    <PayPalCheckout
+                      planType={planType}
+                      onPaymentError={(msg) => setPaymentError(msg)}
+                    />
                   </div>
                 )}
 
@@ -87,61 +91,63 @@ export default function PaymentInformationClient() {
                 >
                   Other (coming soon)
                 </Button>
-              </div>  
+              </div>
             </div>
 
-            <div className="mt-8">
-              <h2 className="text-base font-semibold">Card Information</h2>
-              <div className="mt-4 grid grid-cols-1 gap-4">
-                <Input
-                  label="Card Number*"
-                  labelPlacement="outside"
-                  placeholder="Input"
-                  variant="bordered"
-                  radius="md"
-                  classNames={{ inputWrapper: "rounded-[12px]" }}
-                  isDisabled={paymentType !== "card"}
-                />
-
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <Input
-                    label="Expiry*"
-                    labelPlacement="outside"
-                    placeholder="MM/YY"
-                    variant="bordered"
-                    radius="md"
-                    classNames={{ inputWrapper: "rounded-[12px]" }}
-                    isDisabled={paymentType !== "card"}
-                  />
-                  <Input
-                    label="CVC*"
-                    labelPlacement="outside"
-                    placeholder="Input"
-                    variant="bordered"
-                    radius="md"
-                    classNames={{ inputWrapper: "rounded-[12px]" }}
-                    isDisabled={paymentType !== "card"}
-                  />
-                </div>
-
-                {paymentType === "paypal" && (
-                  <p className="text-sm text-default-500">
-                    You’ll be redirected to PayPal to complete your payment.
-                  </p>
-                )}
+            {paymentType === "paypal" ? (
+              <div className="mt-8 rounded-[12px] border border-default-200 p-5">
+                <h2 className="text-base font-semibold">PayPal Checkout</h2>
+                <p className="mt-2 text-sm text-default-500">
+                 Click the PayPal button above to securely complete your sponsorship using PayPal.
+                </p>
 
                 {paymentError && (
                   <p className="mt-3 text-sm text-danger">{paymentError}</p>
                 )}
               </div>
-            </div>
+            ) : (
+              <div className="mt-8">
+                <h2 className="text-base font-semibold">Card Information</h2>
+                <div className="mt-4 grid grid-cols-1 gap-4">
+                  <Input
+                    label="Card Number*"
+                    labelPlacement="outside"
+                    placeholder="Input"
+                    variant="bordered"
+                    radius="md"
+                    classNames={{ inputWrapper: "rounded-[12px]" }}
+                  />
+
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <Input
+                      label="Expiry*"
+                      labelPlacement="outside"
+                      placeholder="MM/YY"
+                      variant="bordered"
+                      radius="md"
+                      classNames={{ inputWrapper: "rounded-[12px]" }}
+                    />
+                    <Input
+                      label="CVC*"
+                      labelPlacement="outside"
+                      placeholder="Input"
+                      variant="bordered"
+                      radius="md"
+                      classNames={{ inputWrapper: "rounded-[12px]" }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="mt-10 flex items-center justify-between">
               <Button
                 variant="bordered"
                 radius="md"
                 className="rounded-[12px]"
-                onPress={() => router.push(`/sponsorship/complete?plan=${planType}`)}
+                onPress={() =>
+                  router.push(`/sponsorship/complete?plan=${planType}`)
+                }
               >
                 ← Back
               </Button>
