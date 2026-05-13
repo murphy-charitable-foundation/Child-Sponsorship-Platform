@@ -71,14 +71,16 @@ export default function PaymentInformationClient() {
             <div className="mt-8">
               <h2 className="text-base font-semibold">Payment Method</h2>
               <div className="mt-3 flex items-center gap-3">
-                {paymentType === "paypal" && (
-                  <div className="h-10 w-[220px]">
-                    <PayPalCheckout
-                      planType={planType}
-                      onPaymentError={(msg) => setPaymentError(msg)}
-                    />
-                  </div>
-                )}
+                <Button
+                  radius="md"
+                  className="h-10 rounded-[12px] px-5"
+                  disableAnimation
+                  variant={paymentType === "paypal" ? "solid" : "bordered"}
+                  color={paymentType === "paypal" ? "primary" : "default"}
+                  onPress={() => setPaymentType("paypal")}
+                >
+                  PayPal
+                </Button>
 
                 <Button
                   radius="md"
@@ -98,8 +100,16 @@ export default function PaymentInformationClient() {
               <div className="mt-8 rounded-[12px] border border-default-200 p-5">
                 <h2 className="text-base font-semibold">PayPal Checkout</h2>
                 <p className="mt-2 text-sm text-default-500">
-                 Click the PayPal button above to securely complete your sponsorship using PayPal.
+                  Click the button below to securely complete your sponsorship
+                  using PayPal.
                 </p>
+
+                <div className="mt-4 w-[260px]">
+                  <PayPalCheckout
+                    planType={planType}
+                    onPaymentError={(msg) => setPaymentError(msg)}
+                  />
+                </div>
 
                 {paymentError && (
                   <p className="mt-3 text-sm text-danger">{paymentError}</p>
