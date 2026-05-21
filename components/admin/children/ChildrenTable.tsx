@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
 	Table,
 	TableHeader,
@@ -13,7 +13,6 @@ import {
 	useDisclosure,
 } from "@heroui/react";
 import ChildEditModal, { type ChildRow } from "./ChildEditModal";
-import { createClient } from "@/lib/supabase/client";
 
 function statusChipColor(status: boolean) {
 	if (status) return "success";
@@ -21,12 +20,13 @@ function statusChipColor(status: boolean) {
 	return "default"; // for Exited
 }
 
-const supabase = createClient();
+type Props = {
+	rows: ChildRow[];
+};
 
-export default function ChildrenTable() {
+export default function ChildrenTable({ rows }: Props) {
 	const editModal = useDisclosure();
 	const [editTarget, setEditTarget] = useState<ChildRow | null>(null);
-	const [children, setChildren] = useState<ChildRow[]>([]);
 
 	function openEdit(child: ChildRow) {
 		setEditTarget(child);
@@ -37,27 +37,6 @@ export default function ChildrenTable() {
 		// TODO: persist updated child to database
 		console.log("Saving child:", updated);
 	}
-
-	//load the children data from Supabase
-	useEffect(() => {
-		async function fetchChildren() {
-			const { data: newChildren, error: childrenError } = await supabase
-				.from("children_with_ages")
-				.select("*");
-
-			if (childrenError) {
-				console.log(childrenError);
-			}
-
-			if (newChildren?.length) {
-				setChildren(newChildren);
-			}
-		}
-
-		fetchChildren();
-	}, []);
-
-	console.log(children);
 
 	return (
 		<div className="w-full">
@@ -79,7 +58,7 @@ export default function ChildrenTable() {
 
 				<TableBody
 					emptyContent={"No children found"}
-					items={children}
+					items={rows}
 				>
 					{(c) => (
 						<TableRow key={c.id}>
