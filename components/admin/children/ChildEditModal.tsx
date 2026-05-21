@@ -8,17 +8,17 @@ import {
 	ModalFooter,
 	Button,
 	Input,
-	Select,
-	SelectItem,
 } from "@heroui/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+
+import { createClient } from "@/lib/supabase/client";
+
 import ProfileImageUpload from "@/components/profile-image-upload";
 
 export type ChildRow = {
 	id: string;
 	first_name: string;
 	last_name: string;
-	full_name: string;
 	age: number;
 	date_of_birth: string;
 	gender: "Male" | "Female" | "Other";
@@ -44,31 +44,62 @@ export default function ChildEditModal({
 }: Props) {
 	const [form, setForm] = useState<ChildRow | null>(null);
 	const [imageFile, setImageFile] = useState<File | null>(null);
-	const [isUploading, setIsUploading] = useState(false);
-	const [uploadError, setUploadError] = useState<string | null>(null);
+	const [isSaving, setIsSaving] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+
+	const supabase = useMemo(() => createClient(), []);
 
 	useEffect(() => {
-		if (child) {
-			setForm({ ...child });
-			setImageFile(null);
-			setUploadError(null);
+		if (!child) return;
+
+		async function getSignedUrl(path: string) {
+			const { data } = await supabase.storage
+				.from("profiles")
+				.createSignedUrl(path, 60 * 60);
+			return data?.signedUrl;
 		}
-	}, [child]);
+
+		async function init() {
+			setForm({
+				...child!,
+				imageUrl: child!.photo_path
+					? await getSignedUrl(child!.photo_path)
+					: undefined,
+			});
+			setImageFile(null);
+			setError(null);
+		}
+
+		init();
+	}, [child, supabase]);
 
 	function handleChange(field: keyof ChildRow, value: string) {
-		setForm((prev) =>
-			prev
-				? { ...prev, [field]: field === "age" ? Number(value) : value }
-				: prev,
-		);
+		setForm((prev) => {
+			if (!prev) return prev;
+			return { ...prev, [field]: value };
+		});
+	}
+
+	function validate(): string | null {
+		if (!form) return "No form data.";
+		if (!form.first_name.trim()) return "First name is required.";
+		if (!form.last_name.trim()) return "Last name is required.";
+		if (!form.location.trim()) return "Location is required.";
+		return null;
 	}
 
 	async function handleSave(onClose: () => void) {
 		if (!form) return;
-		setIsUploading(true);
-		setUploadError(null);
+		const validationError = validate();
+		if (validationError) {
+			setError(validationError);
+			return;
+		}
 
-		let imageUrl = form.imageUrl;
+		setIsSaving(true);
+		setError(null);
+
+		let updatedForm = { ...form };
 
 		if (imageFile) {
 			const body = new FormData();
@@ -82,17 +113,36 @@ export default function ChildEditModal({
 
 			if (res.ok) {
 				const data = await res.json();
-				imageUrl = data.url;
+				updatedForm = {
+					...updatedForm,
+					imageUrl: data.url,
+					photo_path: data.path,
+				};
 			} else {
 				const data = await res.json().catch(() => ({}));
-				setUploadError(data.error ?? "Image upload failed");
-				setIsUploading(false);
+				setError(data.error ?? "Image upload failed");
+				setIsSaving(false);
 				return;
 			}
 		}
 
-		onSave({ ...form, imageUrl });
-		setIsUploading(false);
+		const { error: dbError } = await supabase
+			.from("children")
+			.update({
+				first_name: updatedForm.first_name,
+				last_name: updatedForm.last_name,
+				location: updatedForm.location,
+			})
+			.eq("id", updatedForm.id);
+
+		if (dbError) {
+			setError(dbError.message);
+			setIsSaving(false);
+			return;
+		}
+
+		onSave(updatedForm);
+		setIsSaving(false);
 		onClose();
 	}
 
@@ -124,10 +174,8 @@ export default function ChildEditModal({
 										/>
 									</div>
 
-									{uploadError && (
-										<p className="text-sm text-red-500 text-center">
-											{uploadError}
-										</p>
+									{error && (
+										<p className="text-sm text-red-500 text-center">{error}</p>
 									)}
 
 									<div className="flex gap-3">
@@ -135,48 +183,21 @@ export default function ChildEditModal({
 											label="First Name"
 											value={form.first_name}
 											onValueChange={(v) => handleChange("first_name", v)}
+											isRequired
 										/>
 										<Input
 											label="Last Name"
 											value={form.last_name}
 											onValueChange={(v) => handleChange("last_name", v)}
+											isRequired
 										/>
-									</div>
-									<div className="flex gap-3">
-										<Input
-											label="Age"
-											type="number"
-											value={String(form.age)}
-											onValueChange={(v) => handleChange("age", v)}
-										/>
-										<Select
-											label="Gender"
-											selectedKeys={[form.gender]}
-											onSelectionChange={(keys) =>
-												handleChange("gender", Array.from(keys)[0] as string)
-											}
-										>
-											<SelectItem key="Male">Male</SelectItem>
-											<SelectItem key="Female">Female</SelectItem>
-											<SelectItem key="Other">Other</SelectItem>
-										</Select>
 									</div>
 									<Input
 										label="Location"
 										value={form.location}
 										onValueChange={(v) => handleChange("location", v)}
+										isRequired
 									/>
-									{/* <Select
-										label="Status"
-										selectedKeys={[form.active]}
-										onSelectionChange={(keys) =>
-											handleChange("status", Array.from(keys)[0] as string)
-										}
-									>
-										<SelectItem key="active">Active</SelectItem>
-										<SelectItem key="waiting">Waiting</SelectItem>
-										<SelectItem key="exited">Exited</SelectItem>
-									</Select> */}
 								</div>
 							)}
 						</ModalBody>
@@ -185,14 +206,14 @@ export default function ChildEditModal({
 							<Button
 								variant="light"
 								onPress={onClose}
-								isDisabled={isUploading}
+								isDisabled={isSaving}
 							>
 								Cancel
 							</Button>
 							<Button
 								color="primary"
 								onPress={() => handleSave(onClose)}
-								isLoading={isUploading}
+								isLoading={isSaving}
 							>
 								Save Changes
 							</Button>

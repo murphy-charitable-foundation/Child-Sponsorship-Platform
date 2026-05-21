@@ -5,7 +5,9 @@ import { createClient } from "@/lib/supabase/client";
 
 import { KpiCard } from "@/components/admin/dashboard/KpiCard";
 import { PanelCard } from "@/components/admin/dashboard/PanelCard";
-import ChildrenFilters, { type ChildFilters } from "@/components/admin/children/ChildrenFilters";
+import ChildrenFilters, {
+	type ChildFilters,
+} from "@/components/admin/children/ChildrenFilters";
 import ChildrenTable from "@/components/admin/children/ChildrenTable";
 import { ChildRow } from "./ChildEditModal";
 
@@ -45,9 +47,14 @@ export default function ChildrenPage() {
 	const filtered = useMemo(() => {
 		const { search, gender, statuses } = filters;
 		return children.filter((c) => {
-			if (search && !c.full_name.toLowerCase().includes(search.toLowerCase()))
+			const fullName = `${c.first_name} ${c.last_name}`;
+			if (search && !fullName.toLowerCase().includes(search.toLowerCase()))
 				return false;
-			if (gender && gender !== "all" && gender.toLowerCase() !== c.gender.toLowerCase())
+			if (
+				gender &&
+				gender !== "all" &&
+				gender.toLowerCase() !== c.gender.toLowerCase()
+			)
 				return false;
 			const statusKey = c.active ? "active" : "waiting";
 			if (statuses.size > 0 && !statuses.has(statusKey)) return false;

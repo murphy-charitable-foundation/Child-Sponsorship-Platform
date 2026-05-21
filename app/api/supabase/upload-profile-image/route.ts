@@ -26,10 +26,7 @@ export async function POST(req: Request) {
 			.eq("id", user.id)
 			.single();
 
-		if (adminError) {
-			console.log(adminError);
-		}
-		if (!adminRow) {
+		if (adminError || !adminRow) {
 			return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 		}
 
