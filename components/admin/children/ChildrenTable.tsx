@@ -1,120 +1,137 @@
 "use client";
 
-import React from "react";
+import { useEffect, useState } from "react";
 import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  Button,
-  Chip,
+	Table,
+	TableHeader,
+	TableColumn,
+	TableBody,
+	TableRow,
+	TableCell,
+	Button,
+	Chip,
+	useDisclosure,
 } from "@heroui/react";
+import ChildEditModal, { type ChildRow } from "./ChildEditModal";
+import { createClient } from "@/lib/supabase/client";
 
-type ChildRow = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  age: number;
-  gender: "Male" | "Female" | "Other";
-  location: string;
-  status: "Active" | "Waiting" | "Exited";
-  dateEnrolled: string;
-};
-
-const rows: ChildRow[] = [
-  {
-    id: "C-1001",
-    firstName: "Rebecca",
-    lastName: "Akello",
-    age: 9,
-    gender: "Female",
-    location: "Uganda ",
-    status: "Active",
-    dateEnrolled: "Jan 12, 2026",
-  },
-  {
-    id: "C-1002",
-    firstName: "Ruth",
-    lastName: "Babriye",
-    age: 11,
-    gender: "Male",
-    location: "Uganda",
-    status: "Waiting",
-    dateEnrolled: "Jan 10, 2026",
-  },
-  {
-    id: "C-1003",
-    firstName: "Agnes",
-    lastName: "Katende",
-    age: 10,
-    gender: "Female",
-    location: "Uganda",
-    status: "Exited",
-    dateEnrolled: "Dec 22, 2025",
-  },
-];
-
-
-
-function statusChipColor(status: "Active" | "Waiting" | "Exited") {
-  if (status === "Active") return "success";
-  if (status === "Waiting") return "warning";
-  return "default"; // for Exited
+function statusChipColor(status: boolean) {
+	if (status) return "success";
+	if (!status) return "warning";
+	return "default"; // for Exited
 }
 
-export default function ChildrenTable() {
-  return (
-    <div className="w-full">
-      <Table aria-label="Children table" removeWrapper>
-        <TableHeader>
-          <TableColumn>LAST NAME</TableColumn>
-          <TableColumn>FIRST NAME</TableColumn>
-          <TableColumn>ID</TableColumn>
-          <TableColumn>AGE</TableColumn>
-          <TableColumn>GENDER</TableColumn>
-          <TableColumn>LOCATION</TableColumn>
-          <TableColumn>STATUS</TableColumn>
-          <TableColumn>DATE ENROLLED</TableColumn>
-          <TableColumn>ACTIONS</TableColumn>
-        </TableHeader>
+const supabase = createClient();
 
-        <TableBody emptyContent={"No children found"} items={rows}>
-          {(r) => (
-            <TableRow key={r.id}>
-              <TableCell>{r.lastName}</TableCell>
-              <TableCell>{r.firstName}</TableCell>
-              <TableCell>{r.id}</TableCell>
-              <TableCell>{r.age}</TableCell>
-              <TableCell>{r.gender}</TableCell>
-              <TableCell>{r.location}</TableCell>
-              <TableCell>
-  <Chip
-    size="md"
-    radius="full"
-    variant="flat"
-    color={statusChipColor(r.status)}
-    className="px-4 text-base"
-  >
-    {r.status}
-  </Chip>
-</TableCell>
-              <TableCell>{r.dateEnrolled}</TableCell>
-              <TableCell>
-                <div className="flex gap-2">
-                  <Button size="sm" radius="md" color="primary">
-                    View
-                  </Button>
-                  <Button size="sm" radius="md" color="primary">
-                    Edit
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </div>
-  );
+export default function ChildrenTable() {
+	const editModal = useDisclosure();
+	const [editTarget, setEditTarget] = useState<ChildRow | null>(null);
+	const [children, setChildren] = useState<ChildRow[]>([]);
+
+	function openEdit(child: ChildRow) {
+		setEditTarget(child);
+		editModal.onOpen();
+	}
+
+	function handleSave(updated: ChildRow) {
+		// TODO: persist updated child to database
+		console.log("Saving child:", updated);
+	}
+
+	//load the children data from Supabase
+	useEffect(() => {
+		async function fetchChildren() {
+			const { data: newChildren, error: childrenError } = await supabase
+				.from("children_with_ages")
+				.select("*");
+
+			if (childrenError) {
+				console.log(childrenError);
+			}
+
+			if (newChildren?.length) {
+				setChildren(newChildren);
+			}
+		}
+
+		fetchChildren();
+	}, []);
+
+	console.log(children);
+
+	return (
+		<div className="w-full">
+			<Table
+				aria-label="Children table"
+				removeWrapper
+			>
+				<TableHeader>
+					<TableColumn>LAST NAME</TableColumn>
+					<TableColumn>FIRST NAME</TableColumn>
+					<TableColumn>ID</TableColumn>
+					<TableColumn>AGE</TableColumn>
+					<TableColumn>GENDER</TableColumn>
+					<TableColumn>LOCATION</TableColumn>
+					<TableColumn>STATUS</TableColumn>
+					{/* <TableColumn>DATE ENROLLED</TableColumn> */}
+					<TableColumn>ACTIONS</TableColumn>
+				</TableHeader>
+
+				<TableBody
+					emptyContent={"No children found"}
+					items={children}
+				>
+					{(c) => (
+						<TableRow key={c.id}>
+							<TableCell>{c.last_name}</TableCell>
+							<TableCell>{c.first_name}</TableCell>
+							<TableCell>{c.id}</TableCell>
+							<TableCell>{c.age}</TableCell>
+							<TableCell>{c.gender}</TableCell>
+							<TableCell>{c.location}</TableCell>
+							<TableCell>
+								<Chip
+									size="md"
+									radius="full"
+									variant="flat"
+									color={statusChipColor(c.active)}
+									className="px-4 text-base"
+								>
+									{c.active ? "Active" : "Waiting"}
+								</Chip>
+							</TableCell>
+							{/* <TableCell>{c.dateEnrolled}</TableCell> */}
+							<TableCell>
+								<div className="flex gap-2">
+									<Button
+										size="sm"
+										radius="md"
+										color="primary"
+									>
+										View
+									</Button>
+									<Button
+										size="sm"
+										radius="md"
+										variant="bordered"
+										color="primary"
+										onPress={() => openEdit(c)}
+									>
+										Edit
+									</Button>
+								</div>
+							</TableCell>
+						</TableRow>
+					)}
+				</TableBody>
+			</Table>
+
+			<ChildEditModal
+				child={editTarget}
+				isOpen={editModal.isOpen}
+				onOpenChange={editModal.onOpenChange}
+				onSave={handleSave}
+			/>
+		</div>
+	);
 }
