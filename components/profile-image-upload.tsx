@@ -1,5 +1,6 @@
 "use client";
 
+import Compressor from "compressorjs";
 import { useRef, useState, useEffect } from "react";
 import { Camera } from "lucide-react";
 
@@ -10,45 +11,21 @@ type Props = {
 	size?: number;
 };
 
-async function compressToJpeg(
-	file: File,
-	maxDim = 400,
-	quality = 0.82,
-): Promise<File> {
+async function compressToJpeg(file: File, maxDim = 200): Promise<File> {
 	return new Promise((resolve, reject) => {
-		const img = new Image();
-		const objectUrl = URL.createObjectURL(file);
-
-		img.onload = () => {
-			URL.revokeObjectURL(objectUrl);
-
-			let { width, height } = img;
-			if (width > height && width > maxDim) {
-				height = Math.round((height * maxDim) / width);
-				width = maxDim;
-			} else if (height >= width && height > maxDim) {
-				width = Math.round((width * maxDim) / height);
-				height = maxDim;
-			}
-
-			const canvas = document.createElement("canvas");
-			canvas.width = width;
-			canvas.height = height;
-			canvas.getContext("2d")!.drawImage(img, 0, 0, width, height);
-
-			canvas.toBlob(
-				(blob) => {
-					if (!blob) return reject(new Error("Compression failed"));
-					const name = file.name.replace(/\.[^.]+$/, ".jpg");
-					resolve(new File([blob], name, { type: "image/jpeg" }));
-				},
-				"image/jpeg",
-				quality,
-			);
-		};
-
-		img.onerror = reject;
-		img.src = objectUrl;
+		new Compressor(file, {
+			maxWidth: maxDim,
+			maxHeight: maxDim,
+			convertSize: 45 * 1024,
+			convertTypes: ["image/png", "image/webp"],
+			mimeType: "image/jpeg",
+			quality: 0.82,
+			success(result) {
+				const name = file.name.replace(/\.[^.]+$/, ".jpg");
+				resolve(new File([result], name, { type: "image/jpeg" }));
+			},
+			error: reject,
+		});
 	});
 }
 

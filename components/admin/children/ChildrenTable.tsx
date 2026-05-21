@@ -26,10 +26,11 @@ type Props = {
 
 export default function ChildrenTable({ rows }: Props) {
 	const editModal = useDisclosure();
-	const [editTarget, setEditTarget] = useState<ChildRow | null>(null);
+	const [editChild, setEditChild] = useState<ChildRow | null>(null);
 
+	//This open the EditModal for the child
 	function openEdit(child: ChildRow) {
-		setEditTarget(child);
+		setEditChild(child);
 		editModal.onOpen();
 	}
 
@@ -106,7 +107,7 @@ export default function ChildrenTable({ rows }: Props) {
 			</Table>
 
 			<ChildEditModal
-				child={editTarget}
+				child={editChild}
 				isOpen={editModal.isOpen}
 				onOpenChange={editModal.onOpenChange}
 				onSave={handleSave}

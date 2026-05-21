@@ -75,7 +75,7 @@ export default function ChildEditModal({
 			body.append("image", imageFile);
 			body.append("childId", form.id);
 
-			const res = await fetch("/api/supabase/upload-child-image", {
+			const res = await fetch("/api/supabase/upload-profile-image", {
 				method: "POST",
 				body,
 			});
