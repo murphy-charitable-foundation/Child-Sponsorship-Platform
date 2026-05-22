@@ -14,21 +14,7 @@ import { useState, useEffect, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 import ProfileImageUpload from "@/components/profile-image-upload";
-
-export type ChildRow = {
-	id: string;
-	first_name: string;
-	last_name: string;
-	age: number;
-	date_of_birth: string;
-	gender: "Male" | "Female" | "Other";
-	location: string;
-	active: boolean;
-	photo_path?: string;
-	school_grade: number;
-	imageUrl?: string;
-	created_at: string;
-};
+import { ChildRow } from "./ChildrenPage";
 
 type Props = {
 	child: ChildRow | null;

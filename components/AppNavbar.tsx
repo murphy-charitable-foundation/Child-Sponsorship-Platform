@@ -87,38 +87,36 @@ export function AppNavbar() {
 
       <NavbarContent justify="end" className="gap-4 pr-4">
         <NavbarItem>
-          {!user && <Button
-            as={NextLink}
-            href="/auth/login"
-            variant="bordered"
-            color="primary"
-            radius="md"
-            size="sm"
-          >
-            Login
-          </Button>}
-          {user && 
-          <Dropdown>
-            <DropdownTrigger>
-          <Button isIconOnly radius="full" variant="light">
-          <Avatar
-            name={`${userFirstName} ${userLastName}`}
-            size="sm"
-            color="primary"
-            
-          />
-          </Button>
-          </DropdownTrigger>
-            <DropdownMenu>
-              <DropdownItem
-                key="logout"
-                onClick={logout}
-              >
-                Logout
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
-          }
+          {!loading && !user && (
+            <Button
+              as={NextLink}
+              href="/auth/login"
+              variant="bordered"
+              color="primary"
+              radius="md"
+              size="sm"
+            >
+              Login
+            </Button>
+          )}
+          {!loading && user && (
+            <Dropdown>
+              <DropdownTrigger>
+                <Button isIconOnly radius="full" variant="light">
+                  <Avatar
+                    name={`${userFirstName} ${userLastName}`}
+                    size="sm"
+                    color="primary"
+                  />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu>
+                <DropdownItem key="logout" onClick={logout}>
+                  Logout
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          )}
         </NavbarItem>
 
         <NavbarItem>

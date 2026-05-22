@@ -13,7 +13,8 @@ import {
 	Avatar,
 	useDisclosure,
 } from "@heroui/react";
-import ChildEditModal, { type ChildRow } from "./ChildEditModal";
+import ChildEditModal from "./ChildEditModal";
+import { ChildRow } from "./ChildrenPage";
 
 function statusChipColor(status: boolean) {
 	if (status) return "success";

@@ -24,7 +24,7 @@ import {
 	PopoverTrigger,
 	PopoverContent,
 } from "@heroui/react";
-import { ChildRow } from "./admin/children/ChildEditModal";
+import { ChildRow } from "./admin/children/ChildrenPage";
 
 const pageCapacities = ["20", "60", "100"];
 
@@ -33,7 +33,7 @@ export default function MeetTheChildrenUI({
 }: {
 	groupSponsorship: boolean;
 }) {
-	const router = useRouter(); // currently unused
+	const router = useRouter();
 
 	const supabase = createClient();
 
@@ -42,7 +42,7 @@ export default function MeetTheChildrenUI({
 	);
 	const [page, setPage] = React.useState(1);
 
-	const [children, setChildren] = React.useState<any[]>([]);
+	const [children, setChildren] = React.useState<ChildRow[]>([]);
 	const [count, setCount] = React.useState(0);
 	const [ageRange, setAgeRange] = React.useState<number[]>([0, 25]);
 	const [genders, setGenders] = React.useState<string[]>(["Male", "Female"]);
@@ -120,7 +120,7 @@ export default function MeetTheChildrenUI({
 		}
 
 		if (photoPaths.length > 0) {
-			const res = await fetch("/api/supabase/children-signed-urls", {
+			const res = await fetch("/api/supabase/children-signed-url", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ paths: photoPaths }),
@@ -340,7 +340,7 @@ export default function MeetTheChildrenUI({
 							key={item.id}
 							isPressable
 							shadow="sm"
-							onPress={() => console.log("item pressed")}
+							onPress={() => router.push(`/child-profile/${item.id}`)}
 						>
 							<Skeleton
 								className="rounded-lg"

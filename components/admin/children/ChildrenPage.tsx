@@ -9,12 +9,29 @@ import ChildrenFilters, {
 	type ChildFilters,
 } from "@/components/admin/children/ChildrenFilters";
 import ChildrenTable from "@/components/admin/children/ChildrenTable";
-import { ChildRow } from "./ChildEditModal";
 
 //TODO: Previously the status is has "active", "waiting", "exited". however, in supabase children table doesn't have "status"
 //Only has "active" column. so we need to check it. either we add status in the table or just use active column.
 //If we use "active" (boolean), we need to identify what is the waiting and exited.
 //For now, I use active and set waiting if the active value is false
+
+export type ChildRow = {
+	id: string;
+	first_name: string;
+	last_name: string;
+	full_name: string;
+	age: number;
+	date_of_birth: string;
+	gender: "Male" | "Female" | "Other";
+	location: string;
+	active: boolean;
+	photo_path?: string;
+	school_grade: number;
+	imageUrl?: string;
+	created_at: string;
+	favorite_activity: string;
+	dream_job: string;
+};
 
 const supabase = createClient();
 
@@ -68,7 +85,7 @@ export default function ChildrenPage() {
 				}
 
 				if (photoPaths.length > 0) {
-					const res = await fetch("/api/supabase/children-signed-urls", {
+					const res = await fetch("/api/supabase/children-signed-url", {
 						method: "POST",
 						headers: { "Content-Type": "application/json" },
 						body: JSON.stringify({ paths: photoPaths }),
