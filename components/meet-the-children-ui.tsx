@@ -50,10 +50,11 @@ export default function MeetTheChildrenUI({
 	const [searchTerm, setSearchTerm] = React.useState("");
 	const pageSize = Number(Array.from(selectedPageCapacity)[0] ?? "20");
 	const requestIdRef = React.useRef(0);
+	const [isLoaded, setIsLoaded] = React.useState(false);
 
 	function calculateRange() {
-		let from = (page - 1) * pageSize;
-		let to = from + pageSize - 1;
+		const from = (page - 1) * pageSize;
+		const to = from + pageSize - 1;
 
 		return { from, to };
 	}
@@ -111,15 +112,26 @@ export default function MeetTheChildrenUI({
 			console.log(childrenError);
 			throw childrenError;
 		}
-		const childrenWithUrls = await Promise.all(
-			(newChildren || []).map(async (child) => {
-				if (!child.photo_path) return child;
-				const { data } = await supabase.storage
-					.from("profiles")
-					.createSignedUrl(child.photo_path, 60 * 60);
-				return { ...child, imageUrl: data?.signedUrl };
-			}),
-		);
+
+		let signedUrls: Record<string, string> = {};
+		const photoPaths: string[] = [];
+		for (const child of newChildren ?? []) {
+			if (child.photo_path) photoPaths.push(child.photo_path);
+		}
+
+		if (photoPaths.length > 0) {
+			const res = await fetch("/api/supabase/children-signed-urls", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ paths: photoPaths }),
+			});
+			if (res.ok) ({ signedUrls } = await res.json());
+		}
+
+		const childrenWithUrls = (newChildren || []).map((child) => ({
+			...child,
+			imageUrl: child.photo_path ? signedUrls[child.photo_path] : undefined,
+		}));
 		setChildren(childrenWithUrls as ChildRow[]);
 
 		const { count, error: countError } = await supabase
@@ -168,8 +180,6 @@ export default function MeetTheChildrenUI({
 		fetchUniqueCountries();
 		console.log("fetched unique countries");
 	}, []); // Fetch unique countries on component mount
-
-	const [isLoaded, setIsLoaded] = React.useState(false);
 
 	return (
 		<main className="min-h-screen bg-background text-foreground">

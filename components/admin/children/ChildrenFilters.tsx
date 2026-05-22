@@ -80,6 +80,7 @@ export default function ChildrenFilters({ onFiltersChange }: Props) {
 						Gender
 					</div>
 					<Select
+						aria-label="Gender"
 						placeholder="Select gender"
 						radius="md"
 						variant="bordered"
@@ -99,6 +100,7 @@ export default function ChildrenFilters({ onFiltersChange }: Props) {
 						Status
 					</div>
 					<Select
+						aria-label="Status"
 						radius="md"
 						variant="bordered"
 						selectionMode="multiple"

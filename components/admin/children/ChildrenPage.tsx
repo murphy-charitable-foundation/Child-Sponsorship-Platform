@@ -56,19 +56,32 @@ export default function ChildrenPage() {
 						.from("profiles")
 						.createSignedUrls(paths, 60 * 60);
 					for (const entry of signed ?? []) {
-						if (entry.path && entry.signedUrl) signedUrlMap.set(entry.path, entry.signedUrl);
+						if (entry.path && entry.signedUrl)
+							signedUrlMap.set(entry.path, entry.signedUrl);
 					}
 				}
 
-				setChildren(
-					data.map((child) => ({
-						...child,
-						age: ageMap.get(child.id) ?? null,
-						imageUrl: child.photo_path
-							? signedUrlMap.get(child.photo_path)
-							: undefined,
-					})),
-				);
+				let signedUrls: Record<string, string> = {};
+				const photoPaths: string[] = [];
+				for (const child of data ?? []) {
+					if (child.photo_path) photoPaths.push(child.photo_path);
+				}
+
+				if (photoPaths.length > 0) {
+					const res = await fetch("/api/supabase/children-signed-urls", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ paths: photoPaths }),
+					});
+					if (res.ok) ({ signedUrls } = await res.json());
+				}
+
+				const childrenWithUrls = data.map((child) => ({
+					...child,
+					imageUrl: child.photo_path ? signedUrls[child.photo_path] : undefined,
+					age: ageMap.get(child.id) ?? null,
+				}));
+				setChildren(childrenWithUrls as ChildRow[]);
 			}
 		}
 		fetchChildren();
