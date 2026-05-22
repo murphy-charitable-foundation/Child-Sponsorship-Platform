@@ -10,6 +10,7 @@ import {
 	TableCell,
 	Button,
 	Chip,
+	Avatar,
 	useDisclosure,
 } from "@heroui/react";
 import ChildEditModal, { type ChildRow } from "./ChildEditModal";
@@ -22,21 +23,20 @@ function statusChipColor(status: boolean) {
 
 type Props = {
 	rows: ChildRow[];
+	onChildUpdate: (updated: ChildRow) => void;
 };
 
-export default function ChildrenTable({ rows }: Props) {
+export default function ChildrenTable({ rows, onChildUpdate }: Props) {
 	const editModal = useDisclosure();
 	const [editChild, setEditChild] = useState<ChildRow | null>(null);
 
-	//This open the EditModal for the child
 	function openEdit(child: ChildRow) {
 		setEditChild(child);
 		editModal.onOpen();
 	}
 
 	function handleSave(updated: ChildRow) {
-		// TODO: persist updated child to database
-		console.log("Saving child:", updated);
+		onChildUpdate(updated);
 	}
 
 	return (
@@ -46,6 +46,7 @@ export default function ChildrenTable({ rows }: Props) {
 				removeWrapper
 			>
 				<TableHeader>
+					<TableColumn> </TableColumn>
 					<TableColumn>LAST NAME</TableColumn>
 					<TableColumn>FIRST NAME</TableColumn>
 					<TableColumn>ID</TableColumn>
@@ -53,7 +54,7 @@ export default function ChildrenTable({ rows }: Props) {
 					<TableColumn>GENDER</TableColumn>
 					<TableColumn>LOCATION</TableColumn>
 					<TableColumn>STATUS</TableColumn>
-					{/* <TableColumn>DATE ENROLLED</TableColumn> */}
+					<TableColumn>DATE ENROLLED</TableColumn>
 					<TableColumn>ACTIONS</TableColumn>
 				</TableHeader>
 
@@ -63,6 +64,15 @@ export default function ChildrenTable({ rows }: Props) {
 				>
 					{(c) => (
 						<TableRow key={c.id}>
+							<TableCell>
+								<Avatar
+									src={c.imageUrl}
+									name={c.first_name}
+									size="sm"
+									radius="full"
+									color="primary"
+								/>
+							</TableCell>
 							<TableCell>{c.last_name}</TableCell>
 							<TableCell>{c.first_name}</TableCell>
 							<TableCell>{c.id}</TableCell>
@@ -80,7 +90,7 @@ export default function ChildrenTable({ rows }: Props) {
 									{c.active ? "Active" : "Waiting"}
 								</Chip>
 							</TableCell>
-							{/* <TableCell>{c.dateEnrolled}</TableCell> */}
+							<TableCell>{new Date(c.created_at).toDateString()}</TableCell>
 							<TableCell>
 								<div className="flex gap-2">
 									<Button

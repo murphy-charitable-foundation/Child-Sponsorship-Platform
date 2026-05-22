@@ -27,6 +27,7 @@ export type ChildRow = {
 	photo_path?: string;
 	school_grade: number;
 	imageUrl?: string;
+	created_at: string;
 };
 
 type Props = {
@@ -51,27 +52,10 @@ export default function ChildEditModal({
 
 	useEffect(() => {
 		if (!child) return;
-
-		async function getSignedUrl(path: string) {
-			const { data } = await supabase.storage
-				.from("profiles")
-				.createSignedUrl(path, 60 * 60);
-			return data?.signedUrl;
-		}
-
-		async function init() {
-			setForm({
-				...child!,
-				imageUrl: child!.photo_path
-					? await getSignedUrl(child!.photo_path)
-					: undefined,
-			});
-			setImageFile(null);
-			setError(null);
-		}
-
-		init();
-	}, [child, supabase]);
+		setForm({ ...child });
+		setImageFile(null);
+		setError(null);
+	}, [child]);
 
 	function handleChange(field: keyof ChildRow, value: string) {
 		setForm((prev) => {

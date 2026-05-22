@@ -29,15 +29,46 @@ export default function ChildrenPage() {
 	//Load children data from Supabase
 	useEffect(() => {
 		async function fetchChildren() {
-			const { data, error: childrenError } = await supabase
-				.from("children_with_ages")
-				.select("*");
+			const [{ data, error: childrenError }, { data: ageData }] =
+				await Promise.all([
+					supabase.from("children").select("*"),
+					supabase.from("children_with_ages").select("id, age"),
+				]);
 
 			if (childrenError) {
 				console.log(childrenError);
 			}
 			if (data?.length) {
-				setChildren(data);
+				const ageMap = new Map(
+					(ageData ?? []).map((r: { id: string; age: number }) => [
+						r.id,
+						r.age,
+					]),
+				);
+
+				const paths = data
+					.map((c) => c.photo_path)
+					.filter((p): p is string => !!p);
+
+				const signedUrlMap = new Map<string, string>();
+				if (paths.length) {
+					const { data: signed } = await supabase.storage
+						.from("profiles")
+						.createSignedUrls(paths, 60 * 60);
+					for (const entry of signed ?? []) {
+						if (entry.path && entry.signedUrl) signedUrlMap.set(entry.path, entry.signedUrl);
+					}
+				}
+
+				setChildren(
+					data.map((child) => ({
+						...child,
+						age: ageMap.get(child.id) ?? null,
+						imageUrl: child.photo_path
+							? signedUrlMap.get(child.photo_path)
+							: undefined,
+					})),
+				);
 			}
 		}
 		fetchChildren();
@@ -92,7 +123,14 @@ export default function ChildrenPage() {
 			>
 				<div className="space-y-8">
 					<ChildrenFilters onFiltersChange={setFilters} />
-					<ChildrenTable rows={filtered} />
+					<ChildrenTable
+						rows={filtered}
+						onChildUpdate={(updated) =>
+							setChildren((prev) =>
+								prev.map((c) => (c.id === updated.id ? updated : c)),
+							)
+						}
+					/>
 				</div>
 			</PanelCard>
 		</div>
