@@ -3,7 +3,8 @@
 import { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Button, Avatar } from "@heroui/react";
+import { Avatar } from "@heroui/react";
+import { Button } from "@/components/ui/button";
 import { useParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { ChildRow } from "@/components/admin/children/ChildrenPage";
@@ -118,16 +119,13 @@ function ChildProfilePage() {
 	if (notFound || !child) {
 		return (
 			<div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-blue-50">
-				<p className="text-xl font-semibold text-[#2b3039]">Child not found.</p>
+				<p className="text-xl font-semibold ">Child not found.</p>
 
 				<Button
-					as={Link}
-					href="/sponsorship/children"
-					variant="bordered"
-					color="secondary"
-					radius="md"
+					variant="outline"
+					asChild
 				>
-					← Back to All Children
+					<Link href="/sponsorship/children">← Back to All Children</Link>
 				</Button>
 			</div>
 		);
@@ -167,7 +165,7 @@ function ChildProfilePage() {
 				{/* Back button */}
 				<Link
 					href="/sponsorship/children"
-					className="mb-6 inline-flex items-center gap-2 rounded-[12px] bg-blue-50 px-4 py-3 text-sm text-[#2b3039] transition-colors hover:bg-[#e4edf8]"
+					className="mb-6 inline-flex items-center gap-2 rounded-[12px] bg-blue-50 px-4 py-3 text-sm  transition-colors hover:bg-blue-100"
 				>
 					<ArrowLeft className="size-6" /> Back to all children
 				</Link>
@@ -175,13 +173,13 @@ function ChildProfilePage() {
 				{/* Main two-column layout */}
 				<div className="flex flex-col items-start gap-4 lg:flex-row">
 					{/* Left: Child Profile Card */}
-					<div className="flex w-full shrink-0 flex-col items-center gap-3 rounded-[12px] border border-[#e4e6e9] bg-white px-4 pb-8 pt-4 lg:w-[408px]">
+					<div className="flex w-full shrink-0 flex-col items-center gap-3 rounded-[12px] border border-zinc-100 bg-white px-4 pb-8 pt-4 lg:w-[408px]">
 						{/* Photo */}
-						<div className="relative h-[300px] w-full overflow-hidden rounded-[14px] bg-[#e4edf8]">
+						<div className="relative h-[300px] w-full overflow-hidden rounded-[14px] bg-blue-100">
 							{child.imageUrl ? (
 								<Image
 									src={child.imageUrl}
-									alt={child.full_name}
+									alt={child.imageUrl}
 									fill
 									className="object-cover object-[center_30%]"
 									unoptimized
@@ -191,17 +189,18 @@ function ChildProfilePage() {
 									radius="none"
 									color="primary"
 									className="h-full w-full"
+									name={child.full_name}
 								/>
 							)}
 						</div>
 
 						{/* Name & info */}
 						<div className="flex w-full flex-col items-center gap-2">
-							<h2 className="text-center text-2xl font-semibold text-[#2b3039]">
+							<h2 className="text-center text-2xl font-semibold ">
 								{child.first_name} {child.last_name}
 							</h2>
 
-							<p className="text-sm font-medium text-[#2b3039]">
+							<p className="text-sm font-medium ">
 								{child.age} years old
 								{child.location ? ` • ${child.location}` : ""}
 							</p>
@@ -209,27 +208,28 @@ function ChildProfilePage() {
 
 						{/* Buttons */}
 						<div className="mt-2 flex w-full flex-col gap-4">
-							<button className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-[12px] bg-[#4bb32e] text-base font-bold text-white transition-colors hover:bg-[#42972a]">
-								<Heart className="size-6 text-white" />
+							<Button className="h-12 w-full rounded-[12px] bg-green-500 text-base font-bold text-white hover:bg-green-600 [&_svg]:size-5">
+								<Heart />
 								Sponsor {child.first_name}
-							</button>
+							</Button>
 
-							<button className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-[12px] border-2 border-[#4bb32e] text-base font-bold text-[#4bb32e] transition-colors hover:bg-[#f6faf4]">
-								<Plus className="size-6 text-green-500" />
+							<Button
+								variant="outline"
+								className="h-12 w-full rounded-[12px] border-2 border-green-500 text-base font-bold text-green-500 hover:bg-green-50 hover:text-green-500 [&_svg]:size-5"
+							>
+								<Plus />
 								Sponsor More Children
-							</button>
+							</Button>
 						</div>
 					</div>
 
 					{/* Right: Content sections */}
 					<div className="flex min-w-0 flex-1 flex-col gap-4">
 						{/* About */}
-						<div className="flex flex-col gap-3 rounded-[12px] border border-[#e4e6e9] bg-white p-6">
+						<div className="flex flex-col gap-3 rounded-[12px] border border-zinc-100 bg-white p-6">
 							<div className="flex items-center gap-2">
 								<Smile className="size-6 text-green-500" />
-								<h3 className="text-2xl font-semibold text-[#2b3039]">
-									{child.first_name}
-								</h3>
+								<h3 className="text-2xl font-semibold ">{child.first_name}</h3>
 							</div>
 
 							<p className="text-base leading-6 text-[#3c424c]">
@@ -239,22 +239,22 @@ function ChildProfilePage() {
 							</p>
 
 							{bioIsTruncated && (
-								<button
+								<Button
+									variant="ghost"
 									onClick={() => setShowFullBio((v) => !v)}
-									className="flex items-center gap-1 self-end text-sm text-[#2b3039] hover:underline"
+									className="self-end text-sm [&_svg]:size-5"
 								>
 									{showFullBio ? "Show less" : "Show more"}
-
-									<ArrowRight className="size-6" />
-								</button>
+									<ArrowRight />
+								</Button>
 							)}
 						</div>
 
 						{/* Dreams & Aspirations */}
-						<div className="flex flex-col gap-3 rounded-[12px] border border-[#e4e6e9] bg-white p-6">
+						<div className="flex flex-col gap-3 rounded-[12px] border border-zinc-100 bg-white p-6">
 							<div className="flex items-center gap-2">
 								<Sparkles className="size-6 text-green-500" />
-								<h3 className="text-2xl font-semibold text-[#2b3039]">
+								<h3 className="text-2xl font-semibold ">
 									Dreams & Aspirations
 								</h3>
 							</div>
@@ -267,8 +267,8 @@ function ChildProfilePage() {
 						</div>
 
 						{/* Your Sponsorship Provides */}
-						<div className="flex flex-col gap-6 rounded-[12px] bg-[#cadbf2] p-6">
-							<h3 className="text-2xl font-semibold text-[#2b3039]">
+						<div className="flex flex-col gap-6 rounded-[12px] bg-blue-200 p-6">
+							<h3 className="text-2xl font-semibold ">
 								Your Sponsorship Provides
 							</h3>
 
@@ -282,9 +282,7 @@ function ChildProfilePage() {
 											{item.icon}
 										</div>
 
-										<h4 className="text-xl font-semibold text-[#2b3039]">
-											{item.title}
-										</h4>
+										<h4 className="text-xl font-semibold ">{item.title}</h4>
 
 										<p className="text-base leading-6 text-[#3c424c]">
 											{item.desc}
@@ -295,9 +293,9 @@ function ChildProfilePage() {
 						</div>
 
 						{/* Sponsor a Group */}
-						<div className="flex flex-col items-center gap-8 rounded-[12px] border border-[#e4e6e9] bg-white p-6 pb-8">
+						<div className="flex flex-col items-center gap-8 rounded-[12px] border border-zinc-100 bg-white p-6 pb-8">
 							<div className="flex flex-col items-center gap-4">
-								<h3 className="text-2xl font-semibold text-[#2b3039]">
+								<h3 className="text-2xl font-semibold ">
 									Sponsor a Group of Children
 								</h3>
 
@@ -306,14 +304,14 @@ function ChildProfilePage() {
 								</p>
 							</div>
 
-							<button className="flex h-12 w-[210px] cursor-pointer items-center justify-center gap-2 rounded-[12px] bg-[#4bb32e] text-base font-bold text-white transition-colors hover:bg-[#42972a]">
-								<Heart className="size-6 text-white" />
+							<Button className="h-12 w-[210px] rounded-[12px] bg-green-500 text-base font-bold text-white hover:bg-green-600 [&_svg]:size-5">
+								<Heart />
 								Sponsor a Group
-							</button>
+							</Button>
 						</div>
 
 						{/* Disclaimer */}
-						<div className="rounded-[12px] border border-[#e4e6e9] bg-white p-6">
+						<div className="rounded-[12px] border border-zinc-100 bg-white p-6">
 							<p className="text-base text-[#3c424c]">
 								Sponsorship starts at just $25/month per child and can be
 								cancelled anytime
