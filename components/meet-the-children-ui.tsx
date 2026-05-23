@@ -24,7 +24,7 @@ import {
 	PopoverTrigger,
 	PopoverContent,
 } from "@heroui/react";
-import { ChildRow } from "./admin/children/ChildrenPage";
+import { Child } from "./admin/children/ChildrenPage";
 
 const pageCapacities = ["20", "60", "100"];
 
@@ -42,7 +42,7 @@ export default function MeetTheChildrenUI({
 	);
 	const [page, setPage] = React.useState(1);
 
-	const [children, setChildren] = React.useState<ChildRow[]>([]);
+	const [children, setChildren] = React.useState<Child[]>([]);
 	const [count, setCount] = React.useState(0);
 	const [ageRange, setAgeRange] = React.useState<number[]>([0, 25]);
 	const [genders, setGenders] = React.useState<string[]>(["Male", "Female"]);
@@ -120,7 +120,7 @@ export default function MeetTheChildrenUI({
 		}
 
 		if (photoPaths.length > 0) {
-			const res = await fetch("/api/supabase/children-signed-url", {
+			const res = await fetch("/api/supabase/signed-url/children", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ paths: photoPaths }),
@@ -130,9 +130,9 @@ export default function MeetTheChildrenUI({
 
 		const childrenWithUrls = (newChildren || []).map((child) => ({
 			...child,
-			imageUrl: child.photo_path ? signedUrls[child.photo_path] : undefined,
+			image_url: child.photo_path ? signedUrls[child.photo_path] : undefined,
 		}));
-		setChildren(childrenWithUrls as ChildRow[]);
+		setChildren(childrenWithUrls as Child[]);
 
 		const { count, error: countError } = await supabase
 			.from("children_with_ages")
@@ -347,11 +347,11 @@ export default function MeetTheChildrenUI({
 								isLoaded={isLoaded}
 							>
 								<CardBody className="overflow-visible p-0">
-									{item.imageUrl ? (
+									{item.image_url ? (
 										<Image
 											removeWrapper
 											radius="none"
-											src={item.imageUrl}
+											src={item.image_url}
 											alt={item.full_name}
 											className="w-full h-[160px] object-cover object-[center_30%]"
 										/>

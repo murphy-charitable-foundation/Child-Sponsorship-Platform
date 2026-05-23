@@ -4,11 +4,11 @@ import { createClient } from "@/lib/supabase/server";
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_BYTES = 45 * 1024;
 const BUCKET = "profiles";
+const ALLOWED_TARGETS = ["children", "sponsor"] as const;
+type TargetType = (typeof ALLOWED_TARGETS)[number];
 
-//This is child image upload. only admin can upload the children image
 export async function POST(req: Request) {
 	const supabase = await createClient();
-	//First check auth with current user
 	try {
 		const {
 			data: { user },
@@ -19,7 +19,6 @@ export async function POST(req: Request) {
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
-		//Check admin database
 		const { data: adminRow, error: adminError } = await supabase
 			.from("admins")
 			.select("id")
@@ -30,16 +29,20 @@ export async function POST(req: Request) {
 			return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 		}
 
-		//Validate form data
 		const formData = await req.formData();
 		const file = formData.get("image") as File | null;
-		const childId = formData.get("childId") as string | null;
+		const targetId = formData.get("targetId") as string | null;
+		const targetType = (formData.get("targetType") as string | null) ?? "children";
 
-		if (!file || !childId) {
+		if (!file || !targetId) {
 			return NextResponse.json(
-				{ error: "Missing image or childId" },
+				{ error: "Missing image or targetId" },
 				{ status: 400 },
 			);
+		}
+
+		if (!ALLOWED_TARGETS.includes(targetType as TargetType)) {
+			return NextResponse.json({ error: "Invalid targetType" }, { status: 400 });
 		}
 
 		if (!ALLOWED_TYPES.includes(file.type)) {
@@ -56,8 +59,7 @@ export async function POST(req: Request) {
 			);
 		}
 
-		// Path matches RLS policy: children/{child_id}/
-		const path = `children/${childId}/profile.jpg`;
+		const path = `${targetType}/${targetId}/profile.jpg`;
 		const buffer = new Uint8Array(await file.arrayBuffer());
 
 		const { error: uploadError } = await supabase.storage
@@ -68,10 +70,9 @@ export async function POST(req: Request) {
 			return NextResponse.json({ error: uploadError.message }, { status: 500 });
 		}
 
-		//Signed URL since bucket is private
 		const { data: signedData, error: signedError } = await supabase.storage
 			.from(BUCKET)
-			.createSignedUrl(path, 60 * 60); // 1 hour
+			.createSignedUrl(path, 60 * 60);
 
 		if (signedError || !signedData) {
 			return NextResponse.json(
@@ -80,11 +81,11 @@ export async function POST(req: Request) {
 			);
 		}
 
-		// Save path to children table
+		const table = targetType === "children" ? "children" : "sponsors";
 		const { error: dbError } = await supabase
-			.from("children")
+			.from(table)
 			.update({ photo_path: path })
-			.eq("id", childId);
+			.eq("id", targetId);
 
 		if (dbError) {
 			return NextResponse.json({ error: dbError.message }, { status: 500 });

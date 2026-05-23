@@ -15,7 +15,7 @@ import ChildrenTable from "@/components/admin/children/ChildrenTable";
 //If we use "active" (boolean), we need to identify what is the waiting and exited.
 //For now, I use active and set waiting if the active value is false
 
-export type ChildRow = {
+export interface Child {
 	id: string;
 	first_name: string;
 	last_name: string;
@@ -27,16 +27,16 @@ export type ChildRow = {
 	active: boolean;
 	photo_path?: string;
 	school_grade: number;
-	imageUrl?: string;
+	image_url?: string;
 	created_at: string;
 	favorite_activity: string;
 	dream_job: string;
-};
+}
 
 const supabase = createClient();
 
 export default function ChildrenPage() {
-	const [children, setChildren] = useState<ChildRow[]>([]);
+	const [children, setChildren] = useState<Child[]>([]);
 	const [filters, setFilters] = useState<ChildFilters>({
 		search: "",
 		gender: "",
@@ -46,59 +46,65 @@ export default function ChildrenPage() {
 	//Load children data from Supabase
 	useEffect(() => {
 		async function fetchChildren() {
-			const [{ data, error: childrenError }, { data: ageData }] =
-				await Promise.all([
-					supabase.from("children").select("*"),
-					supabase.from("children_with_ages").select("id, age"),
-				]);
+			try {
+				const [{ data, error: childrenError }, { data: ageData }] =
+					await Promise.all([
+						supabase.from("children").select("*"),
+						supabase.from("children_with_ages").select("id, age"),
+					]);
 
-			if (childrenError) {
-				console.log(childrenError);
-			}
-			if (data?.length) {
-				const ageMap = new Map(
-					(ageData ?? []).map((r: { id: string; age: number }) => [
-						r.id,
-						r.age,
-					]),
-				);
+				if (childrenError) {
+					console.log(childrenError);
+				}
+				if (data?.length) {
+					const ageMap = new Map(
+						(ageData ?? []).map((r: { id: string; age: number }) => [
+							r.id,
+							r.age,
+						]),
+					);
 
-				const paths = data
-					.map((c) => c.photo_path)
-					.filter((p): p is string => !!p);
+					const paths = data
+						.map((c) => c.photo_path)
+						.filter((p): p is string => !!p);
 
-				const signedUrlMap = new Map<string, string>();
-				if (paths.length) {
-					const { data: signed } = await supabase.storage
-						.from("profiles")
-						.createSignedUrls(paths, 60 * 60);
-					for (const entry of signed ?? []) {
-						if (entry.path && entry.signedUrl)
-							signedUrlMap.set(entry.path, entry.signedUrl);
+					const signedUrlMap = new Map<string, string>();
+					if (paths.length) {
+						const { data: signed } = await supabase.storage
+							.from("profiles")
+							.createSignedUrls(paths, 60 * 60);
+						for (const entry of signed ?? []) {
+							if (entry.path && entry.signedUrl)
+								signedUrlMap.set(entry.path, entry.signedUrl);
+						}
 					}
-				}
 
-				let signedUrls: Record<string, string> = {};
-				const photoPaths: string[] = [];
-				for (const child of data ?? []) {
-					if (child.photo_path) photoPaths.push(child.photo_path);
-				}
+					let signedUrls: Record<string, string> = {};
+					const photoPaths: string[] = [];
+					for (const child of data ?? []) {
+						if (child.photo_path) photoPaths.push(child.photo_path);
+					}
 
-				if (photoPaths.length > 0) {
-					const res = await fetch("/api/supabase/children-signed-url", {
-						method: "POST",
-						headers: { "Content-Type": "application/json" },
-						body: JSON.stringify({ paths: photoPaths }),
-					});
-					if (res.ok) ({ signedUrls } = await res.json());
-				}
+					if (photoPaths.length > 0) {
+						const res = await fetch("/api/supabase/signed-url/children", {
+							method: "POST",
+							headers: { "Content-Type": "application/json" },
+							body: JSON.stringify({ paths: photoPaths }),
+						});
+						if (res.ok) ({ signedUrls } = await res.json());
+					}
 
-				const childrenWithUrls = data.map((child) => ({
-					...child,
-					imageUrl: child.photo_path ? signedUrls[child.photo_path] : undefined,
-					age: ageMap.get(child.id) ?? null,
-				}));
-				setChildren(childrenWithUrls as ChildRow[]);
+					const childrenWithUrls = data.map((child) => ({
+						...child,
+						image_url: child.photo_path
+							? signedUrls[child.photo_path]
+							: undefined,
+						age: ageMap.get(child.id) ?? null,
+					}));
+					setChildren(childrenWithUrls as Child[]);
+				}
+			} catch (err) {
+				console.error("Failed to fetch children:", err);
 			}
 		}
 		fetchChildren();

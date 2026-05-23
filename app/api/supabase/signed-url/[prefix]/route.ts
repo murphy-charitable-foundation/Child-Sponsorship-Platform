@@ -3,17 +3,31 @@ import { createClient } from "@/lib/supabase/server";
 
 const BUCKET = "profiles";
 const EXPIRY = 60 * 60;
+const ALLOWED_PREFIXES = ["children", "sponsor"] as const;
+type AllowedPrefix = (typeof ALLOWED_PREFIXES)[number];
 
-export async function POST(req: NextRequest) {
+function isAllowed(prefix: string): prefix is AllowedPrefix {
+	return ALLOWED_PREFIXES.includes(prefix as AllowedPrefix);
+}
+
+export async function POST(
+	req: NextRequest,
+	{ params }: { params: Promise<{ prefix: string }> },
+) {
+	const { prefix } = await params;
+
+	if (!isAllowed(prefix)) {
+		return NextResponse.json({ error: "Invalid prefix" }, { status: 400 });
+	}
+
 	const { paths } = await req.json();
 
 	if (!Array.isArray(paths) || paths.length === 0) {
 		return NextResponse.json({ signedUrls: {} });
 	}
 
-	// Restrict to children/ prefix only
 	const safePaths = paths.filter(
-		(p): p is string => typeof p === "string" && p.startsWith("children/"),
+		(p): p is string => typeof p === "string" && p.startsWith(`${prefix}/`),
 	);
 
 	const supabase = await createClient();
@@ -36,10 +50,19 @@ export async function POST(req: NextRequest) {
 	return NextResponse.json({ signedUrls });
 }
 
-export async function GET(req: NextRequest) {
+export async function GET(
+	req: NextRequest,
+	{ params }: { params: Promise<{ prefix: string }> },
+) {
+	const { prefix } = await params;
+
+	if (!isAllowed(prefix)) {
+		return NextResponse.json({ error: "Invalid prefix" }, { status: 400 });
+	}
+
 	const path = req.nextUrl.searchParams.get("path");
 
-	if (!path || !path.startsWith("children/")) {
+	if (!path || !path.startsWith(`${prefix}/`)) {
 		return NextResponse.json({ error: "Invalid path" }, { status: 400 });
 	}
 

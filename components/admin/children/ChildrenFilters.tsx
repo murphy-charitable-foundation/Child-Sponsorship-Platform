@@ -62,7 +62,7 @@ export default function ChildrenFilters({ onFiltersChange }: Props) {
 				{/* Search */}
 				<div className="lg:col-span-6">
 					<div className="mb-1 text-sm font-medium text-default-700">
-						Who are you looking for?
+						Search by first or last name
 					</div>
 					<Input
 						placeholder=""

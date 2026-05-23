@@ -13,31 +13,32 @@ import {
 	Avatar,
 	useDisclosure,
 } from "@heroui/react";
-import ChildEditModal from "./ChildEditModal";
-import { ChildRow } from "./ChildrenPage";
+import { Child } from "./ChildrenPage";
+import type { Sponsor } from "../sponsors/SponsorsPage";
+import ProfileEditModal from "@/components/ui/profileEditModal";
 
-function statusChipColor(status: boolean) {
+export function statusChipColor(status: boolean) {
 	if (status) return "success";
 	if (!status) return "warning";
 	return "default"; // for Exited
 }
 
-type Props = {
-	rows: ChildRow[];
-	onChildUpdate: (updated: ChildRow) => void;
-};
+interface Props {
+	rows: Child[];
+	onChildUpdate: (updated: Child) => void;
+}
 
 export default function ChildrenTable({ rows, onChildUpdate }: Props) {
 	const editModal = useDisclosure();
-	const [editChild, setEditChild] = useState<ChildRow | null>(null);
+	const [editChild, setEditChild] = useState<Child | null>(null);
 
-	function openEdit(child: ChildRow) {
+	function openEdit(child: Child) {
 		setEditChild(child);
 		editModal.onOpen();
 	}
 
-	function handleSave(updated: ChildRow) {
-		onChildUpdate(updated);
+	function handleSave(updated: Child | Sponsor) {
+		onChildUpdate(updated as Child);
 	}
 
 	return (
@@ -67,7 +68,7 @@ export default function ChildrenTable({ rows, onChildUpdate }: Props) {
 						<TableRow key={c.id}>
 							<TableCell>
 								<Avatar
-									src={c.imageUrl}
+									src={c.image_url}
 									name={c.first_name}
 									size="sm"
 									radius="full"
@@ -117,8 +118,9 @@ export default function ChildrenTable({ rows, onChildUpdate }: Props) {
 				</TableBody>
 			</Table>
 
-			<ChildEditModal
-				child={editChild}
+			<ProfileEditModal
+				type="Child"
+				target={editChild}
 				isOpen={editModal.isOpen}
 				onOpenChange={editModal.onOpenChange}
 				onSave={handleSave}

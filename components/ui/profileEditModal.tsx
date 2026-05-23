@@ -14,22 +14,26 @@ import { useState, useEffect, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 import ProfileImageUpload from "@/components/profile-image-upload";
-import { ChildRow } from "./ChildrenPage";
+
+import { Sponsor } from "../admin/sponsors/SponsorsPage";
+import { Child } from "../admin/children/ChildrenPage";
 
 type Props = {
-	child: ChildRow | null;
+	type: "Child" | "Sponsor";
+	target: Child | Sponsor | null;
 	isOpen: boolean;
 	onOpenChange: (open: boolean) => void;
-	onSave: (updated: ChildRow) => void;
+	onSave: (updated: Child | Sponsor) => void;
 };
 
-export default function ChildEditModal({
-	child,
+export default function ProfileEditModal({
+	type,
+	target,
 	isOpen,
 	onOpenChange,
 	onSave,
 }: Props) {
-	const [form, setForm] = useState<ChildRow | null>(null);
+	const [form, setForm] = useState<Child | Sponsor | null>(null);
 	const [imageFile, setImageFile] = useState<File | null>(null);
 	const [isSaving, setIsSaving] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -37,13 +41,13 @@ export default function ChildEditModal({
 	const supabase = useMemo(() => createClient(), []);
 
 	useEffect(() => {
-		if (!child) return;
-		setForm({ ...child });
+		if (!target) return;
+		setForm({ ...target });
 		setImageFile(null);
 		setError(null);
-	}, [child]);
+	}, [target]);
 
-	function handleChange(field: keyof ChildRow, value: string) {
+	function handleChange(field: keyof Child, value: string) {
 		setForm((prev) => {
 			if (!prev) return prev;
 			return { ...prev, [field]: value };
@@ -54,7 +58,6 @@ export default function ChildEditModal({
 		if (!form) return "No form data.";
 		if (!form.first_name.trim()) return "First name is required.";
 		if (!form.last_name.trim()) return "Last name is required.";
-		if (!form.location.trim()) return "Location is required.";
 		return null;
 	}
 
@@ -74,7 +77,8 @@ export default function ChildEditModal({
 		if (imageFile) {
 			const body = new FormData();
 			body.append("image", imageFile);
-			body.append("childId", form.id);
+			body.append("targetId", form.id);
+			body.append("targetType", type === "Child" ? "children" : "sponsor");
 
 			const res = await fetch("/api/supabase/upload-profile-image", {
 				method: "POST",
@@ -85,7 +89,7 @@ export default function ChildEditModal({
 				const data = await res.json();
 				updatedForm = {
 					...updatedForm,
-					imageUrl: data.url,
+					image_url: data.url,
 					photo_path: data.path,
 				};
 			} else {
@@ -96,12 +100,13 @@ export default function ChildEditModal({
 			}
 		}
 
+		const from = type === "Child" ? "children" : "sponsors";
+
 		const { error: dbError } = await supabase
-			.from("children")
+			.from(from)
 			.update({
 				first_name: updatedForm.first_name,
 				last_name: updatedForm.last_name,
-				location: updatedForm.location,
 			})
 			.eq("id", updatedForm.id);
 
@@ -126,7 +131,7 @@ export default function ChildEditModal({
 				{(onClose) => (
 					<>
 						<ModalHeader className="flex flex-col gap-1">
-							Edit Child
+							Edit {type}
 							<span className="text-sm font-normal text-gray-500">
 								{form?.id}
 							</span>
@@ -137,7 +142,7 @@ export default function ChildEditModal({
 								<div className="flex flex-col gap-4">
 									<div className="flex justify-center pt-1">
 										<ProfileImageUpload
-											currentUrl={form.imageUrl}
+											currentUrl={form.image_url}
 											name={`${form.first_name} ${form.last_name}`}
 											onChange={(file) => setImageFile(file)}
 											size={96}
@@ -162,12 +167,6 @@ export default function ChildEditModal({
 											isRequired
 										/>
 									</div>
-									<Input
-										label="Location"
-										value={form.location}
-										onValueChange={(v) => handleChange("location", v)}
-										isRequired
-									/>
 								</div>
 							)}
 						</ModalBody>

@@ -7,7 +7,7 @@ import { Avatar } from "@heroui/react";
 import { Button } from "@/components/ui/button";
 import { useParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { ChildRow } from "@/components/admin/children/ChildrenPage";
+import { Child } from "@/components/admin/children/ChildrenPage";
 import {
 	BookOpen,
 	HeartPlus,
@@ -61,7 +61,7 @@ const sponsorshipItems = [
 
 function ChildProfilePage() {
 	const { childId } = useParams<{ childId: string }>();
-	const [child, setChild] = useState<ChildRow>();
+	const [child, setChild] = useState<Child>();
 	const [loading, setLoading] = useState(true);
 	const [notFound, setNotFound] = useState(false);
 	const [showFullBio, setShowFullBio] = useState(false);
@@ -88,7 +88,7 @@ function ChildProfilePage() {
 
 			if (data.photo_path) {
 				const res = await fetch(
-					`/api/supabase/children-signed-url?path=${data.photo_path}`,
+					`/api/supabase/signed-url/children?path=${data.photo_path}`,
 					{ method: "GET" },
 				);
 
@@ -99,7 +99,7 @@ function ChildProfilePage() {
 
 			setChild({
 				...data,
-				imageUrl: signedUrl,
+				image_url: signedUrl,
 			});
 
 			setLoading(false);
@@ -176,10 +176,10 @@ function ChildProfilePage() {
 					<div className="flex w-full shrink-0 flex-col items-center gap-3 rounded-[12px] border border-zinc-100 bg-white px-4 pb-8 pt-4 lg:w-[408px]">
 						{/* Photo */}
 						<div className="relative h-[300px] w-full overflow-hidden rounded-[14px] bg-blue-100">
-							{child.imageUrl ? (
+							{child.image_url ? (
 								<Image
-									src={child.imageUrl}
-									alt={child.imageUrl}
+									src={child.image_url}
+									alt={`${child.first_name} ${child.last_name}`}
 									fill
 									className="object-cover object-[center_30%]"
 									unoptimized
@@ -189,7 +189,6 @@ function ChildProfilePage() {
 									radius="none"
 									color="primary"
 									className="h-full w-full"
-									name={child.full_name}
 								/>
 							)}
 						</div>
