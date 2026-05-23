@@ -78,9 +78,9 @@ export default function ProfileEditModal({
 			const body = new FormData();
 			body.append("image", imageFile);
 			body.append("targetId", form.id);
-			body.append("targetType", type === "Child" ? "children" : "sponsor");
+			body.append("targetType", type === "Child" ? "children" : "sponsors");
 
-			const res = await fetch("/api/supabase/upload-profile-image", {
+			const res = await fetch("/api/supabase/admin-upload-profile-image", {
 				method: "POST",
 				body,
 			});

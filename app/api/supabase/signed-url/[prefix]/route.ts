@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 
 const BUCKET = "profiles";
 const EXPIRY = 60 * 60;
-const ALLOWED_PREFIXES = ["children", "sponsor"] as const;
+const ALLOWED_PREFIXES = ["children", "sponsors"] as const;
 type AllowedPrefix = (typeof ALLOWED_PREFIXES)[number];
 
 function isAllowed(prefix: string): prefix is AllowedPrefix {

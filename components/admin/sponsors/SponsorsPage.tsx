@@ -56,7 +56,7 @@ export default function SponsorPage() {
 
 				if (photoPaths.length === 0) return;
 
-				const res = await fetch("/api/supabase/signed-url/sponsor", {
+				const res = await fetch("/api/supabase/signed-url/sponsors", {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ paths: photoPaths }),
@@ -136,7 +136,9 @@ export default function SponsorPage() {
 					onSearchChange={(v) => setFilters((f) => ({ ...f, search: v }))}
 					onStatusChange={(v) => setFilters((f) => ({ ...f, status: v }))}
 					onTypeChange={(v) => setFilters((f) => ({ ...f, type: v }))}
-					onResetFilters={() => setFilters({ search: "", status: "all", type: "all" })}
+					onResetFilters={() =>
+						setFilters({ search: "", status: "all", type: "all" })
+					}
 				/>
 				<SponsorsTable
 					activeTab={activeTab}
