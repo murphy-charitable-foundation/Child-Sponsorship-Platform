@@ -26,6 +26,7 @@ export function AppNavbar() {
 	const { user, loading } = useAuth();
 	const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
 	const [target, setTarget] = useState<string>("");
+	const [mounted, setMounted] = useState(false);
 
 	const logout = async () => {
 		const supabase = createClient();
@@ -33,6 +34,10 @@ export function AppNavbar() {
 		await supabase.auth.signOut();
 		router.push("/auth/login");
 	};
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
 
 	useEffect(() => {
 		//get the sponsors data from db
@@ -154,7 +159,7 @@ export function AppNavbar() {
 				className="gap-4 pr-4"
 			>
 				<NavbarItem>
-					{!loading && !user && (
+					{mounted && !loading && !user && (
 						<Button
 							as={NextLink}
 							href="/auth/login"
@@ -166,7 +171,7 @@ export function AppNavbar() {
 							Login
 						</Button>
 					)}
-					{!loading && user && (
+					{mounted && !loading && user && (
 						<Dropdown>
 							<DropdownTrigger>
 								<Button
@@ -185,7 +190,7 @@ export function AppNavbar() {
 							<DropdownMenu>
 								<DropdownItem
 									key="profile"
-									onClick={() => router.push("profile")}
+									onClick={() => router.push("/profile")}
 								>
 									Profile
 								</DropdownItem>
