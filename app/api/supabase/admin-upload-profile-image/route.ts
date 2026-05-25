@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_BYTES = 45 * 1024;
@@ -20,15 +21,25 @@ export async function POST(req: Request) {
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
-		const { data: adminRow, error: adminError } = await supabase
+		const isAdmin = await supabase
 			.from("admins")
 			.select("id")
 			.eq("id", user.id)
-			.single();
+			.single()
+			.then(({ data }) => !!data);
 
-		if (adminError || !adminRow) {
+		const isSuperAdmin = await supabase
+			.from("super_admins")
+			.select("id")
+			.eq("id", user.id)
+			.single()
+			.then(({ data }) => !!data);
+
+		if (!isAdmin && !isSuperAdmin) {
 			return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 		}
+
+		const adminClient = createAdminClient();
 
 		const formData = await req.formData();
 		const file = formData.get("image") as File | null;
@@ -66,7 +77,7 @@ export async function POST(req: Request) {
 		const path = `${targetType}/${targetId}/profile.jpg`;
 		const buffer = new Uint8Array(await file.arrayBuffer());
 
-		const { error: uploadError } = await supabase.storage
+		const { error: uploadError } = await adminClient.storage
 			.from(BUCKET)
 			.upload(path, buffer, { contentType: "image/jpeg", upsert: true });
 
@@ -74,7 +85,7 @@ export async function POST(req: Request) {
 			return NextResponse.json({ error: uploadError.message }, { status: 500 });
 		}
 
-		const { data: signedData, error: signedError } = await supabase.storage
+		const { data: signedData, error: signedError } = await adminClient.storage
 			.from(BUCKET)
 			.createSignedUrl(path, 60 * 60);
 
@@ -85,7 +96,7 @@ export async function POST(req: Request) {
 			);
 		}
 
-		const { error: dbError } = await supabase
+		const { error: dbError } = await adminClient
 			.from(targetType)
 			.update({ photo_path: path })
 			.eq("id", targetId);

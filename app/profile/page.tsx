@@ -15,6 +15,10 @@ const SPONSOR_TYPE_LABELS: Record<string, string> = {
 	ngo: "Organization / NGO",
 	religious: "Religious Institution",
 };
+const ROLE_LABELS: Record<string, string> = {
+	admin: "Admin",
+	super_admin: "Super Admin",
+};
 
 export default function ProfilePage() {
 	const { user, loading } = useAuth();
@@ -25,6 +29,7 @@ export default function ProfilePage() {
 	const [isSaving, setIsSaving] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [target, setTarget] = useState<string>("");
 
 	useEffect(() => {
 		if (!loading && !user) {
@@ -36,11 +41,20 @@ export default function ProfilePage() {
 		//get the sponsors data from db
 		if (!user) return;
 		const role = user.user_metadata.role;
+		console.log("role", role);
 
-		const fetchSponsor = async () => {
+		if (role === "sponsor") {
+			setTarget("sponsors");
+		} else if (role === "admin") {
+			setTarget("admins");
+		} else if (role === "super_admin") {
+			setTarget("super_admins");
+		}
+
+		const fetchProfileImage = async () => {
 			const supabase = createClient();
 			const { data, error } = await supabase
-				.from("sponsors")
+				.from(target)
 				.select("*")
 				.eq("id", user.id)
 				.single();
@@ -51,10 +65,10 @@ export default function ProfilePage() {
 
 			let signedUrl: string | undefined;
 
-			if (data.photo_path) {
+			if (data.photo_path && target) {
 				setPhotoPath(data.photo_path);
 				const res = await fetch(
-					`/api/supabase/signed-url/sponsors?path=${data.photo_path}`,
+					`/api/supabase/signed-url/${target}?path=${data.photo_path}`,
 					{ method: "GET" },
 				);
 
@@ -66,10 +80,10 @@ export default function ProfilePage() {
 			setAvatarUrl(signedUrl);
 		};
 
-		if (role === "sponsor" && user) {
-			fetchSponsor();
+		if (user && target) {
+			fetchProfileImage();
 		}
-	}, [user]);
+	}, [user, target]);
 
 	async function handleSave() {
 		if (!user) return;
@@ -81,6 +95,7 @@ export default function ProfilePage() {
 		if (imageFile) {
 			const body = new FormData();
 			body.append("image", imageFile);
+			body.append("targetType", target);
 			const res = await fetch("/api/supabase/upload-profile-image", {
 				method: "POST",
 				body,
@@ -127,8 +142,9 @@ export default function ProfilePage() {
 
 	const fullName =
 		`${user.user_metadata.first_name ?? ""} ${user.user_metadata.last_name ?? ""}`.trim();
-	const sponsorType = user.user_metadata.sponsor_type ?? "individual";
+	const sponsorType = user.user_metadata.sponsor_type;
 	const isActive = user.user_metadata.active ?? true;
+	const role = user.user_metadata.role;
 	const memberSince = new Date(user.created_at).toLocaleDateString("en-US", {
 		year: "numeric",
 		month: "long",
@@ -167,7 +183,7 @@ export default function ProfilePage() {
 							{isEditing && (
 								<div className="mt-3 flex flex-col gap-2">
 									{error && <p className="text-xs text-red-500">{error}</p>}
-									<div className="flex gap-2 items-end">
+									<div className="flex gap-2">
 										<button
 											onClick={handleSave}
 											disabled={isSaving}
@@ -209,9 +225,13 @@ export default function ProfilePage() {
 								<User className="size-4 text-blue-600" />
 							</div>
 							<div>
-								<p className="text-xs text-zinc-400">Sponsor Type</p>
+								<p className="text-xs text-zinc-400">
+									{sponsorType ? "Sponsor Type" : "Role"}
+								</p>
 								<p className="text-sm font-medium">
-									{SPONSOR_TYPE_LABELS[sponsorType] ?? sponsorType}
+									{SPONSOR_TYPE_LABELS[sponsorType]
+										? SPONSOR_TYPE_LABELS[sponsorType]
+										: ROLE_LABELS[role]}
 								</p>
 							</div>
 						</div>

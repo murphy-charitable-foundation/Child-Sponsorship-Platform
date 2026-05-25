@@ -18,11 +18,14 @@ import {
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { createClient } from "@/lib/supabase/client";
+import { useEffect, useState } from "react";
 
 export function AppNavbar() {
 	const router = useRouter();
 
 	const { user, loading } = useAuth();
+	const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
+	const [target, setTarget] = useState<string>("");
 
 	const logout = async () => {
 		const supabase = createClient();
@@ -30,6 +33,52 @@ export function AppNavbar() {
 		await supabase.auth.signOut();
 		router.push("/auth/login");
 	};
+
+	useEffect(() => {
+		//get the sponsors data from db
+		if (!user) return;
+		const role = user.user_metadata.role;
+
+		if (role === "sponsor") {
+			setTarget("sponsors");
+		} else if (role === "admin") {
+			setTarget("admins");
+		} else if (role === "super_admin") {
+			setTarget("super_admins");
+		}
+
+		const fetchProfileImage = async () => {
+			const supabase = createClient();
+			const { data, error } = await supabase
+				.from(target)
+				.select("*")
+				.eq("id", user.id)
+				.single();
+
+			if (error || !data) {
+				return;
+			}
+
+			let signedUrl: string | undefined;
+
+			if (data.photo_path && target) {
+				const res = await fetch(
+					`/api/supabase/signed-url/${target}?path=${data.photo_path}`,
+					{ method: "GET" },
+				);
+
+				if (res.ok) {
+					signedUrl = (await res.json()).signedUrl;
+				}
+			}
+
+			setAvatarUrl(signedUrl);
+		};
+
+		if (user && target) {
+			fetchProfileImage();
+		}
+	}, [user, target]);
 
 	const userFirstName =
 		user?.user_metadata.first_name || user?.email?.split("@")[0] || "User";
@@ -127,6 +176,7 @@ export function AppNavbar() {
 								>
 									<Avatar
 										name={`${userFirstName} ${userLastName}`}
+										src={avatarUrl}
 										size="sm"
 										color="primary"
 									/>
