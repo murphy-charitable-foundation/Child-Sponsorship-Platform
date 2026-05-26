@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
 
 		if (!ALLOWED_TARGETS.includes(targetType)) {
 			return NextResponse.json(
-				{ error: "Invalud user type." },
+				{ error: "Invalid user type." },
 				{ status: 400 },
 			);
 		}
