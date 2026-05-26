@@ -26,6 +26,7 @@ export function AdminSidebar() {
 	const pathname = usePathname();
 	const router = useRouter();
 	const { user, loading } = useAuth();
+	const [mounted, setMounted] = useState(false);
 	const [target, setTarget] = useState<string>("");
 	const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
 
@@ -35,6 +36,10 @@ export function AdminSidebar() {
 		await supabase.auth.signOut();
 		router.push("/auth/login");
 	};
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
 
 	useEffect(() => {
 		//get the sponsors data from db
@@ -128,7 +133,7 @@ export function AdminSidebar() {
 
 				{/* Profile (ALWAYS visible) */}
 
-				{!loading && user && (
+				{mounted && !loading && user && (
 					<div className="mt-auto px-6 pb-6 pt-6">
 						<div className="mb-4 border-t border-white/30" />
 

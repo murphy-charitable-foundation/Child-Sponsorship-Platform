@@ -65,6 +65,7 @@ export function SponsorsTable({
 						</>
 					)}
 					<TableColumn>ID</TableColumn>
+					<TableColumn>CHILDREN SPONSORED</TableColumn>
 					<TableColumn>STATUS</TableColumn>
 					<TableColumn>ACTIONS</TableColumn>
 				</TableHeader>
@@ -90,6 +91,7 @@ export function SponsorsTable({
 								{isGroupsTab ? s.sponsor_type : s.last_name}
 							</TableCell>
 							<TableCell>{s.id}</TableCell>
+							<TableCell>{s.children_count ?? 0}</TableCell>
 							<TableCell>
 								<Chip
 									size="md"

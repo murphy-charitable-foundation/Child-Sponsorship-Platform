@@ -16,6 +16,7 @@ export interface Sponsor {
 	active: boolean;
 	photo_path?: string;
 	image_url?: string;
+	children_count?: number;
 }
 
 const supabase = createClient();
@@ -34,9 +35,13 @@ export default function SponsorPage() {
 	useEffect(() => {
 		async function fetchSponsors() {
 			try {
-				const { data, error: sponsorsError } = await supabase
-					.from("sponsors")
-					.select("*");
+				const [
+					{ data, error: sponsorsError },
+					{ data: sponsorshipCounts, error: countsError },
+				] = await Promise.all([
+					supabase.from("sponsors").select("*"),
+					supabase.from("sponsorships").select("sponsor_id"),
+				]);
 
 				if (sponsorsError) {
 					console.error("Error fetching sponsors:", sponsorsError);
@@ -48,7 +53,23 @@ export default function SponsorPage() {
 					return;
 				}
 
-				setSponsors(data as Sponsor[]);
+				if (countsError) {
+					console.error("Error fetching sponsorship counts:", countsError);
+				}
+
+				console.log("sdfsfd", sponsorshipCounts, data);
+
+				const countMap: Record<string, number> = {};
+				for (const row of sponsorshipCounts ?? []) {
+					countMap[row.sponsor_id] = (countMap[row.sponsor_id] ?? 0) + 1;
+				}
+
+				const sponsorsWithCounts = data.map((s) => ({
+					...s,
+					children_count: countMap[s.id] ?? 0,
+				}));
+
+				setSponsors(sponsorsWithCounts as Sponsor[]);
 
 				const photoPaths: string[] = data
 					.map((s) => s.photo_path)
@@ -67,7 +88,7 @@ export default function SponsorPage() {
 				const { signedUrls } = await res.json();
 
 				setSponsors(
-					data.map((sponsor) => ({
+					sponsorsWithCounts.map((sponsor) => ({
 						...sponsor,
 						image_url: sponsor.photo_path
 							? signedUrls[sponsor.photo_path]
