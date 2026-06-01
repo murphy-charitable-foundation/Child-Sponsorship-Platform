@@ -57,8 +57,6 @@ export default function SponsorPage() {
 					console.error("Error fetching sponsorship counts:", countsError);
 				}
 
-				console.log("sdfsfd", sponsorshipCounts, data);
-
 				const countMap: Record<string, number> = {};
 				for (const row of sponsorshipCounts ?? []) {
 					countMap[row.sponsor_id] = (countMap[row.sponsor_id] ?? 0) + 1;

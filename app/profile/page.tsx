@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { Chip } from "@heroui/react";
 import { Mail, User, Calendar } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
-import { createClient } from "@/lib/supabase/client";
 import ProfileImageUpload from "@/components/profile-image-upload";
+import { useUserProfile } from "@/components/UserProfileContext";
 
 const SPONSOR_TYPE_LABELS: Record<string, string> = {
 	individual: "Individual",
@@ -22,10 +22,9 @@ const ROLE_LABELS: Record<string, string> = {
 
 export default function ProfilePage() {
 	const { user, loading } = useAuth();
+	const { avatarUrl, refreshAvatar, saveAvatar } = useUserProfile();
 	const router = useRouter();
 	const [imageFile, setImageFile] = useState<File | null>(null);
-	const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
-	const [photoPath, setPhotoPath] = useState<string | null>();
 	const [isSaving, setIsSaving] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -38,81 +37,36 @@ export default function ProfilePage() {
 	}, [loading, user, router]);
 
 	useEffect(() => {
-		//get the sponsors data from db
 		if (!user) return;
 		const role = user.user_metadata.role;
-		console.log("role", role);
 
+		let convertedRole = "";
 		if (role === "sponsor") {
-			setTarget("sponsors");
+			convertedRole = "sponsors";
 		} else if (role === "admin") {
-			setTarget("admins");
+			convertedRole = "admins";
 		} else if (role === "super_admin") {
-			setTarget("super_admins");
+			convertedRole = "super_admins";
 		}
 
-		const fetchProfileImage = async () => {
-			const supabase = createClient();
-			const { data, error } = await supabase
-				.from(target)
-				.select("*")
-				.eq("id", user.id)
-				.single();
+		if (!convertedRole) return;
 
-			if (error || !data) {
-				return;
-			}
-
-			let signedUrl: string | undefined;
-
-			if (data.photo_path && target) {
-				setPhotoPath(data.photo_path);
-				const res = await fetch(
-					`/api/supabase/signed-url/${target}?path=${data.photo_path}`,
-					{ method: "GET" },
-				);
-
-				if (res.ok) {
-					signedUrl = (await res.json()).signedUrl;
-				}
-			}
-
-			setAvatarUrl(signedUrl);
-		};
-
-		if (user && target) {
-			fetchProfileImage();
-		}
-	}, [user, target]);
+		setTarget(convertedRole);
+		refreshAvatar(convertedRole, user.id);
+	}, [user, refreshAvatar]);
 
 	async function handleSave() {
-		if (!user) return;
+		if (!user || !imageFile) return;
 		setIsSaving(true);
 		setError(null);
 
-		let newAvatarUrl = avatarUrl;
+		const { error: uploadError } = await saveAvatar(imageFile, target);
 
-		if (imageFile) {
-			const body = new FormData();
-			body.append("image", imageFile);
-			body.append("targetType", target);
-			const res = await fetch("/api/supabase/upload-profile-image", {
-				method: "POST",
-				body,
-			});
-			if (res.ok) {
-				const data = await res.json();
-				setPhotoPath(photoPath);
-				newAvatarUrl = data.url;
-			} else {
-				const data = await res.json().catch(() => ({}));
-				setError(data.error ?? "Image upload failed");
-				setIsSaving(false);
-				return;
-			}
+		if (uploadError) {
+			setError(uploadError);
+			setIsSaving(false);
+			return;
 		}
-
-		if (newAvatarUrl) setAvatarUrl(newAvatarUrl);
 
 		setImageFile(null);
 		setIsSaving(false);

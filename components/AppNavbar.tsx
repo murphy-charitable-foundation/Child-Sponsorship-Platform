@@ -19,13 +19,13 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { createClient } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
+import { useUserProfile } from "./UserProfileContext";
 
 export function AppNavbar() {
 	const router = useRouter();
 
 	const { user, loading } = useAuth();
-	const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
-	const [target, setTarget] = useState<string>("");
+	const { avatarUrl, refreshAvatar } = useUserProfile();
 	const [mounted, setMounted] = useState(false);
 
 	const logout = async () => {
@@ -44,46 +44,19 @@ export function AppNavbar() {
 		if (!user) return;
 		const role = user.user_metadata.role;
 
+		let convertedRole = "";
 		if (role === "sponsor") {
-			setTarget("sponsors");
+			convertedRole = "sponsors";
 		} else if (role === "admin") {
-			setTarget("admins");
+			convertedRole = "admins";
 		} else if (role === "super_admin") {
-			setTarget("super_admins");
+			convertedRole = "super_admins";
 		}
 
-		const fetchProfileImage = async () => {
-			const supabase = createClient();
-			const { data, error } = await supabase
-				.from(target)
-				.select("*")
-				.eq("id", user.id)
-				.single();
+		if (!convertedRole) return;
 
-			if (error || !data) {
-				return;
-			}
-
-			let signedUrl: string | undefined;
-
-			if (data.photo_path && target) {
-				const res = await fetch(
-					`/api/supabase/signed-url/${target}?path=${data.photo_path}`,
-					{ method: "GET" },
-				);
-
-				if (res.ok) {
-					signedUrl = (await res.json()).signedUrl;
-				}
-			}
-
-			setAvatarUrl(signedUrl);
-		};
-
-		if (user && target) {
-			fetchProfileImage();
-		}
-	}, [user, target]);
+		refreshAvatar(convertedRole, user.id);
+	}, [user, refreshAvatar]);
 
 	const userFirstName =
 		user?.user_metadata.first_name || user?.email?.split("@")[0] || "User";
