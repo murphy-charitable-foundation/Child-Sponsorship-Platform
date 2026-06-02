@@ -78,11 +78,11 @@ export async function updateSession(request: NextRequest) {
 				supabase.from("super_admins").select("id").eq("id", user.sub),
 			]);
 		if (error !== null || sp_admin_error !== null) {
-			const response = NextResponse.rewrite(request.nextUrl);
-			response.headers.set(
-				"x-error",
-				"Something went wrong. Please try again.",
-			);
+			const requestHeaders = new Headers(request.headers);
+			requestHeaders.set("x-error", "Something went wrong. Please try again.");
+			const response = NextResponse.rewrite(request.nextUrl, {
+				request: { headers: requestHeaders },
+			});
 			return response;
 		} else if (sp_admin_data.length === 0 && data.length === 0) {
 			url.pathname = "/";
