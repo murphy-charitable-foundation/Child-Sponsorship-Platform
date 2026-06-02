@@ -38,6 +38,7 @@ export function SignUpForm({
 	const [firstName, setFirstName] = useState("");
 	const [lastName, setLastName] = useState("");
 	const [repeatPassword, setRepeatPassword] = useState("");
+	const [agreedToTerms, setAgreedToTerms] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 	const [sponsorType, setSponsorType] = useState<string>("individual");
@@ -51,6 +52,12 @@ export function SignUpForm({
 
 		if (password !== repeatPassword) {
 			setError("Passwords do not match");
+			setIsLoading(false);
+			return;
+		}
+
+		if (!agreedToTerms) {
+			setError("You must agree to the Terms of Use and Privacy Policy");
 			setIsLoading(false);
 			return;
 		}
@@ -199,7 +206,8 @@ export function SignUpForm({
 					<div className="flex">
 						<Checkbox
 							id="terms"
-							required
+							isSelected={agreedToTerms}
+							onValueChange={setAgreedToTerms}
 						></Checkbox>
 						<p className="text-sm">
 							I agree to the{" "}

@@ -15,6 +15,7 @@ export function AdminSignUpForm({
 	const [firstName, setFirstName] = useState("");
 	const [lastName, setLastName] = useState("");
 	const [repeatPassword, setRepeatPassword] = useState("");
+	const [agreedToTerms, setAgreedToTerms] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 	const router = useRouter();
@@ -24,6 +25,12 @@ export function AdminSignUpForm({
 		const supabase = createClient();
 		setIsLoading(true);
 		setError(null);
+
+		if (!agreedToTerms) {
+			setError("You must agree to the Terms of Use and Privacy Policy");
+			setIsLoading(false);
+			return;
+		}
 
 		if (password !== repeatPassword) {
 			setError("Passwords do not match");
@@ -144,7 +151,8 @@ export function AdminSignUpForm({
 					<div className="flex">
 						<Checkbox
 							id="terms"
-							required
+							isSelected={agreedToTerms}
+							onValueChange={setAgreedToTerms}
 						></Checkbox>
 						<p className="text-sm">
 							I agree to the{" "}
