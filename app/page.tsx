@@ -43,7 +43,7 @@ const steps = [
   },
   {
     step: "Step 3",
-    title: "Start Sponsorship",
+    title: "Connect & Communicate",
     description: "Exchange letters and updates with your child",
     positioning: "top-[calc(50%+4.9vw)] left-1/2 md:w-1/4 2xl:top-[176px]",
   },
