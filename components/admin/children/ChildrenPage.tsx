@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { KpiCard } from "@/components/admin/dashboard/KpiCard";
 import { PanelCard } from "@/components/admin/dashboard/PanelCard";
 import ChildrenFilters from "@/components/admin/children/ChildrenFilters";
@@ -8,7 +9,13 @@ export default function ChildrenPage() {
     <div className="space-y-8 w-full">
       {/* header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-4xl font-bold">Children</h1>
+        <h1 className="text-2xl font-semibold text-[#004a99]">Children</h1>
+        <Link
+          href="/admin/children/add"
+          className="rounded-lg bg-[#004a99] px-4 py-2 text-sm font-medium text-white hover:bg-[#003d7a]"
+        >
+          Add Child
+        </Link>
       </div>
 
       {/* KPI */}

@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useState } from "react";
 import { Chip } from "@heroui/react";
 import CreateSponsorshipDrawer from "./CreateSponsorshipDrawer";
 
@@ -39,22 +38,11 @@ const uniqueSponsors = new Set(sponsorships.map((s) => s.sponsorName)).size;
 const awaitingCount = 3; // placeholder
 
 export default function SponsorshipsPage() {
-  const searchParams  = useSearchParams();
-  const router        = useRouter();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [search,    setSearch]    = useState("");
   const [location,  setLocation]  = useState("All locations");
   const [frequency, setFrequency] = useState("All frequencies");
   const [status,    setStatus]    = useState("All statuses");
-
-  useEffect(() => {
-    if (searchParams.get("create") === "1") setIsCreateOpen(true);
-  }, [searchParams]);
-
-  function handleCloseCreate() {
-    setIsCreateOpen(false);
-    router.replace("/admin/sponsorships");
-  }
 
   const filtered = sponsorships.filter((s) => {
     const q = search.toLowerCase();
@@ -75,7 +63,15 @@ export default function SponsorshipsPage() {
   return (
     <div className="px-10 py-8">
       {/* Header */}
-      <h1 className="text-2xl font-semibold text-[#004a99]">Sponsorships</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold text-[#004a99]">Sponsorships</h1>
+        <button
+          onClick={() => setIsCreateOpen(true)}
+          className="rounded-lg bg-[#004a99] px-4 py-2 text-sm font-medium text-white hover:bg-[#003d7a]"
+        >
+          Create Sponsorship
+        </button>
+      </div>
 
       {/* KPI cards */}
       <div className="mt-6 grid grid-cols-3 gap-4">
@@ -172,7 +168,7 @@ export default function SponsorshipsPage() {
         </table>
       </div>
 
-      <CreateSponsorshipDrawer isOpen={isCreateOpen} onClose={handleCloseCreate} />
+      <CreateSponsorshipDrawer isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} />
     </div>
   );
 }

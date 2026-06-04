@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useState } from "react";
 import { KpiCard } from "@/components/admin/dashboard/KpiCard";
 import { SponsorsFilter } from "./SponsorsFilter";
 import { SponsorsTable, Sponsor, SponsorGroup } from "./SponsorsTable";
@@ -27,21 +26,9 @@ function toSponsorProfile(row: Sponsor | SponsorGroup): SponsorProfile {
 }
 
 export default function SponsorPage() {
-  const searchParams = useSearchParams();
-  const router       = useRouter();
   const [activeTab,      setActiveTab]      = useState<'individuals' | 'groups'>('individuals');
   const [isAddOpen,      setIsAddOpen]      = useState(false);
   const [editingSponsor, setEditingSponsor] = useState<SponsorProfile | null>(null);
-
-  // Open drawer when AdminTopActions pushes ?add=1
-  useEffect(() => {
-    if (searchParams.get("add") === "1") setIsAddOpen(true);
-  }, [searchParams]);
-
-  function handleCloseAdd() {
-    setIsAddOpen(false);
-    router.replace("/admin/sponsors");
-  }
 
   function handleEdit(row: Sponsor | SponsorGroup) {
     setEditingSponsor(toSponsorProfile(row));
@@ -49,7 +36,15 @@ export default function SponsorPage() {
 
   return (
     <div className="px-10 py-8">
-      <h1 className="text-2xl font-semibold text-[#004a99]">Sponsors</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold text-[#004a99]">Sponsors</h1>
+        <button
+          onClick={() => setIsAddOpen(true)}
+          className="rounded-lg bg-[#004a99] px-4 py-2 text-sm font-medium text-white hover:bg-[#003d7a]"
+        >
+          Add Sponsor
+        </button>
+      </div>
 
       <div className="mt-6 grid w-full grid-cols-3 gap-4">
         <KpiCard title="Active Sponsorships"           subtitle="Need KPI visualization" />
@@ -68,7 +63,7 @@ export default function SponsorPage() {
         </div>
       </div>
 
-      <AddSponsorDrawer isOpen={isAddOpen} onClose={handleCloseAdd} />
+      <AddSponsorDrawer isOpen={isAddOpen} onClose={() => setIsAddOpen(false)} />
 
       {editingSponsor && (
         <EditSponsorDrawer
