@@ -37,9 +37,9 @@ export function AdminSidebar() {
           />
         </div>
 
-        {/* Menu (scrolls if it gets too tall) */}
-        <div className="flex-1 min-h-0 overflow-auto px-6 pb-10">
-          <ul className="space-y-3">
+        {/* Menu — natural height, no flex-1 so spacer below creates the gap */}
+        <div className="px-6 mt-2">
+          <ul className="space-y-1">
             {NAV_ITEMS.map((item) => {
               const isActive =
                 pathname === item.href || pathname.startsWith(item.href + "/");
@@ -64,8 +64,11 @@ export function AdminSidebar() {
           </ul>
         </div>
 
+        {/* Spacer — pushes profile section to the bottom */}
+        <div className="flex-1" />
+
         {/* Profile (ALWAYS visible) */}
-        <div className="mt-auto px-6 pb-6 pt-6">
+        <div className="shrink-0 px-6 pb-6 pt-4">
           <div className="mb-4 border-t border-white/30" />
 
           <div className="flex items-center gap-3 mb-4">

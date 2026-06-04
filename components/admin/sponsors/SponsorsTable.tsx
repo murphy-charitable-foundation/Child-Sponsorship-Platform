@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 
 interface Sponsor {
   id: string;
@@ -25,12 +26,12 @@ interface SponsorGroup {
 const SPONSORS_DATA: Sponsor[] = [
   {
     id: '1',
-    firstName: 'Sarah',
-    lastName: 'Johnson',
-    sponsorId: 'SI23-0001',
+    firstName: 'Carlos',
+    lastName: 'Martinez',
+    sponsorId: 'SI24-0008',
     location: 'USA',
     status: 'Active',
-    childrenCount: 1,
+    childrenCount: 2,
   },
   {
     id: '2',
@@ -190,11 +191,15 @@ const GROUPS_DATA: SponsorGroup[] = [
   },
 ];
 
+export type { Sponsor, SponsorGroup };
+
 interface SponsorsTableProps {
   activeTab: 'individuals' | 'groups';
+  onEdit?: (row: Sponsor | SponsorGroup) => void;
 }
 
-export function SponsorsTable({ activeTab }: SponsorsTableProps) {
+export function SponsorsTable({ activeTab, onEdit }: SponsorsTableProps) {
+  const router = useRouter();
   const isGroupsTab = activeTab === 'groups';
   return (
     <div className="w-full overflow-x-auto">
@@ -272,11 +277,17 @@ export function SponsorsTable({ activeTab }: SponsorsTableProps) {
                   </td>
                   <td className="px-4 py-3 text-sm">
                     <div className="flex gap-3">
-                      <button className="text-blue-600 hover:underline font-medium cursor-pointer transition-all">
+                      <button
+                        onClick={() => router.push(`/admin/sponsors/${group.groupId}`)}
+                        className="text-[#004a99] hover:underline font-medium cursor-pointer transition-all"
+                      >
                         View
                       </button>
                       <span className="text-gray-300">|</span>
-                      <button className="text-blue-600 hover:underline font-medium cursor-pointer transition-all">
+                      <button
+                        onClick={() => onEdit?.(group)}
+                        className="text-[#004a99] hover:underline font-medium cursor-pointer transition-all"
+                      >
                         Edit
                       </button>
                     </div>
@@ -316,11 +327,17 @@ export function SponsorsTable({ activeTab }: SponsorsTableProps) {
                   </td>
                   <td className="px-4 py-3 text-sm">
                     <div className="flex gap-3">
-                      <button className="text-blue-600 hover:underline font-medium cursor-pointer transition-all">
+                      <button
+                        onClick={() => router.push(`/admin/sponsors/${sponsor.sponsorId}`)}
+                        className="text-[#004a99] hover:underline font-medium cursor-pointer transition-all"
+                      >
                         View
                       </button>
                       <span className="text-gray-300">|</span>
-                      <button className="text-blue-600 hover:underline font-medium cursor-pointer transition-all">
+                      <button
+                        onClick={() => onEdit?.(sponsor)}
+                        className="text-[#004a99] hover:underline font-medium cursor-pointer transition-all"
+                      >
                         Edit
                       </button>
                     </div>
