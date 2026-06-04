@@ -5,12 +5,14 @@ type ChildTabHeaderProps = {
   child: ChildProfile;
   subtitle: string;
   actionLabel?: string;
+  onActionClick?: () => void;
 };
 
 export function ChildTabHeader({
   child,
   subtitle,
   actionLabel,
+  onActionClick,
 }: ChildTabHeaderProps) {
   return (
     <div className="mb-6 flex items-center justify-between">
@@ -28,7 +30,10 @@ export function ChildTabHeader({
         </div>
       </div>
       {actionLabel && (
-        <button className="rounded-lg bg-[#004a99] px-4 py-2 text-sm font-medium text-white hover:bg-[#003d7a]">
+        <button
+          onClick={onActionClick}
+          className="rounded-lg bg-[#004a99] px-4 py-2 text-sm font-medium text-white hover:bg-[#003d7a]"
+        >
           {actionLabel}
         </button>
       )}

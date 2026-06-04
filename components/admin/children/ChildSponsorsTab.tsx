@@ -1,5 +1,9 @@
+"use client";
+
+import { useState } from "react";
 import { ChildProfile } from "./types";
 import { ChildTabHeader } from "./ChildTabHeader";
+import CreateSponsorshipDrawer from "@/components/admin/sponsorships/CreateSponsorshipDrawer";
 
 type Sponsor = {
   id: string;
@@ -43,12 +47,15 @@ type ChildSponsorsTabProps = {
 };
 
 export default function ChildSponsorsTab({ child }: ChildSponsorsTabProps) {
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+
   return (
     <div className="space-y-6">
       <ChildTabHeader
         child={child}
         subtitle={`Active sponsors: ${sponsors.length}`}
         actionLabel="Create sponsorship"
+        onActionClick={() => setIsCreateOpen(true)}
       />
 
       {sponsors.map((sponsor) => (
@@ -124,6 +131,8 @@ export default function ChildSponsorsTab({ child }: ChildSponsorsTabProps) {
           </div>
         </div>
       ))}
+
+      <CreateSponsorshipDrawer isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} />
     </div>
   );
 }
