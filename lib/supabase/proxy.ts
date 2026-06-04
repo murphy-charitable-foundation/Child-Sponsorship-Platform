@@ -63,33 +63,34 @@ export async function updateSession(request: NextRequest) {
 	//This is access permission for the /admin routes. They are only accessable with admin or super_admin users.
 	//When admin is created, it creates pending_admins in supabase DB and the super_admin need to approve them.
 	//Therefore, we need to use the supabase DB data within admins or super_admins can access to the pages.
-	const isAdminRoutes = request.nextUrl.pathname.startsWith("/admin");
+	// const isAdminRoutes = request.nextUrl.pathname.startsWith("/admin");
+	// console.log("sdfsdf", isAdminRoutes);
 
-	if (isAdminRoutes) {
-		const url = request.nextUrl.clone();
+	// if (isAdminRoutes) {
+	// 	const url = request.nextUrl.clone();
 
-		if (!user) {
-			// no user, potentially respond by redirecting the user to the login page
-			url.pathname = "/auth/login";
-			return NextResponse.redirect(url);
-		}
-		const [{ data, error }, { data: sp_admin_data, error: sp_admin_error }] =
-			await Promise.all([
-				supabase.from("admins").select("id").eq("id", user.sub),
-				supabase.from("super_admins").select("id").eq("id", user.sub),
-			]);
-		if (error !== null || sp_admin_error !== null) {
-			const requestHeaders = new Headers(request.headers);
-			requestHeaders.set("x-error", "Something went wrong. Please try again.");
-			const response = NextResponse.rewrite(request.nextUrl, {
-				request: { headers: requestHeaders },
-			});
-			return response;
-		} else if (sp_admin_data.length === 0 && data.length === 0) {
-			url.pathname = "/";
-			return NextResponse.redirect(url);
-		}
-	}
+	// 	if (!user) {
+	// 		// no user, potentially respond by redirecting the user to the login page
+	// 		url.pathname = "/auth/login";
+	// 		return NextResponse.redirect(url);
+	// 	}
+	// 	const [{ data, error }, { data: sp_admin_data, error: sp_admin_error }] =
+	// 		await Promise.all([
+	// 			supabase.from("admins").select("id").eq("id", user.sub),
+	// 			supabase.from("super_admins").select("id").eq("id", user.sub),
+	// 		]);
+	// 	if (error !== null || sp_admin_error !== null) {
+	// 		const requestHeaders = new Headers(request.headers);
+	// 		requestHeaders.set("x-error", "Something went wrong. Please try again.");
+	// 		const response = NextResponse.rewrite(request.nextUrl, {
+	// 			request: { headers: requestHeaders },
+	// 		});
+	// 		return response;
+	// 	} else if (sp_admin_data.length === 0 && data.length === 0) {
+	// 		url.pathname = "/";
+	// 		return NextResponse.redirect(url);
+	// 	}
+	// }
 
 	// IMPORTANT: You *must* return the supabaseResponse object as it is.
 	// If you're creating a new response object with NextResponse.next() make sure to:

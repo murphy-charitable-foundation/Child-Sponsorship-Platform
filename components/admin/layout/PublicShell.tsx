@@ -3,14 +3,19 @@
 import React from "react";
 import { usePathname } from "next/navigation";
 import ClientProviders from "@/components/ClientProviders";
+import { HeroUIProvider } from "@heroui/react";
 
 export default function PublicShell({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  const isAdminRoute = pathname?.startsWith("/admin");
+	const pathname = usePathname();
+	const isAdminRoute = pathname?.startsWith("/admin");
 
-  return <>{!isAdminRoute && <ClientProviders>{children}</ClientProviders>}</>;
+	if (isAdminRoute) {
+		return <HeroUIProvider>{children}</HeroUIProvider>;
+	}
+
+	return <ClientProviders>{children}</ClientProviders>;
 }
