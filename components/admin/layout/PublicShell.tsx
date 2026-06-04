@@ -6,7 +6,7 @@ import { AppNavbar } from "@/components/AppNavbar";
 
 export default function PublicShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isAdminRoute = pathname?.startsWith("/admin");
+  const isAdminRoute = pathname?.startsWith("/admin") || pathname?.startsWith("/auth");
 
   return (
     <>

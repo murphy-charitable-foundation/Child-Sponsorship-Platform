@@ -1,39 +1,105 @@
 "use client";
 
-import { LoginForm } from "@/components/login-form";
-import { SignUpForm } from "@/components/sign-up-form";
-import React from "react";
-import {Tabs, Tab, Input, Link, Button, Card, CardBody} from "@heroui/react";
-
-
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function Page() {
-  const [selected, setSelected] = React.useState("login");
+  const [org, setOrg] = useState("Uganda");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    // TODO: authenticate with Supabase
+    console.log("Login:", { org, username, password });
+  }
 
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-      <div className="w-full max-w-sm">
-        <Card className="mt-6 rounded-[12px] border border-default-200 shadow-none">
-          <CardBody className="">
-            <Tabs
-              fullWidth
-              aria-label="Tabs form"
-              selectedKey={selected}
-              size="md"
-              color="primary"
-              onSelectionChange={(key) => setSelected(key as string)}
+    <div className="flex min-h-screen items-center justify-center bg-[#004a99]">
+      <div className="w-full max-w-sm rounded-2xl bg-white px-8 py-10 shadow-xl">
+
+        {/* Logo */}
+        <div className="flex justify-center">
+          <Image
+            src="/children/logo.png"
+            alt="Murphy Charitable Foundation"
+            width={96}
+            height={96}
+          />
+        </div>
+
+        {/* Title */}
+        <h1 className="mt-3 text-center text-lg font-semibold text-[#004a99]">
+          Admin Portal
+        </h1>
+
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          {/* Organization */}
+          <div>
+            <label className="mb-1 block text-xs text-slate-500">
+              Organization
+            </label>
+            <select
+              value={org}
+              onChange={(e) => setOrg(e.target.value)}
+              className={inputCls}
             >
-              <Tab key="login" title="Log In">
-                <LoginForm />
-              </Tab>
-              <Tab key="sign-up" title="Sign Up">
-                <SignUpForm />
-              </Tab>
-            </Tabs>
-          </CardBody>
-        </Card>
+              <option>Uganda</option>
+              <option>Kenya</option>
+              <option>Tanzania</option>
+              <option>Rwanda</option>
+            </select>
+          </div>
+
+          {/* Username */}
+          <div>
+            <label className="mb-1 block text-xs text-slate-500">
+              Username
+            </label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className={inputCls}
+              autoComplete="username"
+            />
+          </div>
+
+          {/* Password */}
+          <div>
+            <label className="mb-1 block text-xs text-slate-500">
+              Password
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={inputCls}
+              autoComplete="current-password"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="mt-2 w-full rounded-lg bg-[#004a99] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#003d7a]"
+          >
+            Sign In
+          </button>
+        </form>
+
+        <div className="mt-4 text-center">
+          <Link
+            href="/auth/forgot-password"
+            className="text-xs text-slate-400 hover:text-slate-600 hover:underline"
+          >
+            Forgot password?
+          </Link>
+        </div>
       </div>
     </div>
   );
 }
 
+const inputCls =
+  "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-[#004a99] focus:outline-none focus:ring-2 focus:ring-[#004a99]/20";

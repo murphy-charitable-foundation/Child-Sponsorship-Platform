@@ -1,6 +1,6 @@
 "use client";
-
-import React from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Table,
   TableHeader,
@@ -56,8 +56,6 @@ const rows: ChildRow[] = [
   },
 ];
 
-
-
 function statusChipColor(status: "Active" | "Waiting" | "Exited") {
   if (status === "Active") return "success";
   if (status === "Waiting") return "warning";
@@ -65,9 +63,16 @@ function statusChipColor(status: "Active" | "Waiting" | "Exited") {
 }
 
 export default function ChildrenTable() {
+  const router = useRouter();
+
   return (
     <div className="w-full">
-      <Table aria-label="Children table" removeWrapper>
+      <Table
+        aria-label="Children table"
+        removeWrapper
+        onRowAction={(key) => router.push(`/admin/children/${key}`)}
+        classNames={{ tr: "cursor-pointer" }}
+      >
         <TableHeader>
           <TableColumn>LAST NAME</TableColumn>
           <TableColumn>FIRST NAME</TableColumn>
@@ -90,23 +95,35 @@ export default function ChildrenTable() {
               <TableCell>{r.gender}</TableCell>
               <TableCell>{r.location}</TableCell>
               <TableCell>
-  <Chip
-    size="md"
-    radius="full"
-    variant="flat"
-    color={statusChipColor(r.status)}
-    className="px-4 text-base"
-  >
-    {r.status}
-  </Chip>
-</TableCell>
+                <Chip
+                  size="md"
+                  radius="full"
+                  variant="flat"
+                  color={statusChipColor(r.status)}
+                  className="px-4 text-base"
+                >
+                  {r.status}
+                </Chip>
+              </TableCell>
               <TableCell>{r.dateEnrolled}</TableCell>
               <TableCell>
                 <div className="flex gap-2">
-                  <Button size="sm" radius="md" color="primary">
+                  <Button
+                    as={Link}
+                    href={`/admin/children/${r.id}`}
+                    size="sm"
+                    radius="md"
+                    color="primary"
+                  >
                     View
                   </Button>
-                  <Button size="sm" radius="md" color="primary">
+                  <Button
+                    as={Link}
+                    href="/admin/children/editpage"
+                    size="sm"
+                    radius="md"
+                    color="primary"
+                  >
                     Edit
                   </Button>
                 </div>

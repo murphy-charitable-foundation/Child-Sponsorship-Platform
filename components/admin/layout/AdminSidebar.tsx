@@ -3,7 +3,8 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { Settings } from "lucide-react";
 
 type NavItem = { label: string; href: string };
 
@@ -20,6 +21,7 @@ const NAV_ITEMS: NavItem[] = [
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <aside className="w-80 bg-primary text-white h-screen">
@@ -36,8 +38,7 @@ export function AdminSidebar() {
         </div>
 
         {/* Menu (scrolls if it gets too tall) */}
-       <div className="flex-1 min-h-0 overflow-auto px-6 pb-10">
-
+        <div className="flex-1 min-h-0 overflow-auto px-6 pb-10">
           <ul className="space-y-3">
             {NAV_ITEMS.map((item) => {
               const isActive =
@@ -45,18 +46,18 @@ export function AdminSidebar() {
 
               return (
                 <li key={item.href}>
-                 <Link
-  href={item.href}
-  className={[
-    "block px-4 py-3 text-base text-left transition-colors rounded-sm",
-    isActive
-      ? "bg-primary-200 text-primary-900 font-semibold"
-      : "text-white hover:bg-primary-200/50",
-  ].join(" ")}
->
-  {item.label}
-</Link>
-
+                  <Link
+                    href={item.href}
+                    className={[
+                      "flex items-center gap-3 px-4 py-3 text-base text-left transition-colors rounded-sm",
+                      isActive
+                        ? "bg-primary-200 text-primary-900 font-semibold"
+                        : "text-white hover:bg-primary-200/50",
+                    ].join(" ")}
+                  >
+                    <Settings size={18} className="shrink-0" />
+                    {item.label}
+                  </Link>
                 </li>
               );
             })}
@@ -79,7 +80,10 @@ export function AdminSidebar() {
             </div>
           </div>
 
-          <button className="w-full rounded-sm border border-white/70 py-3 text-center font-medium text-white hover:bg-white/10 transition">
+          <button
+            onClick={() => router.push("/auth/login")}
+            className="w-full rounded-sm border border-white/70 py-3 text-center font-medium text-white hover:bg-white/10 transition"
+          >
             Sign out
           </button>
         </div>
