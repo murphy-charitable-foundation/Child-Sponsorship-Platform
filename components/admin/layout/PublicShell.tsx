@@ -2,24 +2,15 @@
 
 import React from "react";
 import { usePathname } from "next/navigation";
-import { AppNavbar } from "@/components/AppNavbar";
+import ClientProviders from "@/components/ClientProviders";
 
-export default function PublicShell({ children }: { children: React.ReactNode }) {
+export default function PublicShell({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
   const isAdminRoute = pathname?.startsWith("/admin");
 
-  return (
-    <>
-      {!isAdminRoute && <AppNavbar />}
-
-      {children}
-
-      {!isAdminRoute && (
-        <footer className="px-6 py-8 text-sm text-default-500">
-          {/* move your existing footer JSX here */}
-          © Murphy Charitable Foundation
-        </footer>
-      )}
-    </>
-  );
+  return <>{!isAdminRoute && <ClientProviders>{children}</ClientProviders>}</>;
 }
