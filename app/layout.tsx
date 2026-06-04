@@ -1,6 +1,7 @@
 import "./globals.css";
 //import type { Metadata } from "next";
 
+import { Suspense } from "react";
 import { Geist } from "next/font/google";
 import PublicShell from "@/components/admin/layout/PublicShell";
 
@@ -18,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.className} antialiased`}>
-                <PublicShell>{children}</PublicShell>
+                <Suspense><PublicShell>{children}</PublicShell></Suspense>
 
         
       </body>
