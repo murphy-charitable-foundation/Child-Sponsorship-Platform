@@ -83,6 +83,11 @@ export function AppNavbar() {
             Contact
           </NextLink>
         </NavbarItem>
+        <NavbarItem>
+          <NextLink href="/dashboard" className="text-sm text-foreground">
+            Dashboard
+          </NextLink>
+        </NavbarItem>
       </NavbarContent>
 
       <NavbarContent justify="end" className="gap-4 pr-4">
