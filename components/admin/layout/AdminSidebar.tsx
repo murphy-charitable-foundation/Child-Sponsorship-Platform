@@ -79,7 +79,7 @@ export function AdminSidebar() {
           {/* Admin button */}
           <div className="mt-4 pt-4 border-t border-white/20">
             <Link
-              href="/admin"
+              href="/admin/organizations"
               className={[
                 "flex items-center gap-3 px-4 py-3 text-base text-left transition-colors rounded-sm bg-primary-200 text-primary-900 font-semibold",
               ].join(" ")}
