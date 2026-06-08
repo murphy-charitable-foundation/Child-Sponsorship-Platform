@@ -12,6 +12,7 @@ import {
   FileText,
   MessageSquare,
   Settings,
+  Shield,
 } from "lucide-react";
 
 type NavItem = {
@@ -74,6 +75,19 @@ export function AdminSidebar() {
               );
             })}
           </ul>
+
+          {/* Admin button */}
+          <div className="mt-4 pt-4 border-t border-white/20">
+            <Link
+              href="/admin"
+              className={[
+                "flex items-center gap-3 px-4 py-3 text-base text-left transition-colors rounded-sm bg-primary-200 text-primary-900 font-semibold",
+              ].join(" ")}
+            >
+              <Shield size={18} className="shrink-0" />
+              Admin
+            </Link>
+          </div>
         </div>
 
         {/* Spacer — pushes profile section to the bottom */}
