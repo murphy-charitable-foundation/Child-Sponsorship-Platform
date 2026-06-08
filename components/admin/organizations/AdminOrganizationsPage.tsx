@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Plus } from "lucide-react";
 
 type Organization = {
   id: string;
@@ -129,43 +128,6 @@ const users: User[] = [
   },
 ];
 
-const sidebarUsers = [
-  {
-    id: "1",
-    name: "Alice Johnson",
-    email: "alice.johnson@example.com",
-    role: "Admin",
-    status: "Active",
-  },
-  {
-    id: "2",
-    name: "Bob Carter",
-    email: "bob.carter@example.com",
-    role: "Editor",
-    status: "Active",
-  },
-  {
-    id: "3",
-    name: "Sarah Lee",
-    email: "sarah.lee@example.com",
-    role: "Viewer",
-    status: "Active",
-  },
-  {
-    id: "4",
-    name: "Mark Wilson",
-    email: "mark.wilson@example.com",
-    role: "Admin",
-    status: "Active",
-  },
-  {
-    id: "5",
-    name: "Emily Clark",
-    email: "emily.clark@example.com",
-    role: "Viewer",
-    status: "Pending",
-  },
-];
 
 export default function AdminOrganizationsPage() {
   const [activeTab, setActiveTab] = useState<"organizations" | "users">(
@@ -174,7 +136,6 @@ export default function AdminOrganizationsPage() {
   const [search, setSearch] = useState("");
   const [organization, setOrganization] = useState("All organizations");
   const [status, setStatus] = useState("All statuses");
-  const [sidebarSearch, setSidebarSearch] = useState("");
 
   const filteredUsers = users.filter((user) => {
     const q = search.toLowerCase();
@@ -188,10 +149,6 @@ export default function AdminOrganizationsPage() {
       status === "All statuses" || user.status === status;
     return matchSearch && matchOrg && matchStatus;
   });
-
-  const filteredSidebarUsers = sidebarUsers.filter((user) =>
-    user.name.toLowerCase().includes(sidebarSearch.toLowerCase())
-  );
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -217,20 +174,8 @@ export default function AdminOrganizationsPage() {
     }
   };
 
-  const getRoleColors = (name: string) => {
-    const colors: { [key: string]: string } = {
-      A: "bg-purple-500",
-      B: "bg-blue-500",
-      S: "bg-orange-500",
-      M: "bg-blue-500",
-      E: "bg-red-500",
-    };
-    return colors[name.charAt(0)] || "bg-gray-500";
-  };
-
   return (
-    <div className="px-10 py-8 flex gap-8">
-      <div className="flex-1">
+    <div className="px-10 py-8">
         {/* Header */}
         <h1 className="text-3xl font-bold text-[#004a99] mb-6">Admin</h1>
 
@@ -451,67 +396,6 @@ export default function AdminOrganizationsPage() {
             </div>
           </div>
         )}
-      </div>
-
-      {/* Right Sidebar - Users and Access */}
-      {activeTab === "users" && (
-        <div className="w-96 shrink-0">
-          <div className="rounded-xl border border-slate-200 bg-white p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">
-              Users and Access
-            </h3>
-            <p className="text-sm text-gray-600 mb-4">
-              Manage user access, roles, and permissions.
-            </p>
-
-            <button className="w-full bg-[#004a99] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#003d7a] mb-4 flex items-center justify-center gap-2">
-              <Plus size={18} />
-              Invite User
-            </button>
-
-            <input
-              type="text"
-              value={sidebarSearch}
-              onChange={(e) => setSidebarSearch(e.target.value)}
-              placeholder="Search users..."
-              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm mb-4 focus:border-[#004a99] focus:outline-none"
-            />
-
-            <div className="space-y-3">
-              {filteredSidebarUsers.map((user) => (
-                <div
-                  key={user.id}
-                  className="flex items-center gap-3 p-3 rounded-lg border border-slate-200 hover:bg-slate-50"
-                >
-                  <div
-                    className={`flex items-center justify-center w-8 h-8 rounded-full text-white text-xs font-semibold ${getRoleColors(user.name)}`}
-                  >
-                    {user.name.charAt(0)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-800 truncate">
-                      {user.name}
-                    </p>
-                    <p className="text-xs text-gray-500 truncate">
-                      {user.email}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-medium text-gray-700">
-                      {user.role}
-                    </span>
-                    <span
-                      className={`text-xs px-2 py-1 rounded-full font-medium ${getStatusBadgeColor(user.status)}`}
-                    >
-                      {user.status}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
