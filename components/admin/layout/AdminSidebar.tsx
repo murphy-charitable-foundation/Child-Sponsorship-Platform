@@ -57,21 +57,21 @@ export function AdminSidebar() {
   const router = useRouter();
 
   return (
-    <aside className="w-80 bg-primary text-white h-screen">
-      <nav className="h-full flex flex-col">
-        {/* Logo (fixed) */}
-        <div className="flex justify-center pt-6 pb-4">
-          <Image
-            src="/children/logo.png"
-            alt="Murphy Charitable"
-            width={160}
-            height={160}
-            priority
-          />
-        </div>
+    <aside className="w-80 bg-primary text-white h-screen flex flex-col">
+      {/* Logo (fixed) */}
+      <div className="flex justify-center pt-6 pb-4 shrink-0">
+        <Image
+          src="/children/logo.png"
+          alt="Murphy Charitable"
+          width={160}
+          height={160}
+          priority
+        />
+      </div>
 
-        {/* Menu — natural height, no flex-1 so spacer below creates the gap */}
-        <div className="px-6 mt-2">
+      <nav className="flex-1 flex flex-col overflow-hidden">
+        {/* Menu — scrollable */}
+        <div className="px-6 mt-2 overflow-y-auto flex-1">
           {NAV_SECTIONS.map((section, sectionIndex) => (
             <div key={section.title}>
               {sectionIndex > 0 && <div className="my-4" />}
@@ -119,10 +119,7 @@ export function AdminSidebar() {
           </div>
         </div>
 
-        {/* Spacer — pushes profile section to the bottom */}
-        <div className="flex-1" />
-
-        {/* Profile (ALWAYS visible) */}
+        {/* Profile (fixed at bottom) */}
         <div className="shrink-0 px-6 pb-6 pt-4">
           <div className="mb-4 border-t border-white/30" />
 
