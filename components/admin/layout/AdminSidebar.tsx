@@ -107,15 +107,25 @@ export function AdminSidebar() {
 
           {/* Admin button */}
           <div className="mt-4 pt-4 border-t border-white/20">
-            <Link
-              href="/admin/organizations"
-              className={[
-                "flex items-center gap-3 px-4 py-3 text-base text-left transition-colors rounded-sm bg-primary-200 text-primary-900 font-semibold",
-              ].join(" ")}
-            >
-              <Shield size={18} className="shrink-0" />
-              Admin
-            </Link>
+            {(() => {
+              const isAdmin =
+                pathname === "/admin/organizations" ||
+                pathname.startsWith("/admin/organizations/");
+              return (
+                <Link
+                  href="/admin/organizations"
+                  className={[
+                    "flex items-center gap-3 px-4 py-3 text-base text-left transition-colors rounded-sm",
+                    isAdmin
+                      ? "bg-primary-200 text-primary-900 font-semibold"
+                      : "text-white hover:bg-primary-200/50",
+                  ].join(" ")}
+                >
+                  <Shield size={18} className="shrink-0" />
+                  Admin
+                </Link>
+              );
+            })()}
           </div>
         </div>
 
