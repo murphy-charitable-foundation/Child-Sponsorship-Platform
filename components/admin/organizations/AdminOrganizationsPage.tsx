@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Plus } from "lucide-react";
 
 type Organization = {
@@ -264,9 +265,12 @@ export default function AdminOrganizationsPage() {
               <h2 className="text-2xl font-semibold text-gray-800">
                 Organizations
               </h2>
-              <button className="bg-[#004a99] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#003d7a]">
+              <Link
+                href="/admin/organizations/create"
+                className="bg-[#004a99] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#003d7a]"
+              >
                 Create organization
-              </button>
+              </Link>
             </div>
 
             {/* Table */}
