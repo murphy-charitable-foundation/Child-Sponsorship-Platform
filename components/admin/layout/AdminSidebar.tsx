@@ -21,15 +21,35 @@ type NavItem = {
   icon: any;
 };
 
-const NAV_ITEMS: NavItem[] = [
-  { label: "Home", href: "/admin/dashboard", icon: Home },
-  { label: "Children", href: "/admin/children", icon: Users },
-  { label: "Sponsors", href: "/admin/sponsors", icon: Heart },
-  { label: "Sponsorship", href: "/admin/sponsorships", icon: Handshake },
-  { label: "Donations", href: "/admin/donations", icon: Gift },
-  { label: "Reports", href: "/admin/reports", icon: FileText },
-  { label: "Messages", href: "/admin/messages", icon: MessageSquare },
-  { label: "Settings", href: "/admin/settings", icon: Settings },
+type NavSection = {
+  title: string;
+  items: NavItem[];
+};
+
+const NAV_SECTIONS: NavSection[] = [
+  {
+    title: "MAIN",
+    items: [
+      { label: "Home", href: "/admin/dashboard", icon: Home },
+      { label: "Children", href: "/admin/children", icon: Users },
+      { label: "Sponsors", href: "/admin/sponsors", icon: Heart },
+      { label: "Sponsorships", href: "/admin/sponsorships", icon: Handshake },
+      { label: "Donations", href: "/admin/donations", icon: Gift },
+    ],
+  },
+  {
+    title: "COMMUNICATIONS",
+    items: [
+      { label: "Reports", href: "/admin/reports", icon: FileText },
+      { label: "Messages", href: "/admin/messages", icon: MessageSquare },
+    ],
+  },
+  {
+    title: "SYSTEM",
+    items: [
+      { label: "Settings", href: "/admin/settings", icon: Settings },
+    ],
+  },
 ];
 
 export function AdminSidebar() {
@@ -52,29 +72,38 @@ export function AdminSidebar() {
 
         {/* Menu — natural height, no flex-1 so spacer below creates the gap */}
         <div className="px-6 mt-2">
-          <ul className="space-y-1">
-            {NAV_ITEMS.map((item) => {
-              const isActive =
-                pathname === item.href || pathname.startsWith(item.href + "/");
+          {NAV_SECTIONS.map((section, sectionIndex) => (
+            <div key={section.title}>
+              {sectionIndex > 0 && <div className="my-4" />}
+              <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-white/60">
+                {section.title}
+              </p>
+              <ul className="space-y-1">
+                {section.items.map((item) => {
+                  const isActive =
+                    pathname === item.href ||
+                    pathname.startsWith(item.href + "/");
 
-              return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className={[
-                      "flex items-center gap-3 px-4 py-3 text-base text-left transition-colors rounded-sm",
-                      isActive
-                        ? "bg-primary-200 text-primary-900 font-semibold"
-                        : "text-white hover:bg-primary-200/50",
-                    ].join(" ")}
-                  >
-                    <item.icon size={18} className="shrink-0" />
-                    {item.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        className={[
+                          "flex items-center gap-3 px-4 py-3 text-base text-left transition-colors rounded-sm",
+                          isActive
+                            ? "bg-primary-200 text-primary-900 font-semibold"
+                            : "text-white hover:bg-primary-200/50",
+                        ].join(" ")}
+                      >
+                        <item.icon size={18} className="shrink-0" />
+                        {item.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
 
           {/* Admin button */}
           <div className="mt-4 pt-4 border-t border-white/20">
@@ -105,6 +134,9 @@ export function AdminSidebar() {
             <div className="min-w-0">
               <div className="text-base font-medium truncate">
                 Stephanie McVanSmithersons
+              </div>
+              <div className="text-xs text-white/70 truncate">
+                stephanie@example.com
               </div>
             </div>
           </div>
