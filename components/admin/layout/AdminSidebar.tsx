@@ -1,22 +1,34 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { Settings } from "lucide-react";
+import {
+  Home,
+  Users,
+  Heart,
+  Handshake,
+  Gift,
+  FileText,
+  MessageSquare,
+  Settings,
+} from "lucide-react";
 
-type NavItem = { label: string; href: string };
+type NavItem = {
+  label: string;
+  href: string;
+  icon: any;
+};
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "Home", href: "/admin/dashboard" },
-  { label: "Children", href: "/admin/children" },
-  { label: "Sponsors", href: "/admin/sponsors" },
-  { label: "Sponsorship", href: "/admin/sponsorships" },
-  { label: "Donations", href: "/admin/donations" },
-  { label: "Reports", href: "/admin/reports" },
-  { label: "Messages", href: "/admin/messages" },
-  { label: "Settings", href: "/admin/settings" },
+  { label: "Home", href: "/admin/dashboard", icon: Home },
+  { label: "Children", href: "/admin/children", icon: Users },
+  { label: "Sponsors", href: "/admin/sponsors", icon: Heart },
+  { label: "Sponsorship", href: "/admin/sponsorships", icon: Handshake },
+  { label: "Donations", href: "/admin/donations", icon: Gift },
+  { label: "Reports", href: "/admin/reports", icon: FileText },
+  { label: "Messages", href: "/admin/messages", icon: MessageSquare },
+  { label: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
 export function AdminSidebar() {
@@ -55,7 +67,7 @@ export function AdminSidebar() {
                         : "text-white hover:bg-primary-200/50",
                     ].join(" ")}
                   >
-                    <Settings size={18} className="shrink-0" />
+                    <item.icon size={18} className="shrink-0" />
                     {item.label}
                   </Link>
                 </li>
