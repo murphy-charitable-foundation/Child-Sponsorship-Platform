@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import NextLink from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Navbar,
   NavbarBrand,
@@ -13,29 +14,29 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownSection,
-  DropdownTrigger
+  DropdownTrigger,
 } from "@heroui/react";
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import {useAuth} from "@/components/AuthProvider";
-import { createClient } from "@/lib/supabase/client";
 
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/components/AuthProvider";
+import { createClient } from "@/lib/supabase/client";
 
 export function AppNavbar() {
   const router = useRouter();
-
+  const pathname = usePathname();
   const { user, loading } = useAuth();
+
+  const isActive = (href: string) => pathname === href;
 
   const logout = async () => {
     const supabase = createClient();
     //setUserAuthenticated(false);
     await supabase.auth.signOut();
     router.push("/auth/login");
-    
   };
 
-
-  const userFirstName = user?.user_metadata.first_name || user?.email?.split("@")[0] || "User";
+  const userFirstName =
+    user?.user_metadata.first_name || user?.email?.split("@")[0] || "User";
   const userLastName = user?.user_metadata.last_name || "";
 
   return (
@@ -55,36 +56,59 @@ export function AppNavbar() {
 
       <NavbarContent className="hidden sm:flex gap-6" justify="center">
         <NavbarItem>
-          <NextLink href="/" className="text-sm text-foreground">
+          <NextLink
+            href="/"
+            className={`text-sm transition-colors text-primary ${
+              isActive("/") && "font-semibold"
+            }`}
+          >
             Home
           </NextLink>
         </NavbarItem>
 
         <NavbarItem>
-          <NextLink href="/sponsorship/children" className="text-sm text-foreground">
+          <NextLink
+            href="/sponsorship/children"
+            className="text-sm text-primary"
+          >
             Meet the Children ▾
           </NextLink>
         </NavbarItem>
 
         <NavbarItem>
-          <NextLink href="#" className="text-sm text-foreground">
+          <NextLink href="#" className="text-sm text-primary">
             Who We Are
           </NextLink>
         </NavbarItem>
 
         <NavbarItem>
-          <NextLink href="#" className="text-sm text-foreground">
+          <NextLink href="#" className="text-sm text-primary">
             About the Program ▾
           </NextLink>
         </NavbarItem>
 
         <NavbarItem>
-          <NextLink href="#" className="text-sm text-foreground">
+          <NextLink href="#" className="text-sm text-primary">
             Contact
           </NextLink>
         </NavbarItem>
         <NavbarItem>
-          <NextLink href="/dashboard" className="text-sm text-foreground">
+          <NextLink
+            href="/about-us"
+            className={`text-sm transition-colors text-primary ${
+              isActive("/about-us") && "font-semibold"
+            }`}
+          >
+            AboutUs
+          </NextLink>
+        </NavbarItem>
+        <NavbarItem>
+          <NextLink
+            href="/dashboard"
+            className={`text-sm transition-colors text-primary ${
+              isActive("/dashboard") && "font-semibold"
+            }`}
+          >
             Dashboard
           </NextLink>
         </NavbarItem>
@@ -92,38 +116,36 @@ export function AppNavbar() {
 
       <NavbarContent justify="end" className="gap-4 pr-4">
         <NavbarItem>
-          {!user && <Button
-            as={NextLink}
-            href="/auth/login"
-            variant="bordered"
-            color="primary"
-            radius="md"
-            size="sm"
-          >
-            Login
-          </Button>}
-          {user && 
-          <Dropdown>
-            <DropdownTrigger>
-          <Button isIconOnly radius="full" variant="light">
-          <Avatar
-            name={`${userFirstName} ${userLastName}`}
-            size="sm"
-            color="primary"
-            
-          />
-          </Button>
-          </DropdownTrigger>
-            <DropdownMenu>
-              <DropdownItem
-                key="logout"
-                onClick={logout}
-              >
-                Logout
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
-          }
+          {!user && (
+            <Button
+              as={NextLink}
+              href="/auth/login"
+              variant="bordered"
+              color="primary"
+              radius="md"
+              size="sm"
+            >
+              Login
+            </Button>
+          )}
+          {user && (
+            <Dropdown>
+              <DropdownTrigger>
+                <Button isIconOnly radius="full" variant="light">
+                  <Avatar
+                    name={`${userFirstName} ${userLastName}`}
+                    size="sm"
+                    color="primary"
+                  />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu>
+                <DropdownItem key="logout" onClick={logout}>
+                  Logout
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          )}
         </NavbarItem>
 
         <NavbarItem>
