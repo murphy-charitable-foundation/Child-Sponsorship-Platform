@@ -48,49 +48,43 @@ export async function updateSession(request: NextRequest) {
 	// with the Supabase client, your users may be randomly logged out.
 	const { data } = await supabase.auth.getClaims();
 	const user = data?.claims;
+	const url = request.nextUrl.clone();
 
 	const isPublicPath =
 		request.nextUrl.pathname === "/" ||
 		PUBLIC_PATH.some((path) => request.nextUrl.pathname.startsWith(path));
 
+	const isAdminPath = request.nextUrl.pathname.startsWith("/admin");
+
 	if (!user && !isPublicPath) {
 		// no user, potentially respond by redirecting the user to the login page
-		const url = request.nextUrl.clone();
 		url.pathname = "/auth/login";
 		return NextResponse.redirect(url);
 	}
 
-	//This is access permission for the /admin routes. They are only accessable with admin or super_admin users.
-	//When admin is created, it creates pending_admins in supabase DB and the super_admin need to approve them.
-	//Therefore, we need to use the supabase DB data within admins or super_admins can access to the pages.
-	// const isAdminRoutes = request.nextUrl.pathname.startsWith("/admin");
-	// console.log("sdfsdf", isAdminRoutes);
+	if (!user) return supabaseResponse;
 
-	// if (isAdminRoutes) {
-	// 	const url = request.nextUrl.clone();
+	//Use app_metadata.role for checking role and give the permission for pages.
+	//we don't want to use user_metadata because it's editable from logged in user's browser console.
+	const role = user.app_metadata?.role;
 
-	// 	if (!user) {
-	// 		// no user, potentially respond by redirecting the user to the login page
-	// 		url.pathname = "/auth/login";
-	// 		return NextResponse.redirect(url);
-	// 	}
-	// 	const [{ data, error }, { data: sp_admin_data, error: sp_admin_error }] =
-	// 		await Promise.all([
-	// 			supabase.from("admins").select("id").eq("id", user.sub),
-	// 			supabase.from("super_admins").select("id").eq("id", user.sub),
-	// 		]);
-	// 	if (error !== null || sp_admin_error !== null) {
-	// 		const requestHeaders = new Headers(request.headers);
-	// 		requestHeaders.set("x-error", "Something went wrong. Please try again.");
-	// 		const response = NextResponse.rewrite(request.nextUrl, {
-	// 			request: { headers: requestHeaders },
-	// 		});
-	// 		return response;
-	// 	} else if (sp_admin_data.length === 0 && data.length === 0) {
-	// 		url.pathname = "/";
-	// 		return NextResponse.redirect(url);
-	// 	}
-	// }
+	if (!role && !isPublicPath) {
+		// authenticated but no approved role (e.g. pending_admin) — block protected paths
+		url.pathname = "/";
+		return NextResponse.redirect(url);
+	}
+
+	if (role === "sponsor") {
+		if (isAdminPath) {
+			url.pathname = "/";
+			return NextResponse.redirect(url);
+		}
+	} else if (role === "super_admin" || role === "admin") {
+		if (!isAdminPath) {
+			url.pathname = "/admin/dashboard";
+			return NextResponse.redirect(url);
+		}
+	}
 
 	// IMPORTANT: You *must* return the supabaseResponse object as it is.
 	// If you're creating a new response object with NextResponse.next() make sure to:
