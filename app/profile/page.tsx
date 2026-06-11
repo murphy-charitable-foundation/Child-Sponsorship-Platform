@@ -38,7 +38,7 @@ export default function ProfilePage() {
 
 	useEffect(() => {
 		if (!user) return;
-		const role = user.user_metadata.role;
+		const role = user.app_metadata.role;
 
 		let convertedRole = "";
 		if (role === "sponsor") {

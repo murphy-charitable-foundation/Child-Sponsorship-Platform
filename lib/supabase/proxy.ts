@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { hasEnvVars } from "../utils";
 
-const PUBLIC_PATH = ["/terms", "/privacy", "/auth"];
+const PUBLIC_PATH = ["/terms", "/privacy", "/auth", "about-us"];
 
 export async function updateSession(request: NextRequest) {
 	let supabaseResponse = NextResponse.next({
@@ -55,6 +55,7 @@ export async function updateSession(request: NextRequest) {
 		PUBLIC_PATH.some((path) => request.nextUrl.pathname.startsWith(path));
 
 	const isAdminPath = request.nextUrl.pathname.startsWith("/admin");
+	const isApiPath = request.nextUrl.pathname.startsWith("/api");
 
 	if (!user && !isPublicPath) {
 		// no user, potentially respond by redirecting the user to the login page
@@ -75,12 +76,12 @@ export async function updateSession(request: NextRequest) {
 	}
 
 	if (role === "sponsor") {
-		if (isAdminPath) {
+		if (isAdminPath && !isApiPath) {
 			url.pathname = "/";
 			return NextResponse.redirect(url);
 		}
 	} else if (role === "super_admin" || role === "admin") {
-		if (!isAdminPath) {
+		if (!isAdminPath && !isApiPath) {
 			url.pathname = "/admin/dashboard";
 			return NextResponse.redirect(url);
 		}
