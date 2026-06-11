@@ -19,7 +19,6 @@ import {
 	Smile,
 	Sparkles,
 	Heart,
-	Plus,
 } from "lucide-react";
 
 export default function ChildProfilePageWrapper() {
@@ -73,7 +72,7 @@ function ChildProfilePage() {
 			const supabase = createClient();
 
 			const { data, error } = await supabase
-				.from("children")
+				.from("children_with_ages")
 				.select("*")
 				.eq("id", childId)
 				.single();
@@ -211,14 +210,14 @@ function ChildProfilePage() {
 								<Heart />
 								Sponsor {child.first_name}
 							</Button>
-
+							{/* 
 							<Button
 								variant="outline"
 								className="h-12 w-full rounded-[12px] border-2 border-green-500 text-base font-bold text-green-500 hover:bg-green-50 hover:text-green-500 [&_svg]:size-5"
 							>
 								<Plus />
 								Sponsor More Children
-							</Button>
+							</Button> */}
 						</div>
 					</div>
 
@@ -292,7 +291,7 @@ function ChildProfilePage() {
 						</div>
 
 						{/* Sponsor a Group */}
-						<div className="flex flex-col items-center gap-8 rounded-[12px] border border-zinc-100 bg-white p-6 pb-8">
+						{/* <div className="flex flex-col items-center gap-8 rounded-[12px] border border-zinc-100 bg-white p-6 pb-8">
 							<div className="flex flex-col items-center gap-4">
 								<h3 className="text-2xl font-semibold ">
 									Sponsor a Group of Children
@@ -307,7 +306,7 @@ function ChildProfilePage() {
 								<Heart />
 								Sponsor a Group
 							</Button>
-						</div>
+						</div> */}
 
 						{/* Disclaimer */}
 						<div className="rounded-[12px] border border-zinc-100 bg-white p-6">
