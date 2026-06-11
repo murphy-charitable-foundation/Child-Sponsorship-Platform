@@ -80,6 +80,13 @@ export async function updateSession(request: NextRequest) {
 			url.pathname = "/";
 			return NextResponse.redirect(url);
 		}
+	} else if (role === "pending_admin") {
+		console.log(isAdminPath);
+		// If pending admin tried to access admin or sponsor page redirect to screen for pending page.,
+		if (!isApiPath && (!isPublicPath || isAdminPath)) {
+			url.pathname = "/auth/pending-approval";
+			return NextResponse.redirect(url);
+		}
 	} else if (role === "super_admin" || role === "admin") {
 		if (!isAdminPath && !isApiPath) {
 			url.pathname = "/admin/dashboard";
