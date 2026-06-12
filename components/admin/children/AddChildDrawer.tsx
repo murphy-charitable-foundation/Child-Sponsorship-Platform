@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   Drawer,
@@ -13,7 +12,7 @@ import {
 } from "@heroui/react";
 
 type AddForm = {
-  photoUrl: string;
+  photoFile: File | null;
   firstName: string;
   lastName: string;
   gender: string;
@@ -43,7 +42,7 @@ type AddChildDrawerProps = {
 export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps) {
   const router = useRouter();
   const [form, setForm] = useState<AddForm>({
-    photoUrl: "/children/placeholder.png",
+    photoFile: null,
     firstName: "",
     lastName: "",
     gender: "Select gender",
@@ -68,11 +67,7 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
   function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        update("photoUrl", event.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+      update("photoFile", file);
     }
   }
 
@@ -90,7 +85,7 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
   return (
     <Drawer isOpen={isOpen} onOpenChange={handleClose} size="md" placement="right">
       <DrawerContent>
-        {(closeDrawer) => (
+        {() => (
           <>
             <DrawerHeader className="border-b border-slate-200 text-lg font-semibold text-slate-900">
               Add Child
@@ -99,20 +94,16 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
             <DrawerBody className="space-y-6 py-5 overflow-y-auto">
               {/* Photo Upload */}
               <div>
-                <label className="mb-3 block text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Photo
-                </label>
-                <div className="mb-4 h-40 w-40 overflow-hidden rounded-xl bg-slate-100">
-                  <Image
-                    src={form.photoUrl}
-                    alt="Child"
-                    width={160}
-                    height={160}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-                <div className="rounded-xl border-2 border-dashed border-slate-300 p-6 text-center">
-                  <div className="mb-2 text-2xl text-slate-400">📷</div>
+                <div className="rounded-xl border-2 border-dashed border-slate-300 p-8 text-center">
+                  <div className="mb-3 flex justify-center">
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="8" y="8" width="32" height="32" rx="2" stroke="#004a99" strokeWidth="2"/>
+                      <path d="M20 28L24 20L28 28" stroke="#004a99" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <circle cx="22" cy="16" r="2" fill="#004a99"/>
+                      <circle cx="38" cy="36" r="6" stroke="#004a99" strokeWidth="2"/>
+                      <path d="M38 33v6m-3-3h6" stroke="#004a99" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                  </div>
                   <p className="text-sm font-medium text-slate-700">
                     Drag photo here or{" "}
                     <label className="cursor-pointer text-[#004a99] hover:underline">
@@ -125,7 +116,7 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
                       />
                     </label>
                   </p>
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="mt-2 text-xs text-slate-500">
                     Supported formats: JPG or PNG formats up to [number]mb
                   </p>
                 </div>
