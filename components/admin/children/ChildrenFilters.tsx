@@ -3,10 +3,8 @@
 import { useState } from "react";
 import { Input, Select, SelectItem, Button } from "@heroui/react";
 
-const STATUS_OPTIONS = ["active", "waiting", "exited"];
-
 export default function ChildrenFilters() {
-  const [selectedStatus, setSelectedStatus] = useState<Set<string>>(new Set(STATUS_OPTIONS));
+  const [selectedStatus, setSelectedStatus] = useState<Set<string>>(new Set(["all"]));
   const [selectedGender, setSelectedGender] = useState<Set<string>>(new Set());
 
   return (
@@ -55,13 +53,12 @@ export default function ChildrenFilters() {
             onSelectionChange={(keys) => {
               const newKeys = new Set(Array.from(keys as Set<string>));
 
-              // If "all" was just selected, select all individual statuses
+              // If "all" is selected, keep only "all"
               if (newKeys.has("all")) {
-                setSelectedStatus(new Set(STATUS_OPTIONS));
+                setSelectedStatus(new Set(["all"]));
               }
-              // If an individual status is selected (and "all" is no longer there), remove "all" and keep individual selections
+              // If an individual status is clicked when "all" was selected, switch to just that status
               else if (newKeys.size > 0) {
-                newKeys.delete("all");
                 setSelectedStatus(newKeys);
               }
               // Allow empty selection
@@ -69,33 +66,30 @@ export default function ChildrenFilters() {
                 setSelectedStatus(new Set());
               }
             }}
-            renderValue={(items) => {
-              const allThreeSelected = items.length === 3 && items.every((item) => STATUS_OPTIONS.includes(item.key as string));
-              return (
-                <span className="flex gap-2">
-                  {items.length === 0 ? (
-                    <span className="text-default-500">No status selected</span>
-                  ) : allThreeSelected ? (
-                    <span className="text-default-700">All statuses</span>
-                  ) : (
-                    items.map((item) => (
-                      <span
-                        key={item.key}
-                        className={
-                          item.key === "active"
-                            ? "text-success"
-                            : item.key === "waiting"
-                              ? "text-warning"
-                              : "text-default-500"
-                        }
-                      >
-                        {item.textValue}
-                      </span>
-                    ))
-                  )}
-                </span>
-              );
-            }}
+            renderValue={(items) => (
+              <span className="flex gap-2">
+                {items.length === 0 ? (
+                  <span className="text-default-500">No status selected</span>
+                ) : items.some((item) => item.key === "all") ? (
+                  <span className="text-default-700">All statuses</span>
+                ) : (
+                  items.map((item) => (
+                    <span
+                      key={item.key}
+                      className={
+                        item.key === "active"
+                          ? "text-success"
+                          : item.key === "waiting"
+                            ? "text-warning"
+                            : "text-default-500"
+                      }
+                    >
+                      {item.textValue}
+                    </span>
+                  ))
+                )}
+              </span>
+            )}
           >
             <SelectItem key="all">All statuses</SelectItem>
             <SelectItem key="active">Active</SelectItem>
@@ -112,7 +106,7 @@ export default function ChildrenFilters() {
           size="sm"
           className="text-primary font-medium"
           onPress={() => {
-            setSelectedStatus(new Set(STATUS_OPTIONS));
+            setSelectedStatus(new Set(["all"]));
             setSelectedGender(new Set());
           }}
         >
