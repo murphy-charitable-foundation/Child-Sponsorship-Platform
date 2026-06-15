@@ -1,8 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { Input, Select, SelectItem, Button } from "@heroui/react";
 
 export default function ChildrenFilters() {
+  const [selectedStatus, setSelectedStatus] = useState<Set<string>>(new Set(["active", "waiting", "exited"]));
+  const [selectedGender, setSelectedGender] = useState<Set<string>>(new Set());
+
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 items-end">
@@ -28,6 +32,8 @@ export default function ChildrenFilters() {
             placeholder="Select gender"
             radius="md"
             variant="bordered"
+            selectedKeys={selectedGender}
+            onSelectionChange={(keys) => setSelectedGender(new Set(Array.from(keys as Set<string>)))}
           >
             <SelectItem key="male">Male</SelectItem>
             <SelectItem key="female">Female</SelectItem>
@@ -43,12 +49,24 @@ export default function ChildrenFilters() {
           <Select
             radius="md"
             variant="bordered"
-            selectedKeys={["active", "waiting", "exited"]}
-            renderValue={() => (
-              <span>
-                <span className="text-success">Active</span>,{" "}
-                <span className="text-warning">Waiting</span>,{" "}
-                <span className="text-default-500">Exited</span>
+            selectedKeys={selectedStatus}
+            onSelectionChange={(keys) => setSelectedStatus(new Set(Array.from(keys as Set<string>)))}
+            renderValue={(items) => (
+              <span className="flex gap-2">
+                {items.map((item) => (
+                  <span
+                    key={item.key}
+                    className={
+                      item.key === "active"
+                        ? "text-success"
+                        : item.key === "waiting"
+                          ? "text-warning"
+                          : "text-default-500"
+                    }
+                  >
+                    {item.textValue}
+                  </span>
+                ))}
               </span>
             )}
           >
@@ -65,6 +83,10 @@ export default function ChildrenFilters() {
           variant="light"
           size="sm"
           className="text-primary font-medium"
+          onPress={() => {
+            setSelectedStatus(new Set(["active", "waiting", "exited"]));
+            setSelectedGender(new Set());
+          }}
         >
           Reset filters
         </Button>
