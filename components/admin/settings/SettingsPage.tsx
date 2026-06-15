@@ -543,7 +543,7 @@ function Toggle({ label, description, value, onChange }: {
         onClick={() => onChange(!value)}
         className={`relative mt-0.5 h-6 w-11 shrink-0 rounded-full transition-colors ${value ? "bg-[#004a99]" : "bg-slate-200"}`}
       >
-        <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${value ? "translate-x-5" : "translate-x-0.5"}`} />
+        <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${value ? "translate-x-5" : "translate-x-0"}`} />
       </button>
     </div>
   );
@@ -745,7 +745,7 @@ function MessageSettings() {
                 <p className="mt-0.5 text-xs text-slate-400">{desc}</p>
               </div>
               <button onClick={() => set(!value)} className={`relative mt-0.5 h-6 w-11 shrink-0 rounded-full transition-colors ${value ? "bg-green-500" : "bg-slate-600"}`}>
-                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${value ? "translate-x-5" : "translate-x-0.5"}`} />
+                <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${value ? "translate-x-5" : "translate-x-0"}`} />
               </button>
             </div>
           ))}
