@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { KpiCard } from "@/components/admin/dashboard/KpiCard";
 import { PanelCard } from "@/components/admin/dashboard/PanelCard";
@@ -5,6 +8,10 @@ import ChildrenFilters from "@/components/admin/children/ChildrenFilters";
 import ChildrenTable from "@/components/admin/children/ChildrenTable";
 
 export default function ChildrenPage() {
+  const [selectedStatus, setSelectedStatus] = useState<Set<string>>(new Set(["all"]));
+  const [selectedGender, setSelectedGender] = useState<Set<string>>(new Set());
+  const [searchQuery, setSearchQuery] = useState("");
+
   return (
     <div className="space-y-8 w-full">
       {/* header */}
@@ -37,8 +44,19 @@ export default function ChildrenPage() {
       {/* BOX containing Filters + Table */}
       <PanelCard title="" className="w-full">
         <div className="space-y-8">
-          <ChildrenFilters />
-          <ChildrenTable />
+          <ChildrenFilters
+            selectedStatus={selectedStatus}
+            setSelectedStatus={setSelectedStatus}
+            selectedGender={selectedGender}
+            setSelectedGender={setSelectedGender}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+          />
+          <ChildrenTable
+            selectedStatus={selectedStatus}
+            selectedGender={selectedGender}
+            searchQuery={searchQuery}
+          />
         </div>
       </PanelCard>
     </div>

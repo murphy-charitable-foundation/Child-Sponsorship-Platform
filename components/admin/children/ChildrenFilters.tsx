@@ -1,11 +1,24 @@
 "use client";
 
-import { useState } from "react";
 import { Input, Select, SelectItem, Button } from "@heroui/react";
 
-export default function ChildrenFilters() {
-  const [selectedStatus, setSelectedStatus] = useState<Set<string>>(new Set(["all"]));
-  const [selectedGender, setSelectedGender] = useState<Set<string>>(new Set());
+type ChildrenFiltersProps = {
+  selectedStatus: Set<string>;
+  setSelectedStatus: (status: Set<string>) => void;
+  selectedGender: Set<string>;
+  setSelectedGender: (gender: Set<string>) => void;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+};
+
+export default function ChildrenFilters({
+  selectedStatus,
+  setSelectedStatus,
+  selectedGender,
+  setSelectedGender,
+  searchQuery,
+  setSearchQuery,
+}: ChildrenFiltersProps) {
 
   return (
     <div className="w-full">
@@ -16,10 +29,13 @@ export default function ChildrenFilters() {
             Who are you looking for?
           </div>
           <Input
-            placeholder=""
+            placeholder="Search by name"
             radius="md"
             variant="bordered"
             isClearable
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onClear={() => setSearchQuery("")}
           />
         </div>
 

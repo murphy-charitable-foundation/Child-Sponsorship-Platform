@@ -62,8 +62,39 @@ function statusChipColor(status: "Active" | "Waiting" | "Exited") {
   return "default"; // for Exited
 }
 
-export default function ChildrenTable() {
+type ChildrenTableProps = {
+  selectedStatus: Set<string>;
+  selectedGender: Set<string>;
+  searchQuery: string;
+};
+
+export default function ChildrenTable({
+  selectedStatus,
+  selectedGender,
+  searchQuery,
+}: ChildrenTableProps) {
   const router = useRouter();
+
+  // Filter rows based on selection
+  const filtered = rows.filter((row) => {
+    // Status filter
+    const statusMatches =
+      selectedStatus.has("all") ||
+      selectedStatus.has(row.status.toLowerCase());
+
+    // Gender filter
+    const genderMatches =
+      selectedGender.size === 0 ||
+      selectedGender.has(row.gender.toLowerCase());
+
+    // Search filter
+    const searchMatches =
+      !searchQuery ||
+      row.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      row.lastName.toLowerCase().includes(searchQuery.toLowerCase());
+
+    return statusMatches && genderMatches && searchMatches;
+  });
 
   return (
     <div className="w-full">
@@ -85,7 +116,7 @@ export default function ChildrenTable() {
           <TableColumn>ACTIONS</TableColumn>
         </TableHeader>
 
-        <TableBody emptyContent={"No children found"} items={rows}>
+        <TableBody emptyContent={"No children found"} items={filtered}>
           {(r) => (
             <TableRow key={r.id}>
               <TableCell>{r.lastName}</TableCell>
