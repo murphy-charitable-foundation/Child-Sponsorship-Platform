@@ -2,8 +2,7 @@
 
 import React from "react";
 import { usePathname } from "next/navigation";
-import ClientProviders from "@/components/ClientProviders";
-import { HeroUIProvider } from "@heroui/react";
+import { AppNavbar } from "@/components/AppNavbar";
 
 export default function PublicShell({
 	children,
@@ -11,11 +10,21 @@ export default function PublicShell({
 	children: React.ReactNode;
 }) {
 	const pathname = usePathname();
-	const isAdminRoute = pathname?.startsWith("/admin");
+	const isAdminRoute =
+		pathname?.startsWith("/admin") || pathname?.startsWith("/auth");
 
-	if (isAdminRoute) {
-		return <HeroUIProvider>{children}</HeroUIProvider>;
-	}
+	return (
+		<>
+			{!isAdminRoute && <AppNavbar />}
 
-	return <ClientProviders>{children}</ClientProviders>;
+			{children}
+
+			{!isAdminRoute && (
+				<footer className="px-6 py-8 text-sm text-default-500">
+					{/* move your existing footer JSX here */}© Murphy Charitable
+					Foundation
+				</footer>
+			)}
+		</>
+	);
 }
