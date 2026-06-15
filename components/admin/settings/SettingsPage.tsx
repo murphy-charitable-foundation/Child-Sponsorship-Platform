@@ -618,7 +618,7 @@ function DonationSettings() {
           <span className="text-sm font-medium text-slate-700">Minimum Donation Amount</span>
           <div className="flex items-center gap-2">
             <button onClick={() => setMinDonation(!minDonation)} className={`relative h-6 w-11 rounded-full transition-colors ${minDonation ? "bg-[#004a99]" : "bg-slate-200"}`}>
-              <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${minDonation ? "translate-x-5" : "translate-x-0.5"}`} />
+              <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${minDonation ? "translate-x-5" : "translate-x-0"}`} />
             </button>
             <span className="text-xs font-medium text-slate-500">{minDonation ? "ON" : "OFF"}</span>
           </div>
@@ -690,7 +690,7 @@ function ReportSettings() {
           </div>
           <div className="mt-4 flex items-center gap-3">
             <button onClick={() => setPdfExport(!pdfExport)} className={`relative h-6 w-11 rounded-full transition-colors ${pdfExport ? "bg-[#004a99]" : "bg-slate-200"}`}>
-              <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${pdfExport ? "translate-x-5" : "translate-x-0.5"}`} />
+              <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${pdfExport ? "translate-x-5" : "translate-x-0"}`} />
             </button>
             <span className="text-sm text-slate-700">Enable PDF Export</span>
             <span className="text-xs font-medium text-slate-500">{pdfExport ? "ON" : "OFF"}</span>
