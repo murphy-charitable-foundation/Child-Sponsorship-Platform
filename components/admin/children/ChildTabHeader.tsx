@@ -32,7 +32,7 @@ export function ChildTabHeader({
       {actionLabel && (
         <button
           onClick={onActionClick}
-          className="rounded-lg bg-[#004a99] px-4 py-2 text-sm font-medium text-white hover:bg-[#003d7a]"
+          className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90"
         >
           {actionLabel}
         </button>

@@ -40,7 +40,7 @@ export default function DonationsPage() {
   return (
     <div className="px-10 py-8">
       {/* Header */}
-      <h1 className="text-2xl font-semibold text-[#004a99]">Donations</h1>
+      <h1 className="text-2xl font-semibold text-primary">Donations</h1>
 
       {/* KPI cards */}
       <div className="mt-6 grid grid-cols-2 gap-4">
@@ -50,7 +50,7 @@ export default function DonationsPage() {
             {[40, 65, 50, 80, 55, 90, 70, 85, 60, 95, 75, 100].map((h, i) => (
               <div
                 key={i}
-                className="flex-1 rounded-t bg-[#004a99]/20"
+                className="flex-1 rounded-t bg-primary/20"
                 style={{ height: `${h}%` }}
               />
             ))}
@@ -92,7 +92,7 @@ export default function DonationsPage() {
               </div>
               <button
                 onClick={() => { setSearch(""); setCountry("All countries"); }}
-                className="pb-1 text-sm text-[#004a99] hover:underline"
+                className="pb-1 text-sm text-primary hover:underline"
               >
                 Reset filters
               </button>
@@ -129,7 +129,7 @@ export default function DonationsPage() {
                       <td className="px-4 py-3">
                         <button
                           onClick={() => openDrawer(d)}
-                          className="text-[#004a99] hover:underline"
+                          className="text-primary hover:underline"
                         >
                           View
                         </button>
@@ -159,7 +159,7 @@ export default function DonationsPage() {
                       <span className="text-sm font-medium text-slate-800">
                         {d.firstName} {d.lastName}
                       </span>
-                      <span className="text-sm font-semibold text-[#004a99]">{d.amount}</span>
+                      <span className="text-sm font-semibold text-primary">{d.amount}</span>
                     </div>
                     <div className="mt-0.5 flex items-center justify-between">
                       <span className="text-xs text-slate-400">{d.purpose}</span>
@@ -184,4 +184,4 @@ export default function DonationsPage() {
 }
 
 const inputCls =
-  "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#004a99] focus:outline-none";
+  "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-primary focus:outline-none";

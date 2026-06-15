@@ -16,7 +16,7 @@ export default function Page() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#004a99]">
+    <div className="flex min-h-screen items-center justify-center bg-primary">
       <div className="w-full max-w-sm rounded-2xl bg-white px-8 py-10 shadow-xl">
 
         {/* Logo */}
@@ -30,7 +30,7 @@ export default function Page() {
         </div>
 
         {/* Title */}
-        <h1 className="mt-3 text-center text-lg font-semibold text-[#004a99]">
+        <h1 className="mt-3 text-center text-lg font-semibold text-primary">
           Admin Portal
         </h1>
 
@@ -82,7 +82,7 @@ export default function Page() {
 
           <button
             type="submit"
-            className="mt-2 w-full rounded-lg bg-[#004a99] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#003d7a]"
+            className="mt-2 w-full rounded-lg bg-primary py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary/90"
           >
             Sign In
           </button>
@@ -102,4 +102,4 @@ export default function Page() {
 }
 
 const inputCls =
-  "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-[#004a99] focus:outline-none focus:ring-2 focus:ring-[#004a99]/20";
+  "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20";

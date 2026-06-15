@@ -85,7 +85,7 @@ export default function AddSponsorDrawer({ isOpen, onClose }: AddSponsorDrawerPr
                 Cancel
               </Button>
               <Button
-                className="bg-[#004a99] text-white"
+                className="bg-primary text-white"
                 isDisabled={sponsorType === "none"}
                 onPress={closeDrawer}
               >
@@ -115,8 +115,8 @@ function TypeButton({
       onClick={onSelect}
       className={`flex items-center gap-2 rounded-lg border px-5 py-2.5 text-sm font-medium transition-colors ${
         selected
-          ? "border-[#004a99] bg-[#004a99] text-white"
-          : "border-slate-300 bg-white text-slate-700 hover:border-[#004a99] hover:text-[#004a99]"
+          ? "border-primary bg-primary text-white"
+          : "border-slate-300 bg-white text-slate-700 hover:border-primary hover:text-primary"
       }`}
     >
       <span>{icon}</span>
@@ -231,4 +231,4 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 const inputCls =
-  "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-[#004a99] focus:outline-none focus:ring-2 focus:ring-[#004a99]/20";
+  "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20";

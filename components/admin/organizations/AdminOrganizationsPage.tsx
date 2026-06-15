@@ -177,7 +177,7 @@ export default function AdminOrganizationsPage() {
   return (
     <div className="px-10 py-8">
         {/* Header */}
-        <h1 className="text-3xl font-bold text-[#004a99] mb-6">Admin</h1>
+        <h1 className="text-3xl font-bold text-primary mb-6">Admin</h1>
 
         {/* Tabs */}
         <div className="flex gap-4 mb-6">
@@ -185,7 +185,7 @@ export default function AdminOrganizationsPage() {
             onClick={() => setActiveTab("organizations")}
             className={`px-6 py-2 font-semibold rounded-lg transition-colors ${
               activeTab === "organizations"
-                ? "bg-[#004a99] text-white"
+                ? "bg-primary text-white"
                 : "bg-gray-200 text-gray-700 hover:bg-gray-300"
             }`}
           >
@@ -195,7 +195,7 @@ export default function AdminOrganizationsPage() {
             onClick={() => setActiveTab("users")}
             className={`px-6 py-2 font-semibold rounded-lg transition-colors ${
               activeTab === "users"
-                ? "bg-[#004a99] text-white"
+                ? "bg-primary text-white"
                 : "bg-gray-200 text-gray-700 hover:bg-gray-300"
             }`}
           >
@@ -212,7 +212,7 @@ export default function AdminOrganizationsPage() {
               </h2>
               <Link
                 href="/admin/organizations/create"
-                className="bg-[#004a99] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#003d7a]"
+                className="bg-primary text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary/90"
               >
                 Create organization
               </Link>
@@ -247,11 +247,11 @@ export default function AdminOrganizationsPage() {
                         {org.dateCreated}
                       </td>
                       <td className="px-4 py-3">
-                        <span className="cursor-pointer text-[#004a99] hover:underline">
+                        <span className="cursor-pointer text-primary hover:underline">
                           View
                         </span>
                         <span className="mx-1 text-slate-300">|</span>
-                        <span className="cursor-pointer text-[#004a99] hover:underline">
+                        <span className="cursor-pointer text-primary hover:underline">
                           Edit
                         </span>
                       </td>
@@ -268,7 +268,7 @@ export default function AdminOrganizationsPage() {
           <div>
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-semibold text-gray-800">Users</h2>
-              <button className="bg-[#004a99] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#003d7a]">
+              <button className="bg-primary text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary/90">
                 Create user
               </button>
             </div>
@@ -285,7 +285,7 @@ export default function AdminOrganizationsPage() {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search by first or last name"
-                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-[#004a99] focus:outline-none"
+                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-primary focus:outline-none"
                   />
                 </div>
                 <div className="w-48">
@@ -295,7 +295,7 @@ export default function AdminOrganizationsPage() {
                   <select
                     value={organization}
                     onChange={(e) => setOrganization(e.target.value)}
-                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-[#004a99] focus:outline-none"
+                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-primary focus:outline-none"
                   >
                     <option>All organizations</option>
                     {organizations.map((org) => (
@@ -310,7 +310,7 @@ export default function AdminOrganizationsPage() {
                   <select
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-[#004a99] focus:outline-none"
+                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-primary focus:outline-none"
                   >
                     <option>All statuses</option>
                     <option>Active</option>
@@ -324,7 +324,7 @@ export default function AdminOrganizationsPage() {
                     setOrganization("All organizations");
                     setStatus("All statuses");
                   }}
-                  className="text-sm text-[#004a99] hover:underline pb-1"
+                  className="text-sm text-primary hover:underline pb-1"
                 >
                   Reset filters
                 </button>
@@ -381,11 +381,11 @@ export default function AdminOrganizationsPage() {
                         {user.lastActive}
                       </td>
                       <td className="px-4 py-3">
-                        <span className="cursor-pointer text-[#004a99] hover:underline">
+                        <span className="cursor-pointer text-primary hover:underline">
                           View
                         </span>
                         <span className="mx-1 text-slate-300">|</span>
-                        <span className="cursor-pointer text-[#004a99] hover:underline">
+                        <span className="cursor-pointer text-primary hover:underline">
                           Edit
                         </span>
                       </td>

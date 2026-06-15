@@ -106,7 +106,7 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
                   </div>
                   <p className="text-sm font-medium text-slate-700">
                     Drag photo here or{" "}
-                    <label className="cursor-pointer text-[#004a99] hover:underline">
+                    <label className="cursor-pointer text-primary hover:underline">
                       browse
                       <input
                         type="file"
@@ -133,7 +133,7 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
                         type="text"
                         value={form.firstName}
                         onChange={(e) => update("firstName", e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#004a99]"
+                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
                         placeholder="First name"
                       />
                     </div>
@@ -143,7 +143,7 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
                         type="text"
                         value={form.lastName}
                         onChange={(e) => update("lastName", e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#004a99]"
+                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
                         placeholder="Last name"
                       />
                     </div>
@@ -155,7 +155,7 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
                       <select
                         value={form.gender}
                         onChange={(e) => update("gender", e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#004a99]"
+                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
                       >
                         {GENDERS.map((g) => (
                           <option key={g}>{g}</option>
@@ -168,7 +168,7 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
                         type="date"
                         value={form.dob}
                         onChange={(e) => update("dob", e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#004a99]"
+                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
                       />
                     </div>
                     <div>
@@ -176,7 +176,7 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
                       <select
                         value={form.schoolLevel}
                         onChange={(e) => update("schoolLevel", e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#004a99]"
+                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
                       >
                         {SCHOOL_LEVELS.map((s) => (
                           <option key={s}>{s}</option>
@@ -191,7 +191,7 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
                       <select
                         value={form.country}
                         onChange={(e) => update("country", e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#004a99]"
+                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
                       >
                         {COUNTRIES.map((c) => (
                           <option key={c}>{c}</option>
@@ -204,7 +204,7 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
                         type="text"
                         value={form.language}
                         onChange={(e) => update("language", e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#004a99]"
+                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
                         placeholder="e.g. Luganda"
                       />
                     </div>
@@ -215,7 +215,7 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
                     <textarea
                       value={form.biography}
                       onChange={(e) => update("biography", e.target.value)}
-                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#004a99]"
+                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
                       placeholder="Child's biography"
                       rows={4}
                     />
@@ -231,7 +231,7 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
                   <textarea
                     value={form.familyBiography}
                     onChange={(e) => update("familyBiography", e.target.value)}
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#004a99]"
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
                     placeholder="Describe the family background"
                     rows={4}
                   />
@@ -248,7 +248,7 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
                       type="text"
                       value={form.guardianName}
                       onChange={(e) => update("guardianName", e.target.value)}
-                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#004a99]"
+                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
                       placeholder="Full name"
                     />
                   </div>
@@ -260,7 +260,7 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
                         type="text"
                         value={form.guardianRelationship}
                         onChange={(e) => update("guardianRelationship", e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#004a99]"
+                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
                         placeholder="e.g. Mother"
                       />
                     </div>
@@ -270,7 +270,7 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
                         type="text"
                         value={form.guardianNin}
                         onChange={(e) => update("guardianNin", e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#004a99]"
+                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
                         placeholder="National ID"
                       />
                     </div>
@@ -283,7 +283,7 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
                         type="tel"
                         value={form.guardianPhone}
                         onChange={(e) => update("guardianPhone", e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#004a99]"
+                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
                         placeholder="Phone number"
                       />
                     </div>
@@ -293,7 +293,7 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
                         type="email"
                         value={form.guardianEmail}
                         onChange={(e) => update("guardianEmail", e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#004a99]"
+                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
                         placeholder="Email address"
                       />
                     </div>
@@ -305,7 +305,7 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
                       type="text"
                       value={form.guardianAddress}
                       onChange={(e) => update("guardianAddress", e.target.value)}
-                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#004a99]"
+                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
                       placeholder="Full address"
                     />
                   </div>
@@ -321,7 +321,7 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
               >
                 Cancel
               </Button>
-              <Button onPress={handleSave} className="bg-[#004a99] text-white">
+              <Button onPress={handleSave} className="bg-primary text-white">
                 Add child
               </Button>
             </DrawerFooter>

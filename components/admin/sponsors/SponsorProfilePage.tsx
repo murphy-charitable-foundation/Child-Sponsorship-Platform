@@ -58,10 +58,10 @@ export default function SponsorProfilePage({ sponsor }: Props) {
   return (
     <div className="px-10 py-8">
       {/* Header */}
-      <h1 className="text-2xl font-semibold text-[#004a99]">Sponsor Profile</h1>
+      <h1 className="text-2xl font-semibold text-primary">Sponsor Profile</h1>
       <Link
         href="/admin/sponsors"
-        className="mt-2 flex w-fit items-center gap-1 text-sm font-medium text-[#004a99] hover:underline"
+        className="mt-2 flex w-fit items-center gap-1 text-sm font-medium text-primary hover:underline"
       >
         <span>←</span> Sponsors
       </Link>
@@ -74,7 +74,7 @@ export default function SponsorProfilePage({ sponsor }: Props) {
             onClick={() => setActiveTab(tab.key)}
             className={`rounded-xl py-2.5 text-center text-sm font-medium transition-colors ${
               activeTab === tab.key
-                ? "bg-[#004a99] text-white"
+                ? "bg-primary text-white"
                 : "text-slate-700 hover:text-slate-900"
             }`}
           >

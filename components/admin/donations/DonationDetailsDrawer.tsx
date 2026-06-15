@@ -92,7 +92,7 @@ export default function DonationDetailsDrawer({ donation, isOpen, onClose }: Pro
                 <input
                   type="text"
                   placeholder="e.g. In memory of Jane Doe"
-                  className="mt-3 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-[#004a99] focus:outline-none focus:ring-2 focus:ring-[#004a99]/20"
+                  className="mt-3 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                 />
               </section>
             </DrawerBody>
@@ -101,7 +101,7 @@ export default function DonationDetailsDrawer({ donation, isOpen, onClose }: Pro
               <Button variant="light" onPress={closeDrawer} className="text-slate-700">
                 Cancel
               </Button>
-              <Button className="bg-[#004a99] text-white" onPress={closeDrawer}>
+              <Button className="bg-primary text-white" onPress={closeDrawer}>
                 Close
               </Button>
             </DrawerFooter>

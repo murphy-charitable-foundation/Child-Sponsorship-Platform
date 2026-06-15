@@ -65,7 +65,7 @@ export default function CreateSponsorshipDrawer({ isOpen, onClose }: CreateSpons
               <Button variant="light" onPress={closeDrawer} className="text-slate-700">
                 Cancel
               </Button>
-              <Button className="bg-[#004a99] text-white" onPress={closeDrawer}>
+              <Button className="bg-primary text-white" onPress={closeDrawer}>
                 Create Sponsorship
               </Button>
             </DrawerFooter>
@@ -86,4 +86,4 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 const cls =
-  "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-[#004a99] focus:outline-none focus:ring-2 focus:ring-[#004a99]/20";
+  "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20";

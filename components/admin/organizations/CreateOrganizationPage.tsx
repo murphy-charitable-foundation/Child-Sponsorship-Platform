@@ -66,18 +66,18 @@ export default function CreateOrganizationPage() {
       {/* Back button */}
       <Link
         href="/admin/organizations"
-        className="inline-flex items-center gap-2 text-[#004a99] hover:underline mb-6"
+        className="inline-flex items-center gap-2 text-primary hover:underline mb-6"
       >
         <ChevronLeft size={20} />
         Back to Organizations
       </Link>
 
       {/* Header */}
-      <h1 className="text-3xl font-bold text-[#004a99] mb-6">Admin</h1>
+      <h1 className="text-3xl font-bold text-primary mb-6">Admin</h1>
 
       {/* Tabs */}
       <div className="flex gap-4 mb-8">
-        <div className="px-6 py-2 font-semibold rounded-lg bg-[#004a99] text-white">
+        <div className="px-6 py-2 font-semibold rounded-lg bg-primary text-white">
           Organization
         </div>
         <div className="px-6 py-2 font-semibold rounded-lg bg-gray-200 text-gray-700">
@@ -103,7 +103,7 @@ export default function CreateOrganizationPage() {
                   alt="Logo preview"
                   className="h-24 w-24 object-contain mb-4"
                 />
-                <label className="text-[#004a99] hover:underline cursor-pointer font-medium">
+                <label className="text-primary hover:underline cursor-pointer font-medium">
                   Change logo
                   <input
                     type="file"
@@ -115,10 +115,10 @@ export default function CreateOrganizationPage() {
               </div>
             ) : (
               <div className="flex flex-col items-center">
-                <Upload className="text-[#004a99] mb-3" size={40} />
+                <Upload className="text-primary mb-3" size={40} />
                 <p className="text-gray-700 font-medium mb-2">
                   Drag logo or{" "}
-                  <label className="text-[#004a99] hover:underline cursor-pointer">
+                  <label className="text-primary hover:underline cursor-pointer">
                     browse
                     <input
                       type="file"
@@ -145,7 +145,7 @@ export default function CreateOrganizationPage() {
               name="organizationName"
               value={formData.organizationName}
               onChange={handleInputChange}
-              className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-[#004a99] focus:outline-none"
+              className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-primary focus:outline-none"
               placeholder="Enter organization name"
             />
           </div>
@@ -167,7 +167,7 @@ export default function CreateOrganizationPage() {
                 name="lastName"
                 value={formData.lastName}
                 onChange={handleInputChange}
-                className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-[#004a99] focus:outline-none"
+                className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-primary focus:outline-none"
                 placeholder="Enter last name"
               />
             </div>
@@ -180,7 +180,7 @@ export default function CreateOrganizationPage() {
                 name="firstName"
                 value={formData.firstName}
                 onChange={handleInputChange}
-                className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-[#004a99] focus:outline-none"
+                className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-primary focus:outline-none"
                 placeholder="Enter first name"
               />
             </div>
@@ -195,7 +195,7 @@ export default function CreateOrganizationPage() {
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-[#004a99] focus:outline-none"
+              className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-primary focus:outline-none"
               placeholder="Enter email address"
             />
           </div>
@@ -216,7 +216,7 @@ export default function CreateOrganizationPage() {
                 name="currency"
                 value={formData.currency}
                 onChange={handleInputChange}
-                className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-[#004a99] focus:outline-none"
+                className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-primary focus:outline-none"
               >
                 <option value="">Select country</option>
                 <option value="USD">USD - United States</option>
@@ -234,7 +234,7 @@ export default function CreateOrganizationPage() {
                 name="timezone"
                 value={formData.timezone}
                 onChange={handleInputChange}
-                className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-[#004a99] focus:outline-none"
+                className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-primary focus:outline-none"
                 placeholder="Select time zone"
               />
             </div>
@@ -245,7 +245,7 @@ export default function CreateOrganizationPage() {
         <div className="flex gap-4">
           <button
             type="submit"
-            className="bg-[#004a99] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#003d7a]"
+            className="bg-primary text-white px-6 py-2 rounded-lg font-semibold hover:bg-primary/90"
           >
             Create Organization
           </button>

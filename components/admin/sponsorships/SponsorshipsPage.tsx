@@ -64,10 +64,10 @@ export default function SponsorshipsPage() {
     <div className="px-10 py-8">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-[#004a99]">Sponsorships</h1>
+        <h1 className="text-2xl font-semibold text-primary">Sponsorships</h1>
         <button
           onClick={() => setIsCreateOpen(true)}
-          className="rounded-lg bg-[#004a99] px-4 py-2 text-sm font-medium text-white hover:bg-[#003d7a]"
+          className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90"
         >
           Create Sponsorship
         </button>
@@ -111,7 +111,7 @@ export default function SponsorshipsPage() {
               {STATUSES.map((s) => <option key={s}>{s}</option>)}
             </select>
           </div>
-          <button onClick={reset} className="pb-1 text-sm text-[#004a99] hover:underline">
+          <button onClick={reset} className="pb-1 text-sm text-primary hover:underline">
             Reset filters
           </button>
         </div>
@@ -157,9 +157,9 @@ export default function SponsorshipsPage() {
                   <td className="px-4 py-3 text-slate-600">{s.startDate}</td>
                   <td className="px-4 py-3 text-slate-600">{s.endDate ?? "—"}</td>
                   <td className="px-4 py-3">
-                    <span className="cursor-pointer text-[#004a99] hover:underline">View</span>
+                    <span className="cursor-pointer text-primary hover:underline">View</span>
                     <span className="mx-1 text-slate-300">|</span>
-                    <span className="cursor-pointer text-[#004a99] hover:underline">Edit</span>
+                    <span className="cursor-pointer text-primary hover:underline">Edit</span>
                   </td>
                 </tr>
               ))
@@ -183,4 +183,4 @@ function KpiCard({ label, value }: { label: string; value: number }) {
 }
 
 const inputCls =
-  "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#004a99] focus:outline-none";
+  "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-primary focus:outline-none";

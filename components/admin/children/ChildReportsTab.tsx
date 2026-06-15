@@ -62,7 +62,7 @@ export default function ChildReportsTab({ child }: ChildReportsTabProps) {
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#004a99]"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
             >
               {reportTypes.map((t) => (
                 <option key={t}>{t}</option>
@@ -76,7 +76,7 @@ export default function ChildReportsTab({ child }: ChildReportsTabProps) {
               type="text"
               value={authorFilter}
               onChange={(e) => setAuthorFilter(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#004a99]"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
 
@@ -85,7 +85,7 @@ export default function ChildReportsTab({ child }: ChildReportsTabProps) {
               setTypeFilter("All report types");
               setAuthorFilter("");
             }}
-            className="pb-2 text-sm text-[#004a99] hover:underline"
+            className="pb-2 text-sm text-primary hover:underline"
           >
             Reset filters
           </button>
@@ -128,11 +128,11 @@ export default function ChildReportsTab({ child }: ChildReportsTabProps) {
                   <td className="px-6 py-4 text-slate-600">{r.author}</td>
                   <td className="px-6 py-4 text-slate-600">{r.date}</td>
                   <td className="px-6 py-4">
-                    <span className="cursor-pointer text-[#004a99] hover:underline">
+                    <span className="cursor-pointer text-primary hover:underline">
                       View
                     </span>
                     <span className="mx-2 text-slate-300">|</span>
-                    <span className="cursor-pointer text-[#004a99] hover:underline">
+                    <span className="cursor-pointer text-primary hover:underline">
                       Edit
                     </span>
                   </td>

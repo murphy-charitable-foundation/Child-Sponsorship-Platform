@@ -17,7 +17,7 @@ export default function SponsorSponsorshipsTab({ sponsor }: Props) {
             Active sponsorships: {sponsor.sponsoredChildren.length}
           </p>
         </div>
-        <button className="rounded-lg bg-[#004a99] px-4 py-2 text-sm font-medium text-white hover:bg-[#003d7a]">
+        <button className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90">
           Create sponsorship
         </button>
       </div>

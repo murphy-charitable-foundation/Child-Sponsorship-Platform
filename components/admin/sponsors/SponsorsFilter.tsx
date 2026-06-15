@@ -156,7 +156,7 @@ export function SponsorsFilter({
         <div className="flex-1 pt-2">
           <button
             onClick={handleReset}
-            className="text-sm font-semibold text-blue-600 hover:underline cursor-pointer transition-all"
+            className="text-sm font-semibold text-primary hover:underline cursor-pointer transition-all"
           >
             Reset filters
           </button>

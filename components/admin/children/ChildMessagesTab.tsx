@@ -34,7 +34,7 @@ export default function ChildMessagesTab({ child }: ChildMessagesTabProps) {
               onClick={() => setActiveSponsor(sponsor.id)}
               className={`pb-3 text-sm font-medium transition-colors border-b-2 ${
                 activeSponsor === sponsor.id
-                  ? "border-[#004a99] text-[#004a99]"
+                  ? "border-primary text-primary"
                   : "border-transparent text-slate-600 hover:text-slate-800"
               }`}
             >

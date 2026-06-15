@@ -279,14 +279,14 @@ export function SponsorsTable({ activeTab, onEdit }: SponsorsTableProps) {
                     <div className="flex gap-3">
                       <button
                         onClick={() => router.push(`/admin/sponsors/${group.groupId}`)}
-                        className="text-[#004a99] hover:underline font-medium cursor-pointer transition-all"
+                        className="text-primary hover:underline font-medium cursor-pointer transition-all"
                       >
                         View
                       </button>
                       <span className="text-gray-300">|</span>
                       <button
                         onClick={() => onEdit?.(group)}
-                        className="text-[#004a99] hover:underline font-medium cursor-pointer transition-all"
+                        className="text-primary hover:underline font-medium cursor-pointer transition-all"
                       >
                         Edit
                       </button>
@@ -329,14 +329,14 @@ export function SponsorsTable({ activeTab, onEdit }: SponsorsTableProps) {
                     <div className="flex gap-3">
                       <button
                         onClick={() => router.push(`/admin/sponsors/${sponsor.sponsorId}`)}
-                        className="text-[#004a99] hover:underline font-medium cursor-pointer transition-all"
+                        className="text-primary hover:underline font-medium cursor-pointer transition-all"
                       >
                         View
                       </button>
                       <span className="text-gray-300">|</span>
                       <button
                         onClick={() => onEdit?.(sponsor)}
-                        className="text-[#004a99] hover:underline font-medium cursor-pointer transition-all"
+                        className="text-primary hover:underline font-medium cursor-pointer transition-all"
                       >
                         Edit
                       </button>

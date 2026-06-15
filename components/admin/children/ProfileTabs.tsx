@@ -21,7 +21,7 @@ export function ProfileTabs({ activeTab, onChange }: ProfileTabsProps) {
           onClick={() => onChange(tab.key)}
           className={`rounded-xl py-2.5 text-center text-sm font-medium ${
             activeTab === tab.key
-              ? "bg-[#004a99] text-white"
+              ? "bg-primary text-white"
               : "text-slate-700"
           }`}
         >

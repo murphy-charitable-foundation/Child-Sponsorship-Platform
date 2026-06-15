@@ -13,11 +13,11 @@ export function ChildProfileHeader({
 }: ChildProfileHeaderProps) {
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-[#004a99]">{title}</h1>
+      <h1 className="text-2xl font-semibold text-primary">{title}</h1>
 
       <Link
         href={backHref}
-        className="mt-4 flex w-fit items-center gap-2 text-sm font-medium text-[#004a99] hover:underline"
+        className="mt-4 flex w-fit items-center gap-2 text-sm font-medium text-primary hover:underline"
       >
         <span className="text-xl">←</span>
         <span>{backLabel}</span>

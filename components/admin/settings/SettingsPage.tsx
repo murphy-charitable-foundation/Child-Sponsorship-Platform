@@ -44,7 +44,7 @@ export default function SettingsPage() {
 
   return (
     <div className="px-10 py-8">
-      <h1 className="text-2xl font-semibold text-[#004a99]">Settings</h1>
+      <h1 className="text-2xl font-semibold text-primary">Settings</h1>
 
       {/* Tabs — equal-width grid, active = solid blue, inactive = plain text */}
       <div className="mt-6 grid grid-cols-6">
@@ -54,7 +54,7 @@ export default function SettingsPage() {
             onClick={() => setActiveTab(tab.key)}
             className={`py-2.5 text-center text-sm font-medium transition-colors rounded-md ${
               activeTab === tab.key
-                ? "bg-[#004a99] text-white"
+                ? "bg-primary text-white"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
@@ -198,7 +198,7 @@ function ChildSettings() {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={saveEdit}
-                          className="rounded-md bg-[#004a99] px-3 py-1.5 text-xs font-medium text-white hover:bg-[#003d7a]"
+                          className="rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-white hover:bg-primary/90"
                         >
                           Save
                         </button>
@@ -224,7 +224,7 @@ function ChildSettings() {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => startEdit(s)}
-                          className="text-xs font-medium text-[#004a99] hover:underline"
+                          className="text-xs font-medium text-primary hover:underline"
                         >
                           Edit
                         </button>
@@ -259,7 +259,7 @@ function ChildSettings() {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={addStatus}
-                        className="rounded-md bg-[#004a99] px-3 py-1.5 text-xs font-medium text-white hover:bg-[#003d7a]"
+                        className="rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-white hover:bg-primary/90"
                       >
                         Add
                       </button>
@@ -280,7 +280,7 @@ function ChildSettings() {
             <div className="border-t border-slate-100 px-4 py-2">
               <button
                 onClick={() => setAddingNew(true)}
-                className="text-sm text-[#004a99] hover:underline"
+                className="text-sm text-primary hover:underline"
               >
                 + Add status type
               </button>
@@ -360,7 +360,7 @@ function SponsorSettings() {
                       <input className={inputCls} value={editGLabel} onChange={(e) => setEditGLabel(e.target.value)} autoFocus />
                     </td>
                     <td className="px-4 py-2 flex gap-2">
-                      <button onClick={() => { setGroupTypes((p) => p.map((x) => x.id === g.id ? { ...x, label: editGLabel } : x)); setEditGId(null); }} className="rounded-md bg-[#004a99] px-3 py-1.5 text-xs text-white">Save</button>
+                      <button onClick={() => { setGroupTypes((p) => p.map((x) => x.id === g.id ? { ...x, label: editGLabel } : x)); setEditGId(null); }} className="rounded-md bg-primary px-3 py-1.5 text-xs text-white">Save</button>
                       <button onClick={() => setEditGId(null)} className="text-xs text-slate-400 hover:underline">Cancel</button>
                     </td>
                   </tr>
@@ -369,7 +369,7 @@ function SponsorSettings() {
                     <td className="px-4 py-3 text-slate-800">{g.label}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
-                        <button onClick={() => { setEditGId(g.id); setEditGLabel(g.label); }} className="text-xs font-medium text-[#004a99] hover:underline">Edit</button>
+                        <button onClick={() => { setEditGId(g.id); setEditGLabel(g.label); }} className="text-xs font-medium text-primary hover:underline">Edit</button>
                         <span className="text-slate-300">|</span>
                         <button onClick={() => setGroupTypes((p) => p.filter((x) => x.id !== g.id))} className="rounded-md bg-red-500 px-3 py-1 text-xs text-white hover:bg-red-600">Delete</button>
                       </div>
@@ -383,7 +383,7 @@ function SponsorSettings() {
                     <input className={inputCls} value={newGroup} onChange={(e) => setNewGroup(e.target.value)} placeholder="Group type name" autoFocus />
                   </td>
                   <td className="px-4 py-2 flex gap-2">
-                    <button onClick={() => { if (newGroup.trim()) { setGroupTypes((p) => [...p, { id: Date.now(), label: newGroup }]); setNewGroup(""); setAddingGroup(false); } }} className="rounded-md bg-[#004a99] px-3 py-1.5 text-xs text-white">Add</button>
+                    <button onClick={() => { if (newGroup.trim()) { setGroupTypes((p) => [...p, { id: Date.now(), label: newGroup }]); setNewGroup(""); setAddingGroup(false); } }} className="rounded-md bg-primary px-3 py-1.5 text-xs text-white">Add</button>
                     <button onClick={() => setAddingGroup(false)} className="text-xs text-slate-400 hover:underline">Cancel</button>
                   </td>
                 </tr>
@@ -392,7 +392,7 @@ function SponsorSettings() {
           </table>
           {!addingGroup && (
             <div className="border-t border-slate-100 px-4 py-2">
-              <button onClick={() => setAddingGroup(true)} className="text-sm text-[#004a99] hover:underline">+ Add group type</button>
+              <button onClick={() => setAddingGroup(true)} className="text-sm text-primary hover:underline">+ Add group type</button>
             </div>
           )}
         </div>
@@ -418,7 +418,7 @@ function SponsorSettings() {
                     <td className="px-4 py-2"><ColorSelect value={editSColor} onChange={setEditSColor} /></td>
                     <td className="px-4 py-2">
                       <div className="flex items-center gap-2">
-                        <button onClick={() => { setStatuses((p) => p.map((x) => x.id === s.id ? { ...x, label: editSLabel, color: editSColor } : x)); setEditSId(null); }} className="rounded-md bg-[#004a99] px-3 py-1.5 text-xs text-white">Save</button>
+                        <button onClick={() => { setStatuses((p) => p.map((x) => x.id === s.id ? { ...x, label: editSLabel, color: editSColor } : x)); setEditSId(null); }} className="rounded-md bg-primary px-3 py-1.5 text-xs text-white">Save</button>
                         <button onClick={() => setEditSId(null)} className="text-xs text-slate-400 hover:underline">Cancel</button>
                       </div>
                     </td>
@@ -429,7 +429,7 @@ function SponsorSettings() {
                     <td className="px-4 py-3"><div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: colorHex(s.color) }} /><span className="text-slate-600">{s.color}</span></div></td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
-                        <button onClick={() => { setEditSId(s.id); setEditSLabel(s.label); setEditSColor(s.color); }} className="text-xs font-medium text-[#004a99] hover:underline">Edit</button>
+                        <button onClick={() => { setEditSId(s.id); setEditSLabel(s.label); setEditSColor(s.color); }} className="text-xs font-medium text-primary hover:underline">Edit</button>
                         <span className="text-slate-300">|</span>
                         <button onClick={() => setStatuses((p) => p.filter((x) => x.id !== s.id))} className="rounded-md bg-red-500 px-3 py-1 text-xs text-white hover:bg-red-600">Delete</button>
                       </div>
@@ -443,7 +443,7 @@ function SponsorSettings() {
                   <td className="px-4 py-2"><ColorSelect value={newSColor} onChange={setNewSColor} /></td>
                   <td className="px-4 py-2">
                     <div className="flex items-center gap-2">
-                      <button onClick={() => { if (newSLabel.trim()) { setStatuses((p) => [...p, { id: Date.now(), label: newSLabel, color: newSColor }]); setNewSLabel(""); setNewSColor("green"); setAddingStatus(false); } }} className="rounded-md bg-[#004a99] px-3 py-1.5 text-xs text-white">Add</button>
+                      <button onClick={() => { if (newSLabel.trim()) { setStatuses((p) => [...p, { id: Date.now(), label: newSLabel, color: newSColor }]); setNewSLabel(""); setNewSColor("green"); setAddingStatus(false); } }} className="rounded-md bg-primary px-3 py-1.5 text-xs text-white">Add</button>
                       <button onClick={() => setAddingStatus(false)} className="text-xs text-slate-400 hover:underline">Cancel</button>
                     </div>
                   </td>
@@ -453,7 +453,7 @@ function SponsorSettings() {
           </table>
           {!addingStatus && (
             <div className="border-t border-slate-100 px-4 py-2">
-              <button onClick={() => setAddingStatus(true)} className="text-sm text-[#004a99] hover:underline">+ Add status type</button>
+              <button onClick={() => setAddingStatus(true)} className="text-sm text-primary hover:underline">+ Add status type</button>
             </div>
           )}
         </div>
@@ -541,7 +541,7 @@ function Toggle({ label, description, value, onChange }: {
       </div>
       <button
         onClick={() => onChange(!value)}
-        className={`relative mt-0.5 h-6 w-11 shrink-0 rounded-full transition-colors ${value ? "bg-[#004a99]" : "bg-slate-200"}`}
+        className={`relative mt-0.5 h-6 w-11 shrink-0 rounded-full transition-colors ${value ? "bg-primary" : "bg-slate-200"}`}
       >
         <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${value ? "translate-x-5" : "translate-x-0"}`} />
       </button>
@@ -617,7 +617,7 @@ function DonationSettings() {
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium text-slate-700">Minimum Donation Amount</span>
           <div className="flex items-center gap-2">
-            <button onClick={() => setMinDonation(!minDonation)} className={`relative h-6 w-11 rounded-full transition-colors ${minDonation ? "bg-[#004a99]" : "bg-slate-200"}`}>
+            <button onClick={() => setMinDonation(!minDonation)} className={`relative h-6 w-11 rounded-full transition-colors ${minDonation ? "bg-primary" : "bg-slate-200"}`}>
               <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${minDonation ? "translate-x-5" : "translate-x-0"}`} />
             </button>
             <span className="text-xs font-medium text-slate-500">{minDonation ? "ON" : "OFF"}</span>
@@ -689,7 +689,7 @@ function ReportSettings() {
             </div>
           </div>
           <div className="mt-4 flex items-center gap-3">
-            <button onClick={() => setPdfExport(!pdfExport)} className={`relative h-6 w-11 rounded-full transition-colors ${pdfExport ? "bg-[#004a99]" : "bg-slate-200"}`}>
+            <button onClick={() => setPdfExport(!pdfExport)} className={`relative h-6 w-11 rounded-full transition-colors ${pdfExport ? "bg-primary" : "bg-slate-200"}`}>
               <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${pdfExport ? "translate-x-5" : "translate-x-0"}`} />
             </button>
             <span className="text-sm text-slate-700">Enable PDF Export</span>
@@ -708,7 +708,7 @@ function ReportSettings() {
               </label>
             ))}
           </div>
-          <button className="mt-4 rounded-lg bg-[#004a99] px-4 py-2 text-sm font-medium text-white hover:bg-[#003d7a]">
+          <button className="mt-4 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90">
             + Add Report
           </button>
         </section>
@@ -808,4 +808,4 @@ function ColorSelect({ value, onChange }: { value: string; onChange: (v: string)
 }
 
 const inputCls =
-  "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-[#004a99] focus:outline-none focus:ring-2 focus:ring-[#004a99]/20";
+  "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20";

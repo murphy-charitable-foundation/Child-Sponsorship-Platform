@@ -71,8 +71,8 @@ export default function EditSponsorDrawer({ sponsor, isOpen, onClose }: EditSpon
                       onClick={() => setType(t)}
                       className={`flex items-center gap-2 rounded-lg border px-5 py-2.5 text-sm font-medium transition-colors ${
                         type === t
-                          ? "border-[#004a99] bg-[#004a99] text-white"
-                          : "border-slate-300 bg-white text-slate-700 hover:border-[#004a99]"
+                          ? "border-primary bg-primary text-white"
+                          : "border-slate-300 bg-white text-slate-700 hover:border-primary"
                       }`}
                     >
                       {t === "Individual" ? "👤" : "👥"} {t}
@@ -151,7 +151,7 @@ export default function EditSponsorDrawer({ sponsor, isOpen, onClose }: EditSpon
               <Button variant="light" onPress={closeDrawer} className="text-slate-700">
                 Cancel
               </Button>
-              <Button className="bg-[#004a99] text-white" onPress={closeDrawer}>
+              <Button className="bg-primary text-white" onPress={closeDrawer}>
                 Save changes
               </Button>
             </DrawerFooter>
@@ -172,4 +172,4 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 const cls =
-  "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-[#004a99] focus:outline-none focus:ring-2 focus:ring-[#004a99]/20";
+  "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20";

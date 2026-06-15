@@ -37,10 +37,10 @@ export default function SponsorPage() {
   return (
     <div className="px-10 py-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-[#004a99]">Sponsors</h1>
+        <h1 className="text-2xl font-semibold text-primary">Sponsors</h1>
         <button
           onClick={() => setIsAddOpen(true)}
-          className="rounded-lg bg-[#004a99] px-4 py-2 text-sm font-medium text-white hover:bg-[#003d7a]"
+          className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90"
         >
           Add Sponsor
         </button>

@@ -79,7 +79,7 @@ export default function AddChildModal({ open, onClose, onSubmit }: Props) {
 
               <p className="text-sm font-medium text-slate-900">
                 Drag photo here or{" "}
-                <span className="text-blue-600 underline underline-offset-2">
+                <span className="text-primary underline underline-offset-2">
                   browse
                 </span>
               </p>

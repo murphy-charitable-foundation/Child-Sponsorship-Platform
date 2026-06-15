@@ -258,7 +258,7 @@ export default function EditChildDrawer({
                 Cancel
               </Button>
               <Button
-                className="bg-[#004a99] text-white"
+                className="bg-primary text-white"
                 onPress={handleSave}
               >
                 Save changes
