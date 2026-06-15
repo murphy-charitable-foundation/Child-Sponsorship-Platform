@@ -54,38 +54,48 @@ export default function ChildrenFilters() {
             selectedKeys={selectedStatus}
             onSelectionChange={(keys) => {
               const newKeys = new Set(Array.from(keys as Set<string>));
+
+              // If "all" was just selected, select all individual statuses
               if (newKeys.has("all")) {
                 setSelectedStatus(new Set(STATUS_OPTIONS));
-              } else if (newKeys.size === 0) {
-                setSelectedStatus(new Set());
-              } else {
+              }
+              // If an individual status is selected (and "all" is no longer there), remove "all" and keep individual selections
+              else if (newKeys.size > 0) {
+                newKeys.delete("all");
                 setSelectedStatus(newKeys);
               }
+              // Allow empty selection
+              else {
+                setSelectedStatus(new Set());
+              }
             }}
-            renderValue={(items) => (
-              <span className="flex gap-2">
-                {items.length === 0 ? (
-                  <span className="text-default-500">No status selected</span>
-                ) : items.some((item) => item.key === "all") ? (
-                  <span className="text-default-700">All statuses</span>
-                ) : (
-                  items.map((item) => (
-                    <span
-                      key={item.key}
-                      className={
-                        item.key === "active"
-                          ? "text-success"
-                          : item.key === "waiting"
-                            ? "text-warning"
-                            : "text-default-500"
-                      }
-                    >
-                      {item.textValue}
-                    </span>
-                  ))
-                )}
-              </span>
-            )}
+            renderValue={(items) => {
+              const allThreeSelected = items.length === 3 && items.every((item) => STATUS_OPTIONS.includes(item.key as string));
+              return (
+                <span className="flex gap-2">
+                  {items.length === 0 ? (
+                    <span className="text-default-500">No status selected</span>
+                  ) : allThreeSelected ? (
+                    <span className="text-default-700">All statuses</span>
+                  ) : (
+                    items.map((item) => (
+                      <span
+                        key={item.key}
+                        className={
+                          item.key === "active"
+                            ? "text-success"
+                            : item.key === "waiting"
+                              ? "text-warning"
+                              : "text-default-500"
+                        }
+                      >
+                        {item.textValue}
+                      </span>
+                    ))
+                  )}
+                </span>
+              );
+            }}
           >
             <SelectItem key="all">All statuses</SelectItem>
             <SelectItem key="active">Active</SelectItem>
