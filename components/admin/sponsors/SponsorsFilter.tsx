@@ -5,56 +5,43 @@ import { Select, SelectItem, Input } from '@heroui/react';
 
 interface SponsorsFilterProps {
   activeTab: 'individuals' | 'groups';
-  onSearchChange?: (value: string) => void;
-  onLocationChange?: (value: string) => void;
-  onStatusChange?: (value: string) => void;
-  onTypeChange?: (value: string) => void;
-  onResetFilters?: () => void;
+  searchValue: string;
+  onSearchChange: (value: string) => void;
+  locationValue: string;
+  onLocationChange: (value: string) => void;
+  statusValue: string;
+  onStatusChange: (value: string) => void;
+  typeValue: string;
+  onTypeChange: (value: string) => void;
+  onResetFilters: () => void;
 }
 
 export function SponsorsFilter({
   activeTab,
+  searchValue,
   onSearchChange,
+  locationValue,
   onLocationChange,
+  statusValue,
   onStatusChange,
+  typeValue,
   onTypeChange,
   onResetFilters,
 }: SponsorsFilterProps) {
-  const [searchValue, setSearchValue] = useState('');
-  const [locationValue, setLocationValue] = useState('all');
-  const [statusValue, setStatusValue] = useState('all');
-  const [typeValue, setTypeValue] = useState('all');
-
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchValue(value);
-    onSearchChange?.(value);
+    onSearchChange(e.target.value);
   };
 
   const handleLocationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    setLocationValue(value);
-    onLocationChange?.(value);
+    onLocationChange(e.target.value);
   };
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    setStatusValue(value);
-    onStatusChange?.(value);
+    onStatusChange(e.target.value);
   };
 
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    setTypeValue(value);
-    onTypeChange?.(value);
-  };
-
-  const handleReset = () => {
-    setSearchValue('');
-    setLocationValue('all');
-    setStatusValue('all');
-    setTypeValue('all');
-    onResetFilters?.();
+    onTypeChange(e.target.value);
   };
 
   const isGroupsTab = activeTab === 'groups';

@@ -29,6 +29,10 @@ export default function SponsorPage() {
   const [activeTab,      setActiveTab]      = useState<'individuals' | 'groups'>('individuals');
   const [isAddOpen,      setIsAddOpen]      = useState(false);
   const [editingSponsor, setEditingSponsor] = useState<SponsorProfile | null>(null);
+  const [searchValue,    setSearchValue]    = useState('');
+  const [locationValue,  setLocationValue]  = useState('all');
+  const [statusValue,    setStatusValue]    = useState('all');
+  const [typeValue,      setTypeValue]      = useState('all');
 
   function handleEdit(row: Sponsor | SponsorGroup) {
     setEditingSponsor(toSponsorProfile(row));
@@ -57,9 +61,32 @@ export default function SponsorPage() {
       </div>
 
       <div className="mt-4 space-y-4">
-        <SponsorsFilter activeTab={activeTab} />
+        <SponsorsFilter
+          activeTab={activeTab}
+          searchValue={searchValue}
+          onSearchChange={setSearchValue}
+          locationValue={locationValue}
+          onLocationChange={setLocationValue}
+          statusValue={statusValue}
+          onStatusChange={setStatusValue}
+          typeValue={typeValue}
+          onTypeChange={setTypeValue}
+          onResetFilters={() => {
+            setSearchValue('');
+            setLocationValue('all');
+            setStatusValue('all');
+            setTypeValue('all');
+          }}
+        />
         <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-          <SponsorsTable activeTab={activeTab} onEdit={handleEdit} />
+          <SponsorsTable
+            activeTab={activeTab}
+            onEdit={handleEdit}
+            searchValue={searchValue}
+            locationValue={locationValue}
+            statusValue={statusValue}
+            typeValue={typeValue}
+          />
         </div>
       </div>
 

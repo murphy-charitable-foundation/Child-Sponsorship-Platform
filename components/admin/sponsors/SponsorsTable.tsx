@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { useRouter } from 'next/navigation';
 
 interface Sponsor {
@@ -196,11 +195,45 @@ export type { Sponsor, SponsorGroup };
 interface SponsorsTableProps {
   activeTab: 'individuals' | 'groups';
   onEdit?: (row: Sponsor | SponsorGroup) => void;
+  searchValue?: string;
+  locationValue?: string;
+  statusValue?: string;
+  typeValue?: string;
 }
 
-export function SponsorsTable({ activeTab, onEdit }: SponsorsTableProps) {
+export function SponsorsTable({
+  activeTab,
+  onEdit,
+  searchValue = '',
+  locationValue = 'all',
+  statusValue = 'all',
+  typeValue = 'all',
+}: SponsorsTableProps) {
   const router = useRouter();
   const isGroupsTab = activeTab === 'groups';
+
+  // Filter data based on selections
+  const dataToDisplay = isGroupsTab ? GROUPS_DATA : SPONSORS_DATA;
+  const filtered = dataToDisplay.filter((item) => {
+    // Search filter
+    const searchMatches = isGroupsTab
+      ? !searchValue || (item as SponsorGroup).groupName.toLowerCase().includes(searchValue.toLowerCase())
+      : !searchValue ||
+        (item as Sponsor).firstName.toLowerCase().includes(searchValue.toLowerCase()) ||
+        (item as Sponsor).lastName.toLowerCase().includes(searchValue.toLowerCase());
+
+    // Location filter
+    const locationMatches = locationValue === 'all' || item.location.toLowerCase() === locationValue.toLowerCase();
+
+    // Status filter
+    const statusMatches = statusValue === 'all' || item.status.toLowerCase() === statusValue.toLowerCase();
+
+    // Type filter (for groups tab only)
+    const typeMatches = !isGroupsTab || typeValue === 'all' || (item as SponsorGroup).type.toLowerCase() === typeValue.toLowerCase();
+
+    return searchMatches && locationMatches && statusMatches && typeMatches;
+  });
+
   return (
     <div className="w-full overflow-x-auto">
       <table className="w-full text-sm">
@@ -243,8 +276,14 @@ export function SponsorsTable({ activeTab, onEdit }: SponsorsTableProps) {
           </tr>
         </thead>
         <tbody>
-          {isGroupsTab
-            ? GROUPS_DATA.map((group) => (
+          {filtered.length === 0 ? (
+            <tr>
+              <td colSpan={7} className="px-4 py-8 text-center text-gray-400">
+                No {isGroupsTab ? 'groups' : 'sponsors'} found
+              </td>
+            </tr>
+          ) : isGroupsTab
+            ? (filtered as SponsorGroup[]).map((group) => (
                 <tr
                   key={group.id}
                   className="border-b border-gray-100 bg-white hover:bg-gray-50 transition-colors"
@@ -294,7 +333,7 @@ export function SponsorsTable({ activeTab, onEdit }: SponsorsTableProps) {
                   </td>
                 </tr>
               ))
-            : SPONSORS_DATA.map((sponsor) => (
+            : (filtered as Sponsor[]).map((sponsor) => (
                 <tr
                   key={sponsor.id}
                   className="border-b border-gray-100 bg-white hover:bg-gray-50 transition-colors"
