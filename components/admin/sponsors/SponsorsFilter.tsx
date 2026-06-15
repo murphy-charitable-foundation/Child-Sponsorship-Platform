@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Select, SelectItem, Input } from '@heroui/react';
 
 interface SponsorsFilterProps {
@@ -42,6 +42,10 @@ export function SponsorsFilter({
 
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onTypeChange(e.target.value);
+  };
+
+  const handleReset = () => {
+    onResetFilters();
   };
 
   const isGroupsTab = activeTab === 'groups';
