@@ -2,7 +2,7 @@
 
 import React from "react";
 import { usePathname } from "next/navigation";
-import { AppNavbar } from "@/components/AppNavbar";
+import ClientProviders from "@/components/ClientProviders";
 
 export default function PublicShell({
 	children,
@@ -13,18 +13,7 @@ export default function PublicShell({
 	const isAdminRoute =
 		pathname?.startsWith("/admin") || pathname?.startsWith("/auth");
 
-	return (
-		<>
-			{!isAdminRoute && <AppNavbar />}
+	if (isAdminRoute) return <>{children}</>;
 
-			{children}
-
-			{!isAdminRoute && (
-				<footer className="px-6 py-8 text-sm text-default-500">
-					{/* move your existing footer JSX here */}© Murphy Charitable
-					Foundation
-				</footer>
-			)}
-		</>
-	);
+	return <ClientProviders>{children}</ClientProviders>;
 }
