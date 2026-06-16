@@ -20,7 +20,7 @@ const children: Child[] = [
     date: "Apr 25, 2026",
     costs: 40,
     img: "/children/kid1.png",
-    status: "Sponsering",
+    status: "Sponsoring",
   },
   {
     id: 2,
@@ -38,7 +38,7 @@ const children: Child[] = [
     date: "Jun 13, 2026",
     costs: 36,
     img: "/children/kid3.png",
-    status: "Sponsering",
+    status: "Sponsoring",
   },
   {
     id: 4,
@@ -47,7 +47,7 @@ const children: Child[] = [
     date: "Aug 21, 2026",
     costs: 46,
     img: "/children/kid1.png",
-    status: "Sponsering",
+    status: "Sponsoring",
   },
   {
     id: 5,
@@ -74,7 +74,7 @@ const children: Child[] = [
     date: "Mar 20, 2026",
     costs: 86,
     img: "/children/kid3.png",
-    status: "Sponsering",
+    status: "Sponsoring",
   },
   {
     id: 8,
@@ -119,7 +119,7 @@ const Card = ({
       <span
         role="status"
         aria-label={`Status: ${status}`}
-        className={`${status === "Sponsering" ? "bg-green-500" : "bg-default-600"}
+        className={`${status === "Sponsoring" ? "bg-[--green-500]" : "bg-[--zinc-600]"}
         text-white py-1.5 px-4 rounded-sm text-base font-semibold absolute top-2 right-2`}
       >
         {status}
@@ -137,7 +137,7 @@ const Card = ({
       <p className="text-zinc-900 mt-2 font-normal">{age} years old</p>
       <section
         aria-label="Sponsorship details"
-        className="bg-primary-50 rounded-xl text-default-800 p-4 my-4"
+        className="bg-[--blue-50] rounded-xl text-[--zinc-800] p-4 my-4"
       >
         <div className="flex flex-row items-center">
           <Image
@@ -172,13 +172,13 @@ const Card = ({
   );
 };
 
-const SecondChild = () => {
+const SponsoredChildren = () => {
   const [showMore, setShowMore] = useState<number>(4);
   const numberOfChildren: number = children?.length || 0;
 
   return (
     <section className="rounded-3xl w-full mx-auto my-10">
-      <h2 className="text-2xl font-semibold mb-6 text-primary-500">
+      <h2 className="text-2xl font-semibold mb-6 text-[--blue-500]">
         My Sponsored Children
       </h2>
       <div className={`grid grid-cols-4 gap-6 `}>
@@ -205,7 +205,7 @@ const SecondChild = () => {
         py-2 px-10 my-10 flex items-center justify-center mx-auto"
       >
         <span className="pe-2 font-semibold">
-          {showMore >= numberOfChildren ? "Less" : "Load More Children"}
+          {showMore >= numberOfChildren ? "Collapse" : "Load More Children"}
         </span>
         <Image
           src="/dashboard/arrow.svg"
@@ -218,4 +218,4 @@ const SecondChild = () => {
   );
 };
 
-export default SecondChild;
+export default SponsoredChildren;
