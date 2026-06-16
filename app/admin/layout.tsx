@@ -3,7 +3,7 @@ import React from "react";
 import { AdminSidebar } from "@/components/admin/layout/AdminSidebar";
 import AdminTopActions from "@/components/admin/layout/AdminTopActions";
 
-export default async function AdminLayout({
+export default function AdminLayout({
 	children,
 }: {
 	children: React.ReactNode;
@@ -18,6 +18,7 @@ export default async function AdminLayout({
 					<div className="flex justify-end mb-6">
 						<AdminTopActions />
 					</div>
+
 					{children}
 				</div>
 			</div>
