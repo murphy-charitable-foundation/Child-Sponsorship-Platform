@@ -4,7 +4,7 @@ const Header = () => {
       aria-labelledby="about-hero-title"
       aria-describedby="about-hero-description"
       className="h-[400px] bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: "url('/about-us/header-1.png')" }}
+      style={{ backgroundImage: "url('/about-us/header.png')" }}
     >
       <div className="flex flex-col justify-center h-full w-[90%] mx-auto">
         <h1

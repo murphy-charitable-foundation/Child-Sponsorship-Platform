@@ -1,5 +1,5 @@
 import Image from "next/image";
-import SectionHeading from "./Section-Heading";
+import SectionHeading from "./shared/Section-Heading";
 
 const sections = [
   {
@@ -65,7 +65,7 @@ const TimelineItem = ({
     <div className="py-6">
       <span
         aria-label={`Year ${year}`}
-        className="text-black w-fit px-4 py-1 font-semibold rounded-[8px] bg-green-500"
+        className="text-black w-fit px-4 py-1 font-semibold rounded-[8px] bg-[--green-500]"
       >
         {year}
       </span>
@@ -108,7 +108,7 @@ const TimelineItem = ({
   );
 };
 
-const ThirdChild = () => {
+const OurStory = () => {
   return (
     <section
       className="w-[90%] mx-auto py-20"
@@ -140,4 +140,4 @@ const ThirdChild = () => {
   );
 };
 
-export default ThirdChild;
+export default OurStory;

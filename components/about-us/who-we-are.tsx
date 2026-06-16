@@ -1,8 +1,8 @@
 import Image from "next/image";
 
-import SectionHeading from "./Section-Heading";
+import SectionHeading from "./shared/Section-Heading";
 
-const FirstChild = () => {
+const WhoWeAre = () => {
   return (
     <section
       aria-labelledby="who-we-are-heading"
@@ -45,4 +45,4 @@ const FirstChild = () => {
   );
 };
 
-export default FirstChild;
+export default WhoWeAre;

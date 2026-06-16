@@ -99,7 +99,7 @@ export function AppNavbar() {
               isActive("/about-us") && "font-semibold"
             }`}
           >
-            AboutUs
+            About Us
           </NextLink>
         </NavbarItem>
         <NavbarItem>

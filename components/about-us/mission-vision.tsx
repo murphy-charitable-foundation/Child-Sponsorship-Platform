@@ -26,7 +26,7 @@ const Card = ({ title, description, imageSrc }: CardProps) => {
     </article>
   );
 };
-const SecondChild = () => {
+const MissionVisionSection = () => {
   return (
     <section
       aria-label="Mission and Vision section"
@@ -48,4 +48,4 @@ const SecondChild = () => {
   );
 };
 
-export default SecondChild;
+export default MissionVisionSection;

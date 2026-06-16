@@ -1,20 +1,20 @@
-import FirstChild from "./First-Child";
-import FourthChild from "./Fourth-Child";
 import Header from "./header";
-import LastChild from "./Last-Child";
-import SecondChild from "./Second_child";
-import ThirdChild from "./Third-Child";
+import WhoWeAre from "./who-we-are";
+import MissionVissionSection from "./mission-vision";
+import OurStory from "./our-story";
+import ImpactInNumbers from "./impact-in-numbers";
+import ImpactInPhotos from "./impact-in-photos";
 
 const About = () => {
   return (
-    <div className="">
+    <>
       <Header />
-      <FirstChild />
-      <SecondChild />
-      <ThirdChild />
-      <FourthChild />
-      <LastChild />
-    </div>
+      <WhoWeAre />
+      <MissionVissionSection />
+      <OurStory />
+      <ImpactInNumbers />
+      <ImpactInPhotos />
+    </>
   );
 };
 

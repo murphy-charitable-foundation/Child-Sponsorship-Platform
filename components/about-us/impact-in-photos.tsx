@@ -1,5 +1,5 @@
 import Image from "next/image";
-import SectionHeading from "./Section-Heading";
+import SectionHeading from "./shared/Section-Heading";
 
 const columns = [
   [
@@ -34,7 +34,7 @@ const columns = [
   ],
 ];
 
-const LastChild = () => {
+const ImpactInPhotos = () => {
   return (
     <section className="my-20" aria-labelledby="impact-gallery-title">
       <div className="w-[90%] mx-auto py-16">
@@ -77,4 +77,4 @@ const LastChild = () => {
   );
 };
 
-export default LastChild;
+export default ImpactInPhotos;

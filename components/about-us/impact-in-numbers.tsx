@@ -1,4 +1,4 @@
-import SectionHeading from "./Section-Heading";
+import SectionHeading from "./shared/Section-Heading";
 
 const Card = ({ text, number }: { text: string; number: string }) => {
   return (
@@ -9,7 +9,7 @@ const Card = ({ text, number }: { text: string; number: string }) => {
   );
 };
 
-const FourthChild = () => {
+const ImpactInNumbers = () => {
   return (
     <div className="bg-primary-100">
       <div className="w-[90%] mx-auto py-16">
@@ -27,4 +27,4 @@ const FourthChild = () => {
   );
 };
 
-export default FourthChild;
+export default ImpactInNumbers;
