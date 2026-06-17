@@ -5,13 +5,14 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function Page() {
+  const [org, setOrg] = useState("Uganda");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     // TODO: authenticate with Supabase
-    console.log("Sponsor Login:", { username, password });
+    console.log("Admin Login:", { org, username, password });
   }
 
   return (
@@ -30,10 +31,26 @@ export default function Page() {
 
         {/* Title */}
         <h1 className="mt-3 text-center text-lg font-semibold text-primary">
-          Sponsor Portal
+          Admin Portal
         </h1>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          {/* Organization */}
+          <div>
+            <label className="mb-1 block text-xs text-slate-500">
+              Organization
+            </label>
+            <select
+              value={org}
+              onChange={(e) => setOrg(e.target.value)}
+              className={inputCls}
+            >
+              <option>Uganda</option>
+              <option>Kenya</option>
+              <option>Tanzania</option>
+              <option>Rwanda</option>
+            </select>
+          </div>
 
           {/* Username */}
           <div>
