@@ -16,6 +16,7 @@ import {
 	type LucideIcon,
 } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
+import { createClient } from "@/lib/supabase/client";
 
 type NavItem = {
 	label: string;
@@ -56,6 +57,12 @@ export function AdminSidebar() {
 	const pathname = usePathname();
 	const router = useRouter();
 	const { user, loading } = useAuth();
+
+	const logout = async () => {
+		const supabase = createClient();
+		await supabase.auth.signOut();
+		router.push("/auth/admin-login");
+	};
 
 	return (
 		<aside className="w-80 bg-primary text-white h-screen flex flex-col">
@@ -149,7 +156,7 @@ export function AdminSidebar() {
 						</div>
 
 						<button
-							onClick={() => router.push("/auth/login")}
+							onClick={logout}
 							className="w-full rounded-sm border border-white/70 py-3 text-center font-medium text-white hover:bg-white/10 transition"
 						>
 							Sign out

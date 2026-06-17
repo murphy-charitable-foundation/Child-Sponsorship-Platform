@@ -37,4 +37,5 @@ export type Child = {
 	created_at: string;
 	favorite_activity: string;
 	dream_job: string;
+	image_url?: string;
 };
