@@ -149,7 +149,7 @@ export function AdminSidebar() {
           </div>
 
           <button
-            onClick={() => router.push("/auth/login")}
+            onClick={() => router.push("/auth/admin-login")}
             className="w-full rounded-sm border border-white/70 py-3 text-center font-medium text-white hover:bg-white/10 transition"
           >
             Sign out
