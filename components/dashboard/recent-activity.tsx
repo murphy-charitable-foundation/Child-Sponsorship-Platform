@@ -11,7 +11,7 @@ const Card = ({
     <article className="p-6 flex justify-between border-b border-[#111]/15">
       <div>
         <span
-          className={`rounded-sm py-2 px-3 me-[10px] ${type === "Payment" ? "text-[#900b09] bg-red-200" : "text-[--blue-500] bg-primary-200"}`}
+          className={`rounded-sm py-2 px-3 me-[10px] ${type === "Payment" ? "text-[--text-danger-secondary] bg-[--bg-danger-secondary]" : "text-[--blue-700] bg-[--primary-200]"}`}
         >
           {type}
         </span>

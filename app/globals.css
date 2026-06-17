@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @layer base {
   :root {
     /*          PRIMITIVES              */
@@ -151,6 +150,8 @@
     --success-500-flat: #1bbe49;
     --warning-500-flat: #f8ad33;
     --danger-500-flat: #ec4654;
+    --bg-danger-secondary: #fdd3d0;
+    --text-danger-secondary: #900b09;
 
     /*          TOKENS                */
     /* for referencing everywhere else*/
@@ -299,7 +300,6 @@
     --default-flat: var(--default-300-flat);
 
     --link: var(--primary);
-
   }
 }
 

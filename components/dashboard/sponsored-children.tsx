@@ -162,7 +162,7 @@ const Card = ({
       </section>
       <button
         className="border-2 flex flex-row items-center
-        justify-center border-[--success-flat] text-[--success-flat] rounded-xl py-2"
+        justify-center border-secondary text-secondary rounded-xl py-2"
         aria-label={`View details for ${name}`}
       >
         <Image src="/dashboard/heart.svg" alt="" width={20} height={20} />
@@ -201,7 +201,7 @@ const SponsoredChildren = () => {
         onClick={() => {
           setShowMore((prev) => (prev >= numberOfChildren ? 4 : prev + 4));
         }}
-        className="border-2 border-[--success-flat] text-[--success-flat] rounded-xl
+        className="border-2 border-secondary text-secondary rounded-xl
         py-2 px-10 my-10 flex items-center justify-center mx-auto"
       >
         <span className="pe-2 font-semibold">
