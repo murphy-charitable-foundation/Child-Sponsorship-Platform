@@ -2,167 +2,175 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  Button,
-  Chip,
+	Table,
+	TableHeader,
+	TableColumn,
+	TableBody,
+	TableRow,
+	TableCell,
+	Button,
+	Chip,
 } from "@heroui/react";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { Child } from "./types";
 
-type ChildRow = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  age: number;
-  gender: "Male" | "Female" | "Other";
-  location: string;
-  status: "Active" | "Waiting" | "Exited";
-  dateEnrolled: string;
-};
+const supabase = createClient();
 
-const rows: ChildRow[] = [
-  {
-    id: "C-1001",
-    firstName: "Rebecca",
-    lastName: "Akello",
-    age: 9,
-    gender: "Female",
-    location: "Uganda ",
-    status: "Active",
-    dateEnrolled: "Jan 12, 2026",
-  },
-  {
-    id: "C-1002",
-    firstName: "Ruth",
-    lastName: "Babriye",
-    age: 11,
-    gender: "Male",
-    location: "Uganda",
-    status: "Waiting",
-    dateEnrolled: "Jan 10, 2026",
-  },
-  {
-    id: "C-1003",
-    firstName: "Agnes",
-    lastName: "Katende",
-    age: 10,
-    gender: "Female",
-    location: "Uganda",
-    status: "Exited",
-    dateEnrolled: "Dec 22, 2025",
-  },
-];
+//TODO: Previously the status is has "active", "waiting", "exited". however, in supabase children table doesn't have "status"
+//Only has "active" column. so we need to check it. either we add status in the table or just use active column.
+//If we use "active" (boolean), we need to identify what is the waiting and exited.
+//For now, I use active and set waiting if the active value is false
 
-function statusChipColor(status: "Active" | "Waiting" | "Exited") {
-  if (status === "Active") return "success";
-  if (status === "Waiting") return "warning";
-  return "default"; // for Exited
+export function statusChipColor(status: boolean) {
+	if (status) return "success";
+	if (!status) return "warning";
+	return "default"; // for Exited
 }
 
 type ChildrenTableProps = {
-  selectedStatus: Set<string>;
-  selectedGender: Set<string>;
-  searchQuery: string;
+	selectedStatus: Set<string>;
+	selectedGender: Set<string>;
+	searchQuery: string;
 };
 
 export default function ChildrenTable({
-  selectedStatus,
-  selectedGender,
-  searchQuery,
+	selectedStatus,
+	selectedGender,
+	searchQuery,
 }: ChildrenTableProps) {
-  const router = useRouter();
+	const router = useRouter();
+	const [children, setChildren] = useState<Child[]>([]);
 
-  // Filter rows based on selection
-  const filtered = rows.filter((row) => {
-    // Status filter
-    const statusMatches =
-      selectedStatus.has("all") ||
-      selectedStatus.has(row.status.toLowerCase());
+	useEffect(() => {
+		async function fetchChildren() {
+			try {
+				const [{ data, error: childrenError }, { data: ageData }] =
+					await Promise.all([
+						supabase.from("children").select("*"),
+						supabase.from("children_with_ages").select("id, age"),
+					]);
 
-    // Gender filter
-    const genderMatches =
-      selectedGender.size === 0 ||
-      selectedGender.has(row.gender.toLowerCase());
+				if (childrenError) {
+					console.log(childrenError);
+				}
+				if (data?.length) {
+					const ageMap = new Map(
+						(ageData ?? []).map((r: { id: string; age: number }) => [
+							r.id,
+							r.age,
+						]),
+					);
 
-    // Search filter
-    const searchMatches =
-      !searchQuery ||
-      row.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      row.lastName.toLowerCase().includes(searchQuery.toLowerCase());
+					const childrenWithAge = data.map((child) => ({
+						...child,
+						age: ageMap.get(child.id) ?? null,
+					}));
+					setChildren(childrenWithAge as Child[]);
+				}
+			} catch (err) {
+				console.error("Failed to fetch children:", err);
+			}
+		}
+		fetchChildren();
+	}, []);
 
-    return statusMatches && genderMatches && searchMatches;
-  });
+	// Filter rows based on selection
+	const filtered = children.filter((c) => {
+		// Status filter
+		const statusKey = c.active ? "active" : "waiting";
+		const statusMatches =
+			selectedStatus.has("all") || selectedStatus.has(statusKey);
 
-  return (
-    <div className="w-full">
-      <Table
-        aria-label="Children table"
-        removeWrapper
-        onRowAction={(key) => router.push(`/admin/children/${key}`)}
-        classNames={{ tr: "cursor-pointer" }}
-      >
-        <TableHeader>
-          <TableColumn>LAST NAME</TableColumn>
-          <TableColumn>FIRST NAME</TableColumn>
-          <TableColumn>ID</TableColumn>
-          <TableColumn>AGE</TableColumn>
-          <TableColumn>GENDER</TableColumn>
-          <TableColumn>LOCATION</TableColumn>
-          <TableColumn>STATUS</TableColumn>
-          <TableColumn>DATE ENROLLED</TableColumn>
-          <TableColumn>ACTIONS</TableColumn>
-        </TableHeader>
+		// Gender filter
+		const genderMatches =
+			selectedGender.size === 0 || selectedGender.has(c.gender.toLowerCase());
 
-        <TableBody emptyContent={"No children found"} items={filtered}>
-          {(r) => (
-            <TableRow key={r.id}>
-              <TableCell>{r.lastName}</TableCell>
-              <TableCell>{r.firstName}</TableCell>
-              <TableCell>{r.id}</TableCell>
-              <TableCell>{r.age}</TableCell>
-              <TableCell>{r.gender}</TableCell>
-              <TableCell>{r.location}</TableCell>
-              <TableCell>
-                <Chip
-                  size="md"
-                  radius="full"
-                  variant="flat"
-                  color={statusChipColor(r.status)}
-                  className="px-4 text-base"
-                >
-                  {r.status}
-                </Chip>
-              </TableCell>
-              <TableCell>{r.dateEnrolled}</TableCell>
-              <TableCell>
-                <div className="flex gap-2">
-                  <Button
-                    as={Link}
-                    href={`/admin/children/${r.id}`}
-                    size="sm"
-                    radius="md"
-                    color="primary"
-                  >
-                    View
-                  </Button>
-                  <Button
-                    as={Link}
-                    href="/admin/children/editpage"
-                    size="sm"
-                    radius="md"
-                    color="primary"
-                  >
-                    Edit
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </div>
-  );
+		// Search filter
+		const searchMatches =
+			!searchQuery ||
+			c.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			c.last_name.toLowerCase().includes(searchQuery.toLowerCase());
+
+		return statusMatches && genderMatches && searchMatches;
+	});
+
+	return (
+		<div className="w-full">
+			<Table
+				aria-label="Children table"
+				removeWrapper
+				onRowAction={(key) => router.push(`/admin/children/${key}`)}
+				classNames={{ tr: "cursor-pointer" }}
+			>
+				<TableHeader>
+					<TableColumn>LAST NAME</TableColumn>
+					<TableColumn>FIRST NAME</TableColumn>
+					<TableColumn>ID</TableColumn>
+					<TableColumn>AGE</TableColumn>
+					<TableColumn>GENDER</TableColumn>
+					<TableColumn>LOCATION</TableColumn>
+					<TableColumn>STATUS</TableColumn>
+					<TableColumn>DATE ENROLLED</TableColumn>
+					<TableColumn>ACTIONS</TableColumn>
+				</TableHeader>
+
+				<TableBody
+					emptyContent={"No children found"}
+					items={filtered}
+				>
+					{(r) => (
+						<TableRow key={r.id}>
+							<TableCell>{r.last_name}</TableCell>
+							<TableCell>{r.first_name}</TableCell>
+							<TableCell>{r.id}</TableCell>
+							<TableCell>{r.age}</TableCell>
+							<TableCell>{r.gender}</TableCell>
+							<TableCell>{r.location}</TableCell>
+							<TableCell>
+								<Chip
+									size="md"
+									radius="full"
+									variant="flat"
+									color={statusChipColor(r.active)}
+									className="px-4 text-base"
+								>
+									{r.active === true ? "Active" : "Waiting"}
+								</Chip>
+							</TableCell>
+							<TableCell>
+								{new Date(r.created_at).toLocaleDateString("en-US", {
+									month: "short",
+									day: "numeric",
+									year: "numeric",
+								})}
+							</TableCell>
+							<TableCell>
+								<div className="flex gap-2">
+									<Button
+										as={Link}
+										href={`/admin/children/${r.id}`}
+										size="sm"
+										radius="md"
+										color="primary"
+									>
+										View
+									</Button>
+									<Button
+										as={Link}
+										href="/admin/children/editpage"
+										size="sm"
+										radius="md"
+										color="primary"
+									>
+										Edit
+									</Button>
+								</div>
+							</TableCell>
+						</TableRow>
+					)}
+				</TableBody>
+			</Table>
+		</div>
+	);
 }

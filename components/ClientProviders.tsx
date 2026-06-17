@@ -51,6 +51,9 @@ export default function ClientProviders({
             <Link href="/contact" style={footerStyles.link}>
               Contact
             </Link>
+            <Link href="/auth/admin-login" style={footerStyles.link}>
+              Admin Login
+            </Link>
           </div>
 
           <div style={footerStyles.right}>
