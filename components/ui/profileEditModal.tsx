@@ -14,9 +14,8 @@ import { useState, useEffect, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 import ProfileImageUpload from "@/components/profile-image-upload";
-
-import { Sponsor } from "../admin/sponsors/SponsorsPage";
-import { Child } from "../admin/children/ChildrenPage";
+import { Sponsor } from "../admin/sponsors/types";
+import { Child } from "../admin/children/types";
 
 type Props = {
 	type: "Child" | "Sponsor";

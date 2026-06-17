@@ -24,7 +24,7 @@ import {
 	PopoverTrigger,
 	PopoverContent,
 } from "@heroui/react";
-import { Child } from "./admin/children/ChildrenPage";
+import { Child } from "./admin/children/types";
 
 const pageCapacities = ["20", "60", "100"];
 

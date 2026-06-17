@@ -7,7 +7,6 @@ import { Avatar } from "@heroui/react";
 import { Button } from "@/components/ui/button";
 import { useParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { Child } from "@/components/admin/children/ChildrenPage";
 import {
 	BookOpen,
 	HeartPlus,
@@ -20,6 +19,7 @@ import {
 	Sparkles,
 	Heart,
 } from "lucide-react";
+import { Child } from "@/components/admin/children/types";
 
 export default function ChildProfilePageWrapper() {
 	return (
