@@ -81,9 +81,12 @@ export async function updateSession(request: NextRequest) {
 			return NextResponse.redirect(url);
 		}
 	} else if (role === "pending_admin") {
-		console.log(isAdminPath);
 		// If pending admin tried to access admin or sponsor page redirect to screen for pending page.,
-		if (!isApiPath && (!isPublicPath || isAdminPath)) {
+		if (
+			!isApiPath &&
+			request.nextUrl.pathname !== "/profile" &&
+			(!isPublicPath || isAdminPath)
+		) {
 			url.pathname = "/auth/pending-approval";
 			return NextResponse.redirect(url);
 		}
