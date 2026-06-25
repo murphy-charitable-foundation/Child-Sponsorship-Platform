@@ -1,4 +1,3 @@
-// @ts-expect-error CSS module declaration not found
 import "./globals.css";
 
 import { Suspense } from "react";
