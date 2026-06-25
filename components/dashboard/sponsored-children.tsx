@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 import Image from "next/image";
 type Child = {
@@ -97,6 +98,7 @@ const children: Child[] = [
 ];
 
 const Card = ({
+  id,
   name,
   age,
   date,
@@ -104,6 +106,7 @@ const Card = ({
   img,
   status,
 }: {
+  id: number;
   name: string;
   age: number;
   date: string;
@@ -111,6 +114,8 @@ const Card = ({
   img: string;
   status: string;
 }) => {
+  const router = useRouter();
+
   return (
     <article
       aria-label={`Child card for ${name}, status ${status}`}
@@ -164,6 +169,7 @@ const Card = ({
         className="border-2 flex flex-row items-center
         justify-center border-secondary text-secondary rounded-xl py-2"
         aria-label={`View details for ${name}`}
+        onClick={() => router.push(`/dashboard/child/${id}`)}
       >
         <Image src="/dashboard/heart.svg" alt="" width={20} height={20} />
         <span className="ps-2 font-semibold">View Details</span>
@@ -186,6 +192,7 @@ const SponsoredChildren = () => {
           return (
             <Card
               key={child?.id}
+              id={child?.id}
               name={child?.name}
               age={child?.age}
               date={child?.date}
