@@ -15,7 +15,7 @@ const Card = ({
       aria-label={`${text} card showing value ${num}`}
       className="bg-[#c3d7f9] rounded-3xl pt-8 pb-6 px-8 flex flex-col justify-between"
     >
-      <p aria-label={`Value: ${num}`} className="text-4xl text-primary-500">
+      <p aria-label={`Value: ${num}`} className="text-4xl text-primary">
         {num}
       </p>
       <p className="text-zinc-800 py-6" aria-label={`Description: ${text}`}>
@@ -31,7 +31,7 @@ const Card = ({
   );
 };
 
-const FirstChild = () => {
+const Overview = () => {
   return (
     <section className="bg-[linear-gradient(86deg,var(--primary-500)_0%,_var(--primary-700)_99.7%)] text-white px-8 py-6  rounded-3xl w-full mx-auto grid grid-cols-4 gap-16">
       <article>
@@ -39,8 +39,8 @@ const FirstChild = () => {
         <p className="text-3xl font-semibold mb-10">
           You have sponsored 3 children!
         </p>
-        <button className="bg-white text-primary-500 px-6 py-2 rounded-lg mt-2 font-medium">
-          Sponsore More
+        <button className="bg-white text-primary px-6 py-2 rounded-lg mt-2 font-medium">
+          Sponsor More
         </button>
       </article>
       <Card
@@ -76,4 +76,4 @@ const FirstChild = () => {
   );
 };
 
-export default FirstChild;
+export default Overview;
