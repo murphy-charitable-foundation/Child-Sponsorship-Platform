@@ -4,27 +4,30 @@ import Image from "next/image";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarItem,
-  Button,
-  Avatar,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownSection,
-  DropdownTrigger,
+	Navbar,
+	NavbarBrand,
+	NavbarContent,
+	NavbarItem,
+	Button,
+	Avatar,
+	Dropdown,
+	DropdownItem,
+	DropdownMenu,
+	DropdownTrigger,
 } from "@heroui/react";
 
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { createClient } from "@/lib/supabase/client";
+import { useEffect, useState } from "react";
+import { useUserProfile } from "./UserProfileContext";
 
 export function AppNavbar() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, loading } = useAuth();
+  const { avatarUrl, refreshAvatar } = useUserProfile();
+	const [mounted, setMounted] = useState(false);
 
   const isActive = (href: string) => pathname === href;
 
@@ -34,6 +37,29 @@ export function AppNavbar() {
     await supabase.auth.signOut();
     router.push("/auth/login");
   };
+  
+  useEffect(() => {
+		setMounted(true);
+	}, []);
+
+	useEffect(() => {
+		//get the sponsors data from db
+		if (!user) return;
+		const role = user.user_metadata.role;
+
+		let convertedRole = "";
+		if (role === "sponsor") {
+			convertedRole = "sponsors";
+		} else if (role === "admin") {
+			convertedRole = "admins";
+		} else if (role === "super_admin") {
+			convertedRole = "super_admins";
+		}
+
+		if (!convertedRole) return;
+
+		refreshAvatar(convertedRole, user.id);
+	}, [user, refreshAvatar]);
 
   const userFirstName =
     user?.user_metadata.first_name || user?.email?.split("@")[0] || "User";
@@ -116,7 +142,7 @@ export function AppNavbar() {
 
       <NavbarContent justify="end" className="gap-4 pr-4">
         <NavbarItem>
-          {!user && (
+          {mounted && !loading && !user && (
             <Button
               as={NextLink}
               href="/auth/login"
@@ -128,19 +154,30 @@ export function AppNavbar() {
               Login
             </Button>
           )}
-          {user && (
+          {mounted && !loading && user && (
             <Dropdown>
               <DropdownTrigger>
                 <Button isIconOnly radius="full" variant="light">
                   <Avatar
                     name={`${userFirstName} ${userLastName}`}
+                    src={avatarUrl}
                     size="sm"
                     color="primary"
                   />
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem key="logout" onClick={logout}>
+                <DropdownItem
+                  key="profile"
+                  onClick={() => router.push("/profile")}
+                >
+                  Profile
+                </DropdownItem>
+
+                <DropdownItem
+                  key="logout"
+                  onClick={logout}
+                >
                   Logout
                 </DropdownItem>
               </DropdownMenu>
