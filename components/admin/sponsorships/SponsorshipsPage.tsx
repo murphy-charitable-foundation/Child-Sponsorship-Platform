@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Chip } from "@heroui/react";
 import CreateSponsorshipDrawer from "./CreateSponsorshipDrawer";
 
@@ -157,9 +158,19 @@ export default function SponsorshipsPage() {
                   <td className="px-4 py-3 text-slate-600">{s.startDate}</td>
                   <td className="px-4 py-3 text-slate-600">{s.endDate ?? "—"}</td>
                   <td className="px-4 py-3">
-                    <span className="cursor-pointer text-primary hover:underline">View</span>
+                    <Link
+                      href={`/admin/sponsorships/${s.id}`}
+                      className="cursor-pointer text-primary hover:underline"
+                    >
+                      View
+                    </Link>
                     <span className="mx-1 text-slate-300">|</span>
-                    <span className="cursor-pointer text-primary hover:underline">Edit</span>
+                    <Link
+                      href={`/admin/sponsorships/${s.id}`}
+                      className="cursor-pointer text-primary hover:underline"
+                    >
+                      Edit
+                    </Link>
                   </td>
                 </tr>
               ))

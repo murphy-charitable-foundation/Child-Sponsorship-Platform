@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import AddOrganizationDrawer from "./AddOrganizationDrawer";
+import EditOrganizationDrawer from "./EditOrganizationDrawer";
+import AddUserDrawer from "./AddUserDrawer";
 
 type Organization = {
   id: string;
@@ -136,6 +138,11 @@ export default function AdminOrganizationsPage() {
   const [search, setSearch] = useState("");
   const [organization, setOrganization] = useState("All organizations");
   const [status, setStatus] = useState("All statuses");
+  const [isAddOrgDrawerOpen, setIsAddOrgDrawerOpen] = useState(false);
+  const [isEditOrgDrawerOpen, setIsEditOrgDrawerOpen] = useState(false);
+  const [selectedOrgId, setSelectedOrgId] = useState<string | null>(null);
+  const [orgDrawerMode, setOrgDrawerMode] = useState<"view" | "edit">("edit");
+  const [isAddUserDrawerOpen, setIsAddUserDrawerOpen] = useState(false);
 
   const filteredUsers = users.filter((user) => {
     const q = search.toLowerCase();
@@ -153,24 +160,13 @@ export default function AdminOrganizationsPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Active":
-        return "text-green-600";
+        return "text-green-700";
       case "Inactive":
-        return "text-gray-500";
+        return "text-slate-800/60";
       case "Pending":
-        return "text-orange-500";
+        return "text-orange-700";
       default:
-        return "text-gray-700";
-    }
-  };
-
-  const getStatusBadgeColor = (status: string) => {
-    switch (status) {
-      case "Active":
-        return "bg-green-100 text-green-700";
-      case "Pending":
-        return "bg-orange-100 text-orange-700";
-      default:
-        return "bg-gray-100 text-gray-700";
+        return "text-slate-800";
     }
   };
 
@@ -186,7 +182,7 @@ export default function AdminOrganizationsPage() {
             className={`px-6 py-2 font-semibold rounded-lg transition-colors ${
               activeTab === "organizations"
                 ? "bg-primary text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                : "bg-slate-100 text-slate-800 hover:bg-slate-100/70"
             }`}
           >
             Organizations
@@ -196,7 +192,7 @@ export default function AdminOrganizationsPage() {
             className={`px-6 py-2 font-semibold rounded-lg transition-colors ${
               activeTab === "users"
                 ? "bg-primary text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                : "bg-slate-100 text-slate-800 hover:bg-slate-100/70"
             }`}
           >
             Users
@@ -207,22 +203,22 @@ export default function AdminOrganizationsPage() {
         {activeTab === "organizations" && (
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-semibold text-gray-800">
+              <h2 className="text-2xl font-semibold text-slate-800">
                 Organizations
               </h2>
-              <Link
-                href="/admin/organizations/create"
+              <button
+                onClick={() => setIsAddOrgDrawerOpen(true)}
                 className="bg-primary text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary/90"
               >
-                Create organization
-              </Link>
+                Add organization
+              </button>
             </div>
 
             {/* Table */}
             <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-200 bg-slate-50">
+                  <tr className="border-b border-slate-200 bg-slate-100">
                     {[
                       "Organization Name",
                       "Members",
@@ -231,7 +227,7 @@ export default function AdminOrganizationsPage() {
                     ].map((h) => (
                       <th
                         key={h}
-                        className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"
+                        className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-800/60"
                       >
                         {h}
                       </th>
@@ -240,18 +236,32 @@ export default function AdminOrganizationsPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {organizations.map((org) => (
-                    <tr key={org.id} className="hover:bg-slate-50">
+                    <tr key={org.id} className="hover:bg-slate-100">
                       <td className="px-4 py-3 text-slate-800">{org.name}</td>
                       <td className="px-4 py-3 text-slate-800">{org.members}</td>
-                      <td className="px-4 py-3 text-slate-600">
+                      <td className="px-4 py-3 text-slate-800/70">
                         {org.dateCreated}
                       </td>
                       <td className="px-4 py-3">
-                        <span className="cursor-pointer text-primary hover:underline">
+                        <span
+                          onClick={() => {
+                            setSelectedOrgId(org.id);
+                            setOrgDrawerMode("view");
+                            setIsEditOrgDrawerOpen(true);
+                          }}
+                          className="cursor-pointer text-primary hover:underline"
+                        >
                           View
                         </span>
-                        <span className="mx-1 text-slate-300">|</span>
-                        <span className="cursor-pointer text-primary hover:underline">
+                        <span className="mx-1 text-slate-800/30">|</span>
+                        <span
+                          onClick={() => {
+                            setSelectedOrgId(org.id);
+                            setOrgDrawerMode("edit");
+                            setIsEditOrgDrawerOpen(true);
+                          }}
+                          className="cursor-pointer text-primary hover:underline"
+                        >
                           Edit
                         </span>
                       </td>
@@ -267,8 +277,11 @@ export default function AdminOrganizationsPage() {
         {activeTab === "users" && (
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-semibold text-gray-800">Users</h2>
-              <button className="bg-primary text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary/90">
+              <h2 className="text-2xl font-semibold text-slate-800">Users</h2>
+              <button
+                onClick={() => setIsAddUserDrawerOpen(true)}
+                className="bg-primary text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary/90"
+              >
                 Create user
               </button>
             </div>
@@ -277,7 +290,7 @@ export default function AdminOrganizationsPage() {
             <div className="mb-6 rounded-xl border border-slate-200 bg-white p-4">
               <div className="flex gap-4 items-end">
                 <div className="flex-1">
-                  <label className="block text-xs text-slate-500 mb-1">
+                  <label className="block text-xs text-slate-800/60 mb-1">
                     Search
                   </label>
                   <input
@@ -289,7 +302,7 @@ export default function AdminOrganizationsPage() {
                   />
                 </div>
                 <div className="w-48">
-                  <label className="block text-xs text-slate-500 mb-1">
+                  <label className="block text-xs text-slate-800/60 mb-1">
                     Organization
                   </label>
                   <select
@@ -304,7 +317,7 @@ export default function AdminOrganizationsPage() {
                   </select>
                 </div>
                 <div className="w-40">
-                  <label className="block text-xs text-slate-500 mb-1">
+                  <label className="block text-xs text-slate-800/60 mb-1">
                     Status
                   </label>
                   <select
@@ -335,7 +348,7 @@ export default function AdminOrganizationsPage() {
             <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-200 bg-slate-50">
+                  <tr className="border-b border-slate-200 bg-slate-100">
                     {[
                       "Last Name",
                       "First Name",
@@ -347,7 +360,7 @@ export default function AdminOrganizationsPage() {
                     ].map((h) => (
                       <th
                         key={h}
-                        className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"
+                        className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-800/60"
                       >
                         {h}
                       </th>
@@ -356,14 +369,14 @@ export default function AdminOrganizationsPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {filteredUsers.map((user) => (
-                    <tr key={user.id} className="hover:bg-slate-50">
+                    <tr key={user.id} className="hover:bg-slate-100">
                       <td className="px-4 py-3 text-slate-800">
                         {user.lastName}
                       </td>
                       <td className="px-4 py-3 text-slate-800">
                         {user.firstName}
                       </td>
-                      <td className="px-4 py-3 text-slate-600">
+                      <td className="px-4 py-3 text-slate-800/70">
                         {user.organization}
                       </td>
                       <td className="px-4 py-3">
@@ -377,14 +390,14 @@ export default function AdminOrganizationsPage() {
                       <td className={`px-4 py-3 font-medium ${getStatusColor(user.status)}`}>
                         {user.status}
                       </td>
-                      <td className="px-4 py-3 text-slate-600">
+                      <td className="px-4 py-3 text-slate-800/70">
                         {user.lastActive}
                       </td>
                       <td className="px-4 py-3">
                         <span className="cursor-pointer text-primary hover:underline">
                           View
                         </span>
-                        <span className="mx-1 text-slate-300">|</span>
+                        <span className="mx-1 text-slate-800/30">|</span>
                         <span className="cursor-pointer text-primary hover:underline">
                           Edit
                         </span>
@@ -396,6 +409,22 @@ export default function AdminOrganizationsPage() {
             </div>
           </div>
         )}
+
+        {/* Drawers */}
+        <AddOrganizationDrawer
+          isOpen={isAddOrgDrawerOpen}
+          onClose={() => setIsAddOrgDrawerOpen(false)}
+        />
+        <EditOrganizationDrawer
+          isOpen={isEditOrgDrawerOpen}
+          onClose={() => setIsEditOrgDrawerOpen(false)}
+          organizationId={selectedOrgId}
+          mode={orgDrawerMode}
+        />
+        <AddUserDrawer
+          isOpen={isAddUserDrawerOpen}
+          onClose={() => setIsAddUserDrawerOpen(false)}
+        />
     </div>
   );
 }

@@ -10,6 +10,7 @@ import { GuardianSection } from "@/components/admin/children/GuardianSection";
 import ChildSponsorsTab from "@/components/admin/children/ChildSponsorsTab";
 import ChildReportsTab from "@/components/admin/children/ChildReportsTab";
 import ChildMessagesTab from "@/components/admin/children/ChildMessagesTab";
+import ChildConsentTab from "@/components/admin/children/ChildConsentTab";
 import EditChildDrawer from "@/components/admin/children/EditChildDrawer";
 import type { ChildProfile } from "@/components/admin/children/types";
 
@@ -129,6 +130,12 @@ export default function ChildProfilePage({ child }: ChildProfilePageProps) {
       {activeTab === "messages" && (
         <div className="mt-8">
           <ChildMessagesTab child={child} />
+        </div>
+      )}
+
+      {activeTab === "consent" && (
+        <div className="mt-8">
+          <ChildConsentTab child={child} />
         </div>
       )}
 

@@ -1,21 +1,23 @@
-export type TabKey = "profile" | "sponsors" | "reports" | "messages" | "consent";
+export type TabKey = "profile" | "sponsorships" | "reports" | "messages";
 
-type ProfileTabsProps = {
+type SponsorshipProfileTabsProps = {
   activeTab: TabKey;
   onChange: (tab: TabKey) => void;
 };
 
 const tabs: { key: TabKey; label: string }[] = [
   { key: "profile", label: "Profile" },
-  { key: "sponsors", label: "Sponsors" },
+  { key: "sponsorships", label: "Sponsorships" },
   { key: "reports", label: "Reports" },
   { key: "messages", label: "Messages" },
-  { key: "consent", label: "Consent" },
 ];
 
-export function ProfileTabs({ activeTab, onChange }: ProfileTabsProps) {
+export function SponsorshipProfileTabs({
+  activeTab,
+  onChange,
+}: SponsorshipProfileTabsProps) {
   return (
-    <div className="grid grid-cols-5 rounded-2xl bg-slate-100 p-1">
+    <div className="grid grid-cols-4 rounded-2xl bg-slate-100 p-1">
       {tabs.map((tab) => (
         <button
           key={tab.key}

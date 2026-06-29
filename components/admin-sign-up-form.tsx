@@ -1,37 +1,11 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
-import {
-  Tabs,
-  Tab,
-  Card,
-  CardBody,
-  CardHeader,
-  Checkbox,
-  Input,
-  Select,
-  SelectItem,
-  Textarea,
-  Button,
-  Link,
-  Divider,
-} from "@heroui/react";
+import { Button, Checkbox, Divider, Input } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-const sponsorOptions = [
-  { key: "individual", label: "Individual" },
-  { key: "family", label: "Family" },
-  { key: "company", label: "Company / Business" },
-  { key: "ngo", label: "Organization / NGO" },
-  { key: "religious", label: "Religious Institution" },
-];
-
-export function AdminSignUpForm({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+export function AdminSignUpForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
@@ -78,113 +52,143 @@ export function AdminSignUpForm({
   };
 
   return (
-    <div className="">
-          <form onSubmit={handleSignUp}>
+    <form onSubmit={handleSignUp}>
+      <div className="flex flex-col gap-6">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="grid gap-2">
+            <label
+              htmlFor="admin-first-name"
+              className="text-sm font-medium text-default-700"
+            >
+              First Name*
+            </label>
+            <Input
+              id="admin-first-name"
+              aria-label="First Name"
+              variant="bordered"
+              radius="md"
+              required
+              onChange={(e) => setFirstName(e.target.value)}
+              value={firstName}
+              classNames={{ inputWrapper: "rounded-[12px]" }}
+            />
+          </div>
+          <div className="grid gap-2">
+            <label
+              htmlFor="admin-last-name"
+              className="text-sm font-medium text-default-700"
+            >
+              Last Name*
+            </label>
+            <Input
+              id="admin-last-name"
+              aria-label="Last Name"
+              variant="bordered"
+              radius="md"
+              required
+              onChange={(e) => setLastName(e.target.value)}
+              value={lastName}
+              classNames={{ inputWrapper: "rounded-[12px]" }}
+            />
+          </div>
+        </div>
 
-            <div className="flex flex-col gap-6">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <Input
-                  id="first-name"
-                  label="First Name*"
-                  labelPlacement="outside"
-                  variant="bordered"
-                  radius="md"
-                  required
-                  onChange={(e) => setFirstName(e.target.value)}
-                  value={firstName}
-                  classNames={{ inputWrapper: "rounded-[12px]" }}
-                />
-                <Input
-                  id="last-name"
-                  label="Last Name*"
-                  labelPlacement="outside"
-                  variant="bordered"
-                  radius="md"
-                  required
-                  onChange={(e) => setLastName(e.target.value)}
-                  value={lastName}
-                  classNames={{ inputWrapper: "rounded-[12px]" }}
-                />
-              </div>
-              <div className="grid gap-2">
-                <Input
-                  id="email"
-                  type="email"
-                  label="Email*"
-                  labelPlacement="outside"
-                  variant="bordered"
-                  radius="md"
-                  required
-                  value={email}
-                  classNames={{ inputWrapper: "rounded-[12px]" }}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
+        <div className="grid gap-2">
+          <label
+            htmlFor="admin-sign-up-email"
+            className="text-sm font-medium text-default-700"
+          >
+            Email*
+          </label>
+          <Input
+            id="admin-sign-up-email"
+            type="email"
+            aria-label="Email"
+            variant="bordered"
+            radius="md"
+            required
+            value={email}
+            classNames={{ inputWrapper: "rounded-[12px]" }}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
 
-              <div className="grid gap-2">
-                <Input
-                  id="phone-number"
-                  type="tel"
-                  label="Phone Number*"
-                  labelPlacement="outside"
-                  variant="bordered"
-                  radius="md"
-                  required
-                  value={phone}
-                  classNames={{ inputWrapper: "rounded-[12px]" }}
-                  onChange={(e) => setPhone(e.target.value)}
-                />
-              </div>
-              <div className="grid gap-2">
+        <div className="grid gap-2">
+          <label
+            htmlFor="admin-phone-number"
+            className="text-sm font-medium text-default-700"
+          >
+            Phone Number*
+          </label>
+          <Input
+            id="admin-phone-number"
+            type="tel"
+            aria-label="Phone Number"
+            variant="bordered"
+            radius="md"
+            required
+            value={phone}
+            classNames={{ inputWrapper: "rounded-[12px]" }}
+            onChange={(e) => setPhone(e.target.value)}
+          />
+        </div>
 
-                <Divider />
-                <Input
-                  id="password"
-                  type="password"
-                  label="Password*"
-                  labelPlacement="outside"
-                  variant="bordered"
-                  radius="md"
-                  required
-                  value={password}
-                  classNames={{ inputWrapper: "rounded-[12px]" }}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              <div className="grid gap-2">
+        <Divider />
 
-                <Input
-                  id="repeat-password"
-                  type="password"
-                  label="Repeat Password*"
-                  labelPlacement="outside"
-                  variant="bordered"
-                  radius="md"
-                  required
-                  value={repeatPassword}
-                  classNames={{ inputWrapper: "rounded-[12px]" }}
-                  onChange={(e) => setRepeatPassword(e.target.value)}
-                />
-              </div>
-              {error && <p className="text-sm text-red-500">{error}</p>}
-              <Checkbox
-                id="terms"
-                required
-                color="secondary" 
-              >
-                <p className="text-sm">I agree to the Terms of Use and Privacy Policy</p>
-              </Checkbox>
-             <Button type="submit" 
-                color="secondary" 
-                radius="md" 
-                className="rounded-[12px]" 
-                disabled={isLoading}
-              >
-                {isLoading ? "Creating an account..." : "Sign up"}
-              </Button>
-            </div>
+        <div className="grid gap-2">
+          <label
+            htmlFor="admin-sign-up-password"
+            className="text-sm font-medium text-default-700"
+          >
+            Password*
+          </label>
+          <Input
+            id="admin-sign-up-password"
+            type="password"
+            aria-label="Password"
+            variant="bordered"
+            radius="md"
+            required
+            value={password}
+            classNames={{ inputWrapper: "rounded-[12px]" }}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
 
-          </form>
-    </div>
+        <div className="grid gap-2">
+          <label
+            htmlFor="admin-repeat-password"
+            className="text-sm font-medium text-default-700"
+          >
+            Repeat Password*
+          </label>
+          <Input
+            id="admin-repeat-password"
+            type="password"
+            aria-label="Repeat Password"
+            variant="bordered"
+            radius="md"
+            required
+            value={repeatPassword}
+            classNames={{ inputWrapper: "rounded-[12px]" }}
+            onChange={(e) => setRepeatPassword(e.target.value)}
+          />
+        </div>
+
+        {error && <p className="text-sm text-danger">{error}</p>}
+        <Checkbox id="terms" required color="primary">
+          <p className="text-sm">I agree to the Terms of Use and Privacy Policy</p>
+        </Checkbox>
+        <Button
+          type="submit"
+          color="primary"
+          radius="md"
+          className="rounded-[12px]"
+          disabled={isLoading}
+        >
+          {isLoading ? "Creating an account..." : "Sign up"}
+        </Button>
+      </div>
+    </form>
   );
 }
