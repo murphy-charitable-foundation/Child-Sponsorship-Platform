@@ -1,6 +1,7 @@
 // app/admin/layout.tsx
 import React from "react";
 import { AdminSidebar } from "@/components/admin/layout/AdminSidebar";
+import AdminTopActions from "@/components/admin/layout/AdminTopActions";
 
 export default function AdminLayout({
 	children,

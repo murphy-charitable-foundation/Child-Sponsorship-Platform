@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
 	Home,
@@ -57,6 +58,9 @@ export function AdminSidebar() {
 	const pathname = usePathname();
 	const router = useRouter();
 	const { user, loading } = useAuth();
+	const [mounted, setMounted] = useState(false);
+	const [target, setTarget] = useState<string>("");
+	const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
 
 	const logout = async () => {
 		const supabase = createClient();
