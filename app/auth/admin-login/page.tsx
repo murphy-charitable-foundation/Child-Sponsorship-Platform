@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function Page() {
-  const [org, setOrg] = useState("Uganda");
+  //const [org, setOrg] = useState("Uganda");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -65,7 +65,7 @@ export default function Page() {
         </h1>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-          <div>
+          {/*<div>
             <label
               htmlFor="admin-organization"
               className="mb-2 block text-sm font-medium text-default-500"
@@ -83,7 +83,7 @@ export default function Page() {
               <option>Tanzania</option>
               <option>Rwanda</option>
             </select>
-          </div>
+          </div>*/}
 
           <div>
             <label
