@@ -44,7 +44,7 @@ export function AdminSidebar() {
 	useEffect(() => {
 		//get the sponsors data from db
 		if (!user) return;
-		const role = user.user_metadata.role;
+		const role = user.app_metadata.role;
 
 		if (role === "sponsor") {
 			setTarget("sponsors");
