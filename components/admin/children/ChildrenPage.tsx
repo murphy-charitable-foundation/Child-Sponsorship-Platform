@@ -1,139 +1,30 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
 
-import { createClient } from "@/lib/supabase/client";
-
+import { useState } from "react";
+import Link from "next/link";
 import { KpiCard } from "@/components/admin/dashboard/KpiCard";
 import { PanelCard } from "@/components/admin/dashboard/PanelCard";
-import ChildrenFilters, {
-	type ChildFilters,
-} from "@/components/admin/children/ChildrenFilters";
+import ChildrenFilters from "@/components/admin/children/ChildrenFilters";
 import ChildrenTable from "@/components/admin/children/ChildrenTable";
 
-//TODO: Previously the status is has "active", "waiting", "exited". however, in supabase children table doesn't have "status"
-//Only has "active" column. so we need to check it. either we add status in the table or just use active column.
-//If we use "active" (boolean), we need to identify what is the waiting and exited.
-//For now, I use active and set waiting if the active value is false
-
-export interface Child {
-	id: string;
-	first_name: string;
-	last_name: string;
-	full_name: string;
-	age: number;
-	date_of_birth: string;
-	gender: "Male" | "Female" | "Other";
-	location: string;
-	active: boolean;
-	photo_path?: string;
-	school_grade: number;
-	image_url?: string;
-	created_at: string;
-	favorite_activity: string;
-	dream_job: string;
-}
-
-const supabase = createClient();
-
 export default function ChildrenPage() {
-	const [children, setChildren] = useState<Child[]>([]);
-	const [filters, setFilters] = useState<ChildFilters>({
-		search: "",
-		gender: "",
-		statuses: new Set(["active", "waiting", "exited"]),
-	});
-
-	//Load children data from Supabase
-	useEffect(() => {
-		async function fetchChildren() {
-			try {
-				const [{ data, error: childrenError }, { data: ageData }] =
-					await Promise.all([
-						supabase.from("children").select("*"),
-						supabase.from("children_with_ages").select("id, age"),
-					]);
-
-				if (childrenError) {
-					console.log(childrenError);
-				}
-				if (data?.length) {
-					const ageMap = new Map(
-						(ageData ?? []).map((r: { id: string; age: number }) => [
-							r.id,
-							r.age,
-						]),
-					);
-
-					const paths = data
-						.map((c) => c.photo_path)
-						.filter((p): p is string => !!p);
-
-					const signedUrlMap = new Map<string, string>();
-					if (paths.length) {
-						const { data: signed } = await supabase.storage
-							.from("profiles")
-							.createSignedUrls(paths, 60 * 60);
-						for (const entry of signed ?? []) {
-							if (entry.path && entry.signedUrl)
-								signedUrlMap.set(entry.path, entry.signedUrl);
-						}
-					}
-
-					let signedUrls: Record<string, string> = {};
-					const photoPaths: string[] = [];
-					for (const child of data ?? []) {
-						if (child.photo_path) photoPaths.push(child.photo_path);
-					}
-
-					if (photoPaths.length > 0) {
-						const res = await fetch("/api/supabase/signed-url/children", {
-							method: "POST",
-							headers: { "Content-Type": "application/json" },
-							body: JSON.stringify({ paths: photoPaths }),
-						});
-						if (res.ok) ({ signedUrls } = await res.json());
-					}
-
-					const childrenWithUrls = data.map((child) => ({
-						...child,
-						image_url: child.photo_path
-							? signedUrls[child.photo_path]
-							: undefined,
-						age: ageMap.get(child.id) ?? null,
-					}));
-					setChildren(childrenWithUrls as Child[]);
-				}
-			} catch (err) {
-				console.error("Failed to fetch children:", err);
-			}
-		}
-		fetchChildren();
-	}, []);
-
-	//Filter children by search, gender, and statuses
-	const filtered = useMemo(() => {
-		const { search, gender, statuses } = filters;
-		return children.filter((c) => {
-			const fullName = `${c.first_name} ${c.last_name}`;
-			if (search && !fullName.toLowerCase().includes(search.toLowerCase()))
-				return false;
-			if (
-				gender &&
-				gender !== "all" &&
-				gender.toLowerCase() !== c.gender.toLowerCase()
-			)
-				return false;
-			const statusKey = c.active ? "active" : "waiting";
-			if (statuses.size > 0 && !statuses.has(statusKey)) return false;
-			return true;
-		});
-	}, [children, filters]);
+	const [selectedStatus, setSelectedStatus] = useState<Set<string>>(
+		new Set(["all"]),
+	);
+	const [selectedGender, setSelectedGender] = useState<Set<string>>(new Set());
+	const [searchQuery, setSearchQuery] = useState("");
 
 	return (
 		<div className="space-y-8 w-full">
 			{/* header */}
 			<div className="flex items-center justify-between">
-				<h1 className="text-4xl font-bold">Children</h1>
+				<h1 className="text-2xl font-semibold text-primary">Children</h1>
+				<Link
+					href="/admin/children/add"
+					className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90"
+				>
+					Add Child
+				</Link>
 			</div>
 
 			{/* KPI */}
@@ -158,14 +49,18 @@ export default function ChildrenPage() {
 				className="w-full"
 			>
 				<div className="space-y-8">
-					<ChildrenFilters onFiltersChange={setFilters} />
+					<ChildrenFilters
+						selectedStatus={selectedStatus}
+						setSelectedStatus={setSelectedStatus}
+						selectedGender={selectedGender}
+						setSelectedGender={setSelectedGender}
+						searchQuery={searchQuery}
+						setSearchQuery={setSearchQuery}
+					/>
 					<ChildrenTable
-						rows={filtered}
-						onChildUpdate={(updated) =>
-							setChildren((prev) =>
-								prev.map((c) => (c.id === updated.id ? updated : c)),
-							)
-						}
+						selectedStatus={selectedStatus}
+						selectedGender={selectedGender}
+						searchQuery={searchQuery}
 					/>
 				</div>
 			</PanelCard>

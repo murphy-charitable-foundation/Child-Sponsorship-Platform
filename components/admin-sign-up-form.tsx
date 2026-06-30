@@ -174,7 +174,7 @@ export function AdminSignUpForm({
 
 					<Button
 						type="submit"
-						color="secondary"
+						color="primary"
 						radius="md"
 						className="rounded-[12px]"
 						disabled={isLoading}

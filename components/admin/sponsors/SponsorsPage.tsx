@@ -1,135 +1,69 @@
 "use client";
 
+import { useState } from "react";
 import { KpiCard } from "@/components/admin/dashboard/KpiCard";
 import { SponsorsFilter } from "./SponsorsFilter";
-import { SponsorsTable } from "./SponsorsTable";
+
 import { TabSelection } from "./TabSelection";
-import { useState, useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
+import AddSponsorDrawer from "./AddSponsorDrawer";
+import EditSponsorDrawer from "./EditSponsorDrawer";
+import type { SponsorProfile } from "./SponsorProfilePage";
+import { Sponsor, SponsorGroup } from "./types";
+import { SponsorsTable } from "./SponsorsTable";
 
-export interface Sponsor {
-	id: string;
-	first_name: string;
-	last_name: string;
-	sponsor_type: string;
-	notes?: string;
-	active: boolean;
-	photo_path?: string;
-	image_url?: string;
-	children_count?: number;
+function toSponsorProfile(row: Sponsor | SponsorGroup): SponsorProfile {
+	const isGroup = "group_name" in row;
+	return {
+		id: isGroup ? row.group_id : row.id,
+		firstName: isGroup ? row.group_name : row.first_name,
+		lastName: isGroup ? "" : row.last_name,
+		sponsorType: isGroup ? "Group" : "Individual",
+		sponsoringSince: "",
+		sponsorshipStatus: row.active ? "Active" : "Inactive",
+		address: {
+			line1: "",
+			line2: "",
+			city: "",
+			state: "",
+			zip: "",
+			country: "",
+		},
+		phone: "",
+		email: "",
+		sponsoredChildren: [],
+	};
 }
-
-const supabase = createClient();
 
 export default function SponsorPage() {
 	const [activeTab, setActiveTab] = useState<"individuals" | "groups">(
 		"individuals",
 	);
-	const [sponsors, setSponsors] = useState<Sponsor[]>([]);
-	const [filters, setFilters] = useState({
-		search: "",
-		status: "all",
-		type: "all",
-	});
+	const [isAddOpen, setIsAddOpen] = useState(false);
+	const [editingSponsor, setEditingSponsor] = useState<SponsorProfile | null>(
+		null,
+	);
+	const [searchValue, setSearchValue] = useState("");
+	const [locationValue, setLocationValue] = useState("all");
+	const [statusValue, setStatusValue] = useState("all");
+	const [typeValue, setTypeValue] = useState("all");
 
-	useEffect(() => {
-		async function fetchSponsors() {
-			try {
-				const [
-					{ data, error: sponsorsError },
-					{ data: sponsorshipCounts, error: countsError },
-				] = await Promise.all([
-					supabase.from("sponsors").select("*"),
-					supabase.from("sponsorships").select("sponsor_id"),
-				]);
-
-				if (sponsorsError) {
-					console.error("Error fetching sponsors:", sponsorsError);
-					return;
-				}
-
-				if (!data || data.length === 0) {
-					setSponsors([]);
-					return;
-				}
-
-				if (countsError) {
-					console.error("Error fetching sponsorship counts:", countsError);
-				}
-
-				const countMap: Record<string, number> = {};
-				for (const row of sponsorshipCounts ?? []) {
-					countMap[row.sponsor_id] = (countMap[row.sponsor_id] ?? 0) + 1;
-				}
-
-				const sponsorsWithCounts = data.map((s) => ({
-					...s,
-					children_count: countMap[s.id] ?? 0,
-				}));
-
-				setSponsors(sponsorsWithCounts as Sponsor[]);
-
-				const photoPaths: string[] = data
-					.map((s) => s.photo_path)
-					.filter((p): p is string => !!p);
-
-				if (photoPaths.length === 0) return;
-
-				const res = await fetch("/api/supabase/signed-url/sponsors", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ paths: photoPaths }),
-				});
-
-				if (!res.ok) return;
-
-				const { signedUrls } = await res.json();
-
-				setSponsors(
-					sponsorsWithCounts.map((sponsor) => ({
-						...sponsor,
-						image_url: sponsor.photo_path
-							? signedUrls[sponsor.photo_path]
-							: undefined,
-					})) as Sponsor[],
-				);
-			} catch (err) {
-				console.error("Failed to fetch sponsors:", err);
-			}
-		}
-		fetchSponsors();
-	}, []);
-
-	const filteredSponsors = sponsors.filter((s) => {
-		const isIndividual = s.sponsor_type === "individual";
-		if (activeTab === "individuals" && !isIndividual) return false;
-		if (activeTab === "groups" && isIndividual) return false;
-
-		if (filters.search) {
-			const q = filters.search.toLowerCase();
-			const fullName = `${s.first_name} ${s.last_name}`.toLowerCase();
-			if (!fullName.includes(q)) return false;
-		}
-
-		if (filters.status !== "all") {
-			const shouldBeActive = filters.status === "active";
-			if (s.active !== shouldBeActive) return false;
-		}
-
-		if (activeTab === "groups" && filters.type !== "all") {
-			if (s.sponsor_type !== filters.type) return false;
-		}
-
-		return true;
-	});
+	function handleEdit(row: Sponsor | SponsorGroup) {
+		setEditingSponsor(toSponsorProfile(row));
+	}
 
 	return (
-		<div className="space-y-8 w-full">
+		<div className="px-10 py-8">
 			<div className="flex items-center justify-between">
-				<h1 className="text-4xl font-bold">Sponsors</h1>
+				<h1 className="text-2xl font-semibold text-primary">Sponsors</h1>
+				<button
+					onClick={() => setIsAddOpen(true)}
+					className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90"
+				>
+					Add Sponsor
+				</button>
 			</div>
 
-			<div className="grid w-full grid-cols-1 gap-6 md:grid-cols-3">
+			<div className="mt-6 grid w-full grid-cols-3 gap-4">
 				<KpiCard
 					title="Active Sponsorships"
 					subtitle="Need KPI visualization"
@@ -139,36 +73,60 @@ export default function SponsorPage() {
 					subtitle="Need KPI visualization"
 				/>
 				<KpiCard
-					title="sponsors Awaiting Sponsorship"
+					title="Children Awaiting Sponsorship"
 					subtitle="Need KPI visualization"
 				/>
 			</div>
 
-			<TabSelection
-				activeTab={activeTab}
-				onTabChange={setActiveTab}
-			/>
-
-			<div className="space-y-6">
-				<SponsorsFilter
+			<div className="mt-6">
+				<TabSelection
 					activeTab={activeTab}
-					onSearchChange={(v) => setFilters((f) => ({ ...f, search: v }))}
-					onStatusChange={(v) => setFilters((f) => ({ ...f, status: v }))}
-					onTypeChange={(v) => setFilters((f) => ({ ...f, type: v }))}
-					onResetFilters={() =>
-						setFilters({ search: "", status: "all", type: "all" })
-					}
-				/>
-				<SponsorsTable
-					activeTab={activeTab}
-					rows={filteredSponsors}
-					onSponsorUpdate={(updated) =>
-						setSponsors((prev) =>
-							prev.map((s) => (s.id === updated.id ? updated : s)),
-						)
-					}
+					onTabChange={setActiveTab}
 				/>
 			</div>
+
+			<div className="mt-4 space-y-4">
+				<SponsorsFilter
+					activeTab={activeTab}
+					searchValue={searchValue}
+					onSearchChange={setSearchValue}
+					locationValue={locationValue}
+					onLocationChange={setLocationValue}
+					statusValue={statusValue}
+					onStatusChange={setStatusValue}
+					typeValue={typeValue}
+					onTypeChange={setTypeValue}
+					onResetFilters={() => {
+						setSearchValue("");
+						setLocationValue("all");
+						setStatusValue("all");
+						setTypeValue("all");
+					}}
+				/>
+				<div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+					<SponsorsTable
+						activeTab={activeTab}
+						onEdit={handleEdit}
+						searchValue={searchValue}
+						locationValue={locationValue}
+						statusValue={statusValue}
+						typeValue={typeValue}
+					/>
+				</div>
+			</div>
+
+			<AddSponsorDrawer
+				isOpen={isAddOpen}
+				onClose={() => setIsAddOpen(false)}
+			/>
+
+			{editingSponsor && (
+				<EditSponsorDrawer
+					sponsor={editingSponsor}
+					isOpen={!!editingSponsor}
+					onClose={() => setEditingSponsor(null)}
+				/>
+			)}
 		</div>
 	);
 }

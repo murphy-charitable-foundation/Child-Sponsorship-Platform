@@ -1,25 +1,57 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import {
+	Home,
+	Users,
+	Heart,
+	Handshake,
+	Gift,
+	FileText,
+	MessageSquare,
+	Settings,
+	Shield,
+	type LucideIcon,
+} from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
-import { Avatar } from "@heroui/react";
+import { createClient } from "@/lib/supabase/client";
 
-type NavItem = { label: string; href: string };
+type NavItem = {
+	label: string;
+	href: string;
+	icon: LucideIcon;
+};
 
-const NAV_ITEMS: NavItem[] = [
-	{ label: "Home", href: "/admin/dashboard" },
-	{ label: "Children", href: "/admin/children" },
-	{ label: "Sponsors", href: "/admin/sponsors" },
-	{ label: "Sponsorship", href: "/admin/sponsorships" },
-	{ label: "Donations", href: "/admin/donations" },
-	{ label: "Reports", href: "/admin/reports" },
-	{ label: "Messages", href: "/admin/messages" },
-	{ label: "Settings", href: "/admin/settings" },
+type NavSection = {
+	title: string;
+	items: NavItem[];
+};
+
+const NAV_SECTIONS: NavSection[] = [
+	{
+		title: "MAIN",
+		items: [
+			{ label: "Home", href: "/admin/dashboard", icon: Home },
+			{ label: "Children", href: "/admin/children", icon: Users },
+			{ label: "Sponsors", href: "/admin/sponsors", icon: Heart },
+			{ label: "Sponsorships", href: "/admin/sponsorships", icon: Handshake },
+			{ label: "Donations", href: "/admin/donations", icon: Gift },
+		],
+	},
+	{
+		title: "COMMUNICATIONS",
+		items: [
+			{ label: "Reports", href: "/admin/reports", icon: FileText },
+			{ label: "Messages", href: "/admin/messages", icon: MessageSquare },
+		],
+	},
+	{
+		title: "SYSTEM",
+		items: [{ label: "Settings", href: "/admin/settings", icon: Settings }],
+	},
 ];
 
 export function AdminSidebar() {
@@ -32,9 +64,8 @@ export function AdminSidebar() {
 
 	const logout = async () => {
 		const supabase = createClient();
-		//setUserAuthenticated(false);
 		await supabase.auth.signOut();
-		router.push("/auth/login");
+		router.push("/auth/admin-login");
 	};
 
 	useEffect(() => {
@@ -92,70 +123,99 @@ export function AdminSidebar() {
 	const userLastName = user?.user_metadata.last_name || "";
 
 	return (
-		<aside className="w-80 bg-primary text-white h-screen">
-			<nav className="h-full flex flex-col">
-				{/* Logo (fixed) */}
-				<div className="flex justify-center pt-6 pb-4">
-					<Image
-						src="/children/logo.png"
-						alt="Murphy Charitable"
-						width={160}
-						height={160}
-						priority
-					/>
-				</div>
+		<aside className="w-80 bg-primary text-white h-screen flex flex-col">
+			{/* Logo (fixed) */}
+			<div className="flex justify-center pt-6 pb-4 shrink-0">
+				<Image
+					src="/children/logo.png"
+					alt="Murphy Charitable"
+					width={160}
+					height={160}
+					priority
+				/>
+			</div>
 
-				{/* Menu (scrolls if it gets too tall) */}
-				<div className="flex-1 min-h-0 overflow-auto px-6 pb-10">
-					<ul className="space-y-3">
-						{NAV_ITEMS.map((item) => {
-							const isActive =
-								pathname === item.href || pathname.startsWith(item.href + "/");
+			<nav className="flex-1 flex flex-col overflow-hidden">
+				{/* Menu — scrollable */}
+				<div className="px-6 mt-2 overflow-y-auto flex-1">
+					{NAV_SECTIONS.map((section, sectionIndex) => (
+						<div key={section.title}>
+							{sectionIndex > 0 && <div className="my-4" />}
+							<p className="mb-3 text-xs font-semibold uppercase tracking-wider text-white/60">
+								{section.title}
+							</p>
+							<ul className="space-y-1">
+								{section.items.map((item) => {
+									const isActive =
+										pathname === item.href ||
+										pathname.startsWith(item.href + "/");
 
+									return (
+										<li key={item.href}>
+											<Link
+												href={item.href}
+												className={[
+													"flex items-center gap-3 px-4 py-3 text-base text-left transition-colors rounded-sm",
+													isActive
+														? "bg-primary-200 text-primary-900 font-semibold"
+														: "text-white hover:bg-primary-200/50",
+												].join(" ")}
+											>
+												<item.icon
+													size={18}
+													className="shrink-0"
+												/>
+												{item.label}
+											</Link>
+										</li>
+									);
+								})}
+							</ul>
+						</div>
+					))}
+
+					{/* Admin button */}
+					<div className="mt-4 pt-4 border-t border-white/20">
+						{(() => {
+							const isAdmin =
+								pathname === "/admin/organizations" ||
+								pathname.startsWith("/admin/organizations/");
 							return (
-								<li key={item.href}>
-									<Link
-										href={item.href}
-										className={[
-											"block px-4 py-3 text-base text-left transition-colors rounded-sm",
-											isActive
-												? "bg-primary-200 text-primary-900 font-semibold"
-												: "text-white hover:bg-primary-200/50",
-										].join(" ")}
-									>
-										{item.label}
-									</Link>
-								</li>
+								<Link
+									href="/admin/organizations"
+									className={[
+										"flex items-center gap-3 px-4 py-3 text-base text-left transition-colors rounded-sm",
+										isAdmin
+											? "bg-primary-200 text-primary-900 font-semibold"
+											: "text-white hover:bg-primary-200/50",
+									].join(" ")}
+								>
+									<Shield
+										size={18}
+										className="shrink-0"
+									/>
+									Admin
+								</Link>
 							);
-						})}
-					</ul>
+						})()}
+					</div>
 				</div>
 
-				{/* Profile (ALWAYS visible) */}
-
-				{mounted && !loading && user && (
-					<div className="mt-auto px-6 pb-6 pt-6">
+				{/* Profile (fixed at bottom) */}
+				{!loading && user && (
+					<div className="shrink-0 px-6 pb-6 pt-4">
 						<div className="mb-4 border-t border-white/30" />
 
-						<div className="flex items-center gap-3 mb-4">
-							<Avatar
-								name={`${userFirstName} ${userLastName}`}
-								src={avatarUrl}
-								size="sm"
-								color="primary"
-								className="flex h-12 w-12 items-center justify-center rounded-full bg-white/30 text-lg font-semibold text-primary"
-							/>
-
-							<div className="min-w-0">
-								<div className="text-base font-medium truncate">
-									{`${userFirstName} ${userLastName}`}
-								</div>
+						<div className="min-w-0 mb-4">
+							<div className="text-base font-medium truncate">
+								{user.user_metadata.first_name} {user.user_metadata.last_name}
 							</div>
+							<div className="text-xs text-white/70 truncate">{user.email}</div>
 						</div>
 
 						<button
-							className="w-full rounded-sm border border-white/70 py-3 text-center font-medium text-white hover:bg-white/10 transition"
 							onClick={logout}
+							className="w-full rounded-sm border border-white/70 py-3 text-center font-medium text-white hover:bg-white/10 transition"
 						>
 							Sign out
 						</button>

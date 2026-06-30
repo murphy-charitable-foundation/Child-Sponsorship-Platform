@@ -2,26 +2,24 @@
 
 import { LoginForm } from "@/components/login-form";
 import { SignUpForm } from "@/components/sign-up-form";
-import React from "react";
-import {Tabs, Tab, Input, Link, Button, Card, CardBody} from "@heroui/react";
-
-
+import { Card, CardBody, Tab, Tabs } from "@heroui/react";
+import { useState } from "react";
 
 export default function Page() {
-  const [selected, setSelected] = React.useState("login");
+  const [selected, setSelected] = useState("login");
 
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+    <div className="flex min-h-svh w-full items-center justify-center bg-primary p-6 md:p-10">
       <div className="w-full max-w-sm">
         <Card className="mt-6 rounded-[12px] border border-default-200 shadow-none">
-          <CardBody className="">
+          <CardBody>
             <Tabs
               fullWidth
-              aria-label="Tabs form"
+              aria-label="Sponsor authentication"
               selectedKey={selected}
               size="md"
               color="primary"
-              onSelectionChange={(key) => setSelected(key as string)}
+              onSelectionChange={(key) => setSelected(String(key))}
             >
               <Tab key="login" title="Log In">
                 <LoginForm />
@@ -36,4 +34,3 @@ export default function Page() {
     </div>
   );
 }
-
