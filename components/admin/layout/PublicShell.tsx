@@ -14,5 +14,6 @@ export default function PublicShell({
 		pathname?.startsWith("/admin") || pathname?.startsWith("/auth");
 
 	if (isAdminRoute) return <>{children}</>;
+
 	return <ClientProviders>{children}</ClientProviders>;
 }

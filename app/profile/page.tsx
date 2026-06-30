@@ -18,6 +18,8 @@ const SPONSOR_TYPE_LABELS: Record<string, string> = {
 const ROLE_LABELS: Record<string, string> = {
 	admin: "Admin",
 	super_admin: "Super Admin",
+	pending_admin: "Pending Admin",
+	sponsor: "Sponsor",
 };
 
 export default function ProfilePage() {
@@ -38,7 +40,9 @@ export default function ProfilePage() {
 
 	useEffect(() => {
 		if (!user) return;
-		const role = user.user_metadata.role;
+		const role = user.app_metadata.role;
+
+		console.log(role);
 
 		let convertedRole = "";
 		if (role === "sponsor") {
@@ -98,7 +102,7 @@ export default function ProfilePage() {
 		`${user.user_metadata.first_name ?? ""} ${user.user_metadata.last_name ?? ""}`.trim();
 	const sponsorType = user.user_metadata.sponsor_type;
 	const isActive = user.user_metadata.active ?? true;
-	const role = user.user_metadata.role;
+	const role = user.app_metadata.role;
 	const memberSince = new Date(user.created_at).toLocaleDateString("en-US", {
 		year: "numeric",
 		month: "long",
