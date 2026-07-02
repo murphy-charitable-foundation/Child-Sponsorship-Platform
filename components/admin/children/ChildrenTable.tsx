@@ -13,18 +13,13 @@ import {
 } from "@heroui/react";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Child } from "./types";
+import { ChildBaseData, StatusType } from "./types";
 
 const supabase = createClient();
 
-//TODO: Previously the status is has "active", "waiting", "exited". however, in supabase children table doesn't have "status"
-//Only has "active" column. so we need to check it. either we add status in the table or just use active column.
-//If we use "active" (boolean), we need to identify what is the waiting and exited.
-//For now, I use active and set waiting if the active value is false
-
-export function statusChipColor(status: boolean) {
-	if (status) return "success";
-	if (!status) return "warning";
+function statusChipColor(status: StatusType) {
+	if (status === "Active") return "success";
+	if (status === "Waiting") return "warning";
 	return "default"; // for Exited
 }
 
@@ -40,36 +35,28 @@ export default function ChildrenTable({
 	searchQuery,
 }: ChildrenTableProps) {
 	const router = useRouter();
-	const [children, setChildren] = useState<Child[]>([]);
+	const [children, setChildren] = useState<ChildBaseData[]>([]);
+	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
+		setError(null);
 		async function fetchChildren() {
 			try {
-				const [{ data, error: childrenError }, { data: ageData }] =
-					await Promise.all([
-						supabase.from("children").select("*"),
-						supabase.from("children_with_ages").select("id, age"),
-					]);
-
-				if (childrenError) {
-					console.log(childrenError);
-				}
-				if (data?.length) {
-					const ageMap = new Map(
-						(ageData ?? []).map((r: { id: string; age: number }) => [
-							r.id,
-							r.age,
-						]),
+				const { data, error: childrenError } = await supabase
+					.from("children_with_ages")
+					.select(
+						"last_name, first_name, id, age, gender, location, created_at, status",
 					);
 
-					const childrenWithAge = data.map((child) => ({
-						...child,
-						age: ageMap.get(child.id) ?? null,
-					}));
-					setChildren(childrenWithAge as Child[]);
+				if (childrenError) {
+					setError("Failed to get children data");
+					console.log(childrenError);
+					return;
 				}
+				setChildren(data);
 			} catch (err) {
-				console.error("Failed to fetch children:", err);
+				setError("Failed to get children data");
+				console.log("Failed to fetch children:", err);
 			}
 		}
 		fetchChildren();
@@ -78,9 +65,8 @@ export default function ChildrenTable({
 	// Filter rows based on selection
 	const filtered = children.filter((c) => {
 		// Status filter
-		const statusKey = c.active ? "active" : "waiting";
 		const statusMatches =
-			selectedStatus.has("all") || selectedStatus.has(statusKey);
+			selectedStatus.has("all") || selectedStatus.has(c.status.toLowerCase());
 
 		// Gender filter
 		const genderMatches =
@@ -97,6 +83,11 @@ export default function ChildrenTable({
 
 	return (
 		<div className="w-full">
+			{error && (
+				<div className="mb-4 rounded-md bg-danger-50 px-4 py-3 text-sm text-danger">
+					{error}
+				</div>
+			)}
 			<Table
 				aria-label="Children table"
 				removeWrapper
@@ -132,19 +123,13 @@ export default function ChildrenTable({
 									size="md"
 									radius="full"
 									variant="flat"
-									color={statusChipColor(r.active)}
+									color={statusChipColor(r.status)}
 									className="px-4 text-base"
 								>
-									{r.active === true ? "Active" : "Waiting"}
+									{r.status}
 								</Chip>
 							</TableCell>
-							<TableCell>
-								{new Date(r.created_at).toLocaleDateString("en-US", {
-									month: "short",
-									day: "numeric",
-									year: "numeric",
-								})}
-							</TableCell>
+							<TableCell>{r.created_at.split("T")[0]}</TableCell>
 							<TableCell>
 								<div className="flex gap-2">
 									<Button

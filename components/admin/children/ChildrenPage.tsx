@@ -15,7 +15,7 @@ export default function ChildrenPage() {
 	const [searchQuery, setSearchQuery] = useState("");
 
 	return (
-		<div className="space-y-8 w-full">
+		<div className="space-y-8 px-10 py-8">
 			{/* header */}
 			<div className="flex items-center justify-between">
 				<h1 className="text-2xl font-semibold text-primary">Children</h1>
