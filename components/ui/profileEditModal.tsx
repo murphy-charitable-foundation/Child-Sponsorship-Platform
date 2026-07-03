@@ -15,14 +15,14 @@ import { createClient } from "@/lib/supabase/client";
 
 import ProfileImageUpload from "@/components/profile-image-upload";
 import { Sponsor } from "../admin/sponsors/types";
-import { Child } from "../admin/children/types";
+import { ChildProfile } from "../admin/children/types";
 
 type Props = {
 	type: "Child" | "Sponsor";
-	target: Child | Sponsor | null;
+	target: ChildProfile | Sponsor | null;
 	isOpen: boolean;
 	onOpenChange: (open: boolean) => void;
-	onSave: (updated: Child | Sponsor) => void;
+	onSave: (updated: ChildProfile | Sponsor) => void;
 };
 
 export default function ProfileEditModal({
@@ -32,7 +32,7 @@ export default function ProfileEditModal({
 	onOpenChange,
 	onSave,
 }: Props) {
-	const [form, setForm] = useState<Child | Sponsor | null>(null);
+	const [form, setForm] = useState<ChildProfile | Sponsor | null>(null);
 	const [imageFile, setImageFile] = useState<File | null>(null);
 	const [isSaving, setIsSaving] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -46,7 +46,7 @@ export default function ProfileEditModal({
 		setError(null);
 	}, [target]);
 
-	function handleChange(field: keyof Child, value: string) {
+	function handleChange(field: keyof ChildProfile, value: string) {
 		setForm((prev) => {
 			if (!prev) return prev;
 			return { ...prev, [field]: value };

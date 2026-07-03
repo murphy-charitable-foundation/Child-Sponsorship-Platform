@@ -24,7 +24,7 @@ import {
 	PopoverTrigger,
 	PopoverContent,
 } from "@heroui/react";
-import { Child } from "./admin/children/types";
+import { ChildProfile } from "./admin/children/types";
 
 const pageCapacities = ["20", "60", "100"];
 
@@ -42,7 +42,7 @@ export default function MeetTheChildrenUI({
 	);
 	const [page, setPage] = React.useState(1);
 
-	const [children, setChildren] = React.useState<Child[]>([]);
+	const [children, setChildren] = React.useState<ChildProfile[]>([]);
 	const [count, setCount] = React.useState(0);
 	const [ageRange, setAgeRange] = React.useState<number[]>([0, 25]);
 	const [genders, setGenders] = React.useState<string[]>(["Male", "Female"]);
@@ -132,7 +132,7 @@ export default function MeetTheChildrenUI({
 			...child,
 			image_url: child.photo_path ? signedUrls[child.photo_path] : undefined,
 		}));
-		setChildren(childrenWithUrls as Child[]);
+		setChildren(childrenWithUrls as ChildProfile[]);
 
 		const { count, error: countError } = await supabase
 			.from("children_with_ages")

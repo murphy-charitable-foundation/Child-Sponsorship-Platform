@@ -1,29 +1,6 @@
-export type ChildProfile = {
-	name: string;
-	gender: string;
-	dob: string;
-	schoolLevel: string;
-	country: string;
-	language: string;
-	biography: string;
-	familyBiography: string;
-	age: number;
-	id: string;
-	enrolled: string;
-	sponsorshipStatus: string;
-	imageUrl: string;
-	guardian: {
-		name: string;
-		relationship: string;
-		nin: string;
-		phone: string;
-		email: string;
-		address: string;
-	};
-};
-
 export type GenderType = "Male" | "Female" | "Other";
 export type StatusType = "Active" | "Waiting" | "Exited";
+export type SponsorshipStatus = "Active" | "Inactive";
 
 export type ChildBaseData = {
 	id: string;
@@ -36,7 +13,16 @@ export type ChildBaseData = {
 	created_at: string;
 };
 
-export type Child = {
+export type Guardian = {
+	name: string;
+	relationship: string | null;
+	nin: string | null;
+	phone: string;
+	email: string | null;
+	address: string | null;
+};
+
+export type ChildProfile = {
 	id: string;
 	first_name: string;
 	last_name: string;
@@ -53,7 +39,10 @@ export type Child = {
 	dream_job: string;
 	biography: string | null;
 	family_details: string | null;
+	language: string | null;
 	guardian_id: string;
 	guardian_relationship: string | null;
 	image_url?: string;
+	guardian?: Guardian;
+	sponsorship_status: SponsorshipStatus;
 };
