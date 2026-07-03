@@ -42,7 +42,7 @@ export type ChildProfile = {
 	language: string | null;
 	guardian_id: string;
 	guardian_relationship: string | null;
-	image_url?: string;
+	image_url?: string | null;
 	guardian?: Guardian;
 	sponsorship_status: SponsorshipStatus;
 };
