@@ -13,6 +13,7 @@ import {
 
 import { CreateChild, GenderType } from "./types";
 import ProfileImageUpload from "@/components/profile-image-upload";
+import { Field, inputCls, textareaCls } from "./EditChildDrawer";
 
 export const COUNTRIES = ["Uganda", "Kenya", "Tanzania", "Rwanda"];
 export const GENDERS: GenderType[] = ["Male", "Female", "Other"];
@@ -135,52 +136,44 @@ export default function AddChildDrawer({
 							</div>
 
 							{/* Child Details */}
-							<div>
+							<section>
 								<h3 className="mb-4 text-sm font-semibold text-slate-800">
 									Child Details
 								</h3>
 								<div className="space-y-4">
 									<div className="grid grid-cols-2 gap-4">
-										<div>
-											<label className="mb-1 block text-xs text-slate-500">
-												First/given name
-											</label>
+										<Field label="First/given name">
 											<input
 												type="text"
 												required
 												value={form.first_name}
 												onChange={(e) => update("first_name", e.target.value)}
-												className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+												className={inputCls}
 												placeholder="First name"
 											/>
-										</div>
-										<div>
-											<label className="mb-1 block text-xs text-slate-500">
-												Last/family name
-											</label>
+										</Field>
+
+										<Field label="Last/family name">
 											<input
 												type="text"
 												required
 												value={form.last_name}
 												onChange={(e) => update("last_name", e.target.value)}
-												className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+												className={inputCls}
 												placeholder="Last name"
 											/>
-										</div>
+										</Field>
 									</div>
 
 									<div className="grid grid-cols-2 gap-4">
-										<div>
-											<label className="mb-1 block text-xs text-slate-500">
-												Gender
-											</label>
+										<Field label="Gender">
 											<select
 												required
-												value={form.gender}
+												value={form?.gender}
 												onChange={(e) =>
 													update("gender", e.target.value as GenderType)
 												}
-												className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+												className={inputCls}
 											>
 												<option value="">Select gender</option>
 												{GENDERS.map((g) => (
@@ -192,33 +185,28 @@ export default function AddChildDrawer({
 													</option>
 												))}
 											</select>
-										</div>
-										<div>
-											<label className="mb-1 block text-xs text-slate-500">
-												Date of birth
-											</label>
+										</Field>
+
+										<Field label="Date of birth">
 											<input
 												type="date"
 												required
-												value={form.date_of_birth}
+												value={form?.date_of_birth}
 												onChange={(e) =>
 													update("date_of_birth", e.target.value)
 												}
-												className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+												className={inputCls}
 											/>
-										</div>
+										</Field>
 									</div>
 
 									<div className="grid grid-cols-2 gap-4">
-										<div>
-											<label className="mb-1 block text-xs text-slate-500">
-												Country
-											</label>
+										<Field label="Country">
 											<select
 												required
-												value={form.location}
+												value={form?.location}
 												onChange={(e) => update("location", e.target.value)}
-												className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+												className={inputCls}
 											>
 												<option value="">Select country</option>
 												{COUNTRIES.map((c) => (
@@ -230,78 +218,64 @@ export default function AddChildDrawer({
 													</option>
 												))}
 											</select>
-										</div>
-										<div>
-											<label className="mb-1 block text-xs text-slate-500">
-												Language
-											</label>
+										</Field>
+
+										<Field label="Language">
 											<input
 												type="text"
-												value={form.language ?? ""}
+												value={form?.language}
 												onChange={(e) => update("language", e.target.value)}
-												className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+												className={inputCls}
 												placeholder="e.g. Luganda"
 											/>
-										</div>
+										</Field>
 									</div>
 
-									<div>
-										<label className="mb-1 block text-xs text-slate-500">
-											Dream job
-										</label>
+									<Field label="Dream job">
 										<input
 											type="text"
-											value={form.dream_job ?? ""}
+											value={form?.dream_job ?? ""}
 											onChange={(e) => update("dream_job", e.target.value)}
-											className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+											className={inputCls}
 										/>
-									</div>
-									<div>
-										<label className="mb-1 block text-xs text-slate-500">
-											Favorite activities
-										</label>
+									</Field>
+									<Field label="Favorite activities">
 										<input
 											type="text"
-											value={form.favorite_activity ?? ""}
+											value={form?.favorite_activity ?? ""}
 											onChange={(e) =>
 												update("favorite_activity", e.target.value)
 											}
-											className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+											className={inputCls}
 										/>
-									</div>
+									</Field>
 
-									<div>
-										<label className="mb-1 block text-xs text-slate-500">
-											Biography
-										</label>
+									<Field label="Biography">
 										<textarea
-											value={form.biography ?? ""}
+											value={form?.biography ?? ""}
 											onChange={(e) => update("biography", e.target.value)}
-											className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+											className={textareaCls}
 											placeholder="Child's biography"
 											rows={4}
 										/>
-									</div>
+									</Field>
 								</div>
-							</div>
+							</section>
 
 							{/* Family Details */}
 							<div>
 								<h3 className="mb-4 text-sm font-semibold text-slate-800">
 									Family Details
 								</h3>
-								<div>
-									<label className="mb-1 block text-xs text-slate-500">
-										Family description
-									</label>
+								<Field label="Family description">
 									<textarea
-										value={form.family_biography ?? ""}
+										value={form?.family_biography ?? ""}
 										onChange={(e) => update("family_biography", e.target.value)}
-										className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+										className={textareaCls}
 										placeholder="Describe the family background"
 										rows={4}
 									/>
-								</div>
+								</Field>
 							</div>
 
 							{/* Guardian */}
@@ -310,92 +284,74 @@ export default function AddChildDrawer({
 									Guardian
 								</h3>
 								<div className="space-y-4">
-									<div>
-										<label className="mb-1 block text-xs text-slate-500">
-											Guardian name
-										</label>
+									<Field label="Guardian name">
 										<input
-											value={form.guardian_name ?? ""}
+											value={form?.guardian_name ?? ""}
 											onChange={(e) => update("guardian_name", e.target.value)}
-											className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+											className={inputCls}
 											placeholder="Full name"
 										/>
-									</div>
+									</Field>
 
 									<div className="grid grid-cols-2 gap-4">
-										<div>
-											<label className="mb-1 block text-xs text-slate-500">
-												Relationship
-											</label>
+										<Field label="Relationship">
 											<input
 												type="text"
-												value={form.guardian_relationship ?? ""}
+												value={form?.guardian_relationship ?? ""}
 												onChange={(e) =>
 													update("guardian_relationship", e.target.value)
 												}
-												className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+												className={inputCls}
 												placeholder="e.g. Mother"
 											/>
-										</div>
-										<div>
-											<label className="mb-1 block text-xs text-slate-500">
-												NIN/ID
-											</label>
+										</Field>
+										<Field label="NIN/ID">
 											<input
 												type="text"
-												value={form.guardian_nin ?? ""}
+												value={form?.guardian_nin ?? ""}
 												onChange={(e) => update("guardian_nin", e.target.value)}
-												className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+												className={inputCls}
 												placeholder="National ID"
 											/>
-										</div>
+										</Field>
 									</div>
 
 									<div className="grid grid-cols-2 gap-4">
-										<div>
-											<label className="mb-1 block text-xs text-slate-500">
-												Phone
-											</label>
+										<Field label="Phone">
 											<input
 												type="tel"
-												value={form.guardian_phone}
+												value={form?.guardian_phone ?? ""}
 												onChange={(e) =>
 													update("guardian_phone", e.target.value)
 												}
-												className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+												className={inputCls}
 												placeholder="Phone number"
 											/>
-										</div>
-										<div>
-											<label className="mb-1 block text-xs text-slate-500">
-												Email
-											</label>
+										</Field>
+										<Field label="Email">
 											<input
 												type="email"
-												value={form.guardian_email ?? ""}
+												value={form?.guardian_email ?? ""}
 												onChange={(e) =>
 													update("guardian_email", e.target.value)
 												}
-												className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+												className={inputCls}
 												placeholder="Email address"
 											/>
-										</div>
+										</Field>
 									</div>
 
-									<div>
-										<label className="mb-1 block text-xs text-slate-500">
-											Address
-										</label>
+									<Field label="Address">
 										<input
 											type="text"
-											value={form.guardian_address ?? ""}
+											value={form?.guardian_address ?? ""}
 											onChange={(e) =>
 												update("guardian_address", e.target.value)
 											}
-											className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+											className={textareaCls}
 											placeholder="Full address"
 										/>
-									</div>
+									</Field>
 								</div>
 							</div>
 						</DrawerBody>

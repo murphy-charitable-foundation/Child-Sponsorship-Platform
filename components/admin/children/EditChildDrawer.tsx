@@ -17,12 +17,14 @@ type EditChildDrawerProps = {
 	child: ChildProfile | null;
 	isOpen: boolean;
 	onClose: () => void;
+	onSaved?: (child: ChildProfile) => void;
 };
 
 export default function EditChildDrawer({
 	child,
 	isOpen,
 	onClose,
+	onSaved,
 }: EditChildDrawerProps) {
 	const [form, setForm] = useState<EditChild | null>(null);
 	const [isSaving, setIsSaving] = useState(false);
@@ -33,8 +35,6 @@ export default function EditChildDrawer({
 	// Reset form to current child data whenever the drawer opens
 	useEffect(() => {
 		if (!child) return;
-
-		console.log(child);
 		if (isOpen && child) {
 			setForm({
 				id: child.id,
@@ -103,12 +103,17 @@ export default function EditChildDrawer({
 				if (!imgRes.ok) {
 					setError(`Photo upload failed for child ${data.id}`);
 					return;
-				} else {
-					setImageUrl(data.image_url);
 				}
 			}
 
-			setIsSaving(false);
+			const refreshRes = await fetch(`/api/supabase/children/${form.id}`);
+
+			if (refreshRes.ok) {
+				const { child: updatedChild } = await refreshRes.json();
+				setImageUrl(updatedChild.image_url ?? null);
+				onSaved?.(updatedChild);
+			}
+
 			onClose();
 		} finally {
 			setIsSaving(false);
@@ -195,7 +200,7 @@ export default function EditChildDrawer({
 														{g}
 													</option>
 												))}
-											</select>{" "}
+											</select>
 										</Field>
 
 										<Field label="Date of birth">
@@ -368,7 +373,7 @@ export default function EditChildDrawer({
 
 						<DrawerFooter className="border-t border-slate-200">
 							<Button
-								variant="light"
+								variant="bordered"
 								onPress={closeDrawer}
 								className="text-slate-700"
 							>
@@ -389,13 +394,13 @@ export default function EditChildDrawer({
 	);
 }
 
-const inputCls =
+export const inputCls =
 	"w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200";
 
-const textareaCls =
+export const textareaCls =
 	"w-full resize-vertical rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200";
 
-function Field({
+export function Field({
 	label,
 	children,
 }: {

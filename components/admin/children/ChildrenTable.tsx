@@ -49,7 +49,8 @@ export default function ChildrenTable({
 					.from("children_with_ages")
 					.select(
 						"last_name, first_name, id, age, gender, location, created_at, status",
-					);
+					)
+					.order("created_at");
 
 				if (childrenError) {
 					setError("Failed to get children data");
@@ -97,6 +98,24 @@ export default function ChildrenTable({
 
 		setEditChild(child);
 		setIsEditOpen(true);
+	}
+
+	function handleChildSaved(updated: ChildProfile) {
+		setChildren((prev) =>
+			prev.map((c) =>
+				c.id === updated.id
+					? {
+							...c,
+							first_name: updated.first_name,
+							last_name: updated.last_name,
+							age: updated.age,
+							gender: updated.gender,
+							location: updated.location,
+							status: updated.status,
+						}
+					: c,
+			),
+		);
 	}
 
 	return (
@@ -178,6 +197,7 @@ export default function ChildrenTable({
 				child={editChild}
 				isOpen={isEditOpen}
 				onClose={() => setIsEditOpen(false)}
+				onSaved={handleChildSaved}
 			/>
 		</div>
 	);
