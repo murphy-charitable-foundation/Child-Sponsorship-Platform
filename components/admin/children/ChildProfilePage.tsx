@@ -26,17 +26,21 @@ export default function ChildProfilePage({
 	const [activeTab, setActiveTab] = useState<TabKey>("profile");
 	const [isEditOpen, setIsEditOpen] = useState(false);
 
+	const childHeaderData = {
+		id: child.id,
+		full_name: child.full_name,
+		enrolled: child.created_at,
+		age: child.age,
+		status: child.status,
+	};
+
 	function handleChildSaved(updated: ChildProfile) {
 		setChild(updated);
 	}
 
 	return (
-		<div className="px-10 py-8">
-			<ChildProfileHeader
-				title="Child Profile"
-				backLabel="Children"
-				backHref="/admin/children"
-			/>
+		<div>
+			<ChildProfileHeader child={childHeaderData} />
 
 			<div className="mt-6">
 				<ProfileTabs

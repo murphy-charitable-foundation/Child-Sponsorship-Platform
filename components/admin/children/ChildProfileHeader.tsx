@@ -1,27 +1,38 @@
 import Link from "next/link";
+import { StatusType } from "./types";
 
 type ChildProfileHeaderProps = {
-  title: string;
-  backLabel: string;
-  backHref: string;
+	child: {
+		id: string;
+		full_name: string;
+		enrolled: string;
+		age: number;
+		status: StatusType;
+	};
 };
 
-export function ChildProfileHeader({
-  title,
-  backLabel,
-  backHref,
-}: ChildProfileHeaderProps) {
-  return (
-    <div>
-      <h1 className="text-2xl font-semibold text-primary">{title}</h1>
-
-      <Link
-        href={backHref}
-        className="mt-4 flex w-fit items-center gap-2 text-sm font-medium text-primary hover:underline"
-      >
-        <span className="text-xl">←</span>
-        <span>{backLabel}</span>
-      </Link>
-    </div>
-  );
+export function ChildProfileHeader({ child }: ChildProfileHeaderProps) {
+	return (
+		<div>
+			<div>
+				<Link
+					href={"/admin/children"}
+					className="text-sm font-semibold text-primary"
+				>
+					Children{" "}
+				</Link>
+				<span className="text-sm ">/ {child.full_name}</span>
+			</div>
+			<h2 className="text-3xl font-semibold pt-5">{child.full_name}</h2>
+			<div className="text-sm text-slate-600 flex gap-2 pt-1">
+				<p>{child.id}</p>
+				<span>•</span>
+				<p>{child.age} years old</p>
+				<span>•</span>
+				<p>enrolled {child.enrolled.split("T")[0]}</p>
+				<span>•</span>
+				<p className="text-green-600 uppercase">{child.status}</p>
+			</div>
+		</div>
+	);
 }

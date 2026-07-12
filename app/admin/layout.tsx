@@ -12,7 +12,7 @@ export default function AdminLayout({
 			<div className="flex h-full">
 				<AdminSidebar />
 
-				<div className="flex-1 overflow-auto px-6 py-6">{children}</div>
+				<div className="flex-1 overflow-auto px-10 py-10">{children}</div>
 			</div>
 		</div>
 	);

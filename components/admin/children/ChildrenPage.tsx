@@ -15,7 +15,7 @@ export default function ChildrenPage() {
 	const [searchQuery, setSearchQuery] = useState("");
 
 	return (
-		<div className="space-y-8 px-10 py-8">
+		<div className="space-y-10">
 			{/* header */}
 			<div className="flex items-center justify-between">
 				<h1 className="text-2xl font-semibold text-primary">Children</h1>
@@ -28,7 +28,7 @@ export default function ChildrenPage() {
 			</div>
 
 			{/* KPI */}
-			<div className="grid w-full grid-cols-1 gap-6 md:grid-cols-3">
+			<div className="grid w-full grid-cols-1 gap-10 md:grid-cols-3">
 				<KpiCard
 					title="Children in Program"
 					subtitle="Need KPI visualization"
