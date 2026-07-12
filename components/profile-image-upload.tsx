@@ -222,6 +222,7 @@ export default function ProfileImageUpload({
 							fill
 							unoptimized
 							className="object-cover"
+							loading="eager"
 						/>
 					) : (
 						<div className="flex flex-col items-center justify-center p-8">

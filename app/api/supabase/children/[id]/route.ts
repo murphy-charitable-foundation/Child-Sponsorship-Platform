@@ -33,6 +33,7 @@ export async function GET(
 
 		if (gData) {
 			guardian = {
+				id: gData.id,
 				full_name: gData.full_name,
 				relationship: data.guardian_relationship ?? "",
 				nin: gData.nin ?? "",
@@ -53,18 +54,11 @@ export async function GET(
 		signedUrl = urlData?.signedUrl;
 	}
 
-	const { count } = await supabase
-		.from("sponsorships")
-		.select("*", { count: "exact", head: true })
-		.eq("child_id", id)
-		.eq("sponsorship_active", true);
-
 	return NextResponse.json({
 		child: {
 			...data,
 			image_url: signedUrl,
 			guardian,
-			sponsorship_status: count && count > 0 ? "Active" : "Inactive",
 		},
 	});
 }

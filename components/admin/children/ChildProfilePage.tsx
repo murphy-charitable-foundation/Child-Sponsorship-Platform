@@ -23,6 +23,8 @@ export default function ChildProfilePage({ child }: ChildProfilePageProps) {
 	const [activeTab, setActiveTab] = useState<TabKey>("profile");
 	const [isEditOpen, setIsEditOpen] = useState(false);
 
+	console.log(child);
+
 	return (
 		<div className="px-10 py-8">
 			<ChildProfileHeader
@@ -50,6 +52,7 @@ export default function ChildProfilePage({ child }: ChildProfilePageProps) {
 								width={320}
 								height={340}
 								unoptimized
+								loading="eager"
 							/>
 						) : (
 							<Avatar
@@ -135,7 +138,7 @@ export default function ChildProfilePage({ child }: ChildProfilePageProps) {
 							<div className="mt-6">
 								<DetailItem
 									label="Family biography"
-									value={child.family_details ?? ""}
+									value={child.family_biography ?? ""}
 								/>
 							</div>
 						</section>

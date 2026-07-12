@@ -141,7 +141,7 @@ export default function ProfileEditModal({
 								<div className="flex flex-col gap-4">
 									<div className="flex justify-center pt-1">
 										<ProfileImageUpload
-											currentUrl={form.image_url}
+											currentUrl={form.image_url ?? undefined}
 											name={`${form.first_name} ${form.last_name}`}
 											onChange={(file) => setImageFile(file)}
 											size={96}

@@ -14,6 +14,7 @@ export type ChildBaseData = {
 };
 
 export type Guardian = {
+	id: string;
 	full_name: string;
 	relationship: string | null;
 	nin: string | null;
@@ -32,16 +33,12 @@ export type ChildProfile = {
 	gender: GenderType;
 	location: string;
 	status: StatusType;
-	photo_path?: string;
-	school_grade: number;
 	created_at: string;
 	favorite_activity: string;
 	dream_job: string;
 	biography: string | null;
-	family_details: string | null;
+	family_biography: string | null;
 	language: string | null;
-	guardian_id: string;
-	guardian_relationship: string | null;
 	image_url?: string | null;
 	guardian?: Guardian;
 	sponsorship_status: SponsorshipStatus;
@@ -65,4 +62,26 @@ export type CreateChild = {
 	guardian_phone: string;
 	guardian_email: string | null;
 	guardian_address: string | null;
+};
+
+export type EditChild = {
+	id: string;
+	first_name: string;
+	last_name: string;
+	gender: GenderType;
+	date_of_birth: string;
+	location: string | "";
+	language: string;
+	dream_job: string | null;
+	favorite_activity: string | null;
+	biography: string;
+	photo_path?: string;
+	family_biography: string | null;
+	guardian_relationship: string | null;
+	guardian_id?: string | null;
+	guardian_name?: string;
+	guardian_nin?: string | null;
+	guardian_phone?: string;
+	guardian_email?: string | null;
+	guardian_address?: string | null;
 };

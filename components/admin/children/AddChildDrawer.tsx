@@ -14,10 +14,10 @@ import {
 import { CreateChild, GenderType } from "./types";
 import ProfileImageUpload from "@/components/profile-image-upload";
 
-const COUNTRIES = ["Uganda", "Kenya", "Tanzania", "Rwanda"];
-const GENDERS: GenderType[] = ["Male", "Female", "Other"];
+export const COUNTRIES = ["Uganda", "Kenya", "Tanzania", "Rwanda"];
+export const GENDERS: GenderType[] = ["Male", "Female", "Other"];
 
-const EMPTY_FORM: CreateChild = {
+export const EMPTY_FORM: CreateChild = {
 	photo_file: null,
 	first_name: "",
 	last_name: "",
@@ -48,21 +48,11 @@ export default function AddChildDrawer({
 }: AddChildDrawerProps) {
 	const router = useRouter();
 	const [form, setForm] = useState<CreateChild>(EMPTY_FORM);
-
 	const [isSaving, setIsSaving] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
 	function update<K extends keyof CreateChild>(key: K, value: CreateChild[K]) {
 		setForm((prev) => ({ ...prev, [key]: value }));
-	}
-
-	function validate(): string | null {
-		if (!form.first_name.trim()) return "First name is required.";
-		if (!form.last_name.trim()) return "Last name is required.";
-		if (!form.gender) return "Gender is required.";
-		if (!form.date_of_birth) return "Date of birth is required.";
-		if (!form.location) return "Country is required.";
-		return null;
 	}
 
 	function handleClose() {
@@ -73,12 +63,6 @@ export default function AddChildDrawer({
 	}
 
 	async function handleSave() {
-		const validationError = validate();
-		if (validationError) {
-			setError(validationError);
-			return;
-		}
-
 		setIsSaving(true);
 		setError(null);
 
@@ -97,18 +81,19 @@ export default function AddChildDrawer({
 			}
 
 			if (form.photo_file) {
-				const uploadBody = new FormData();
-				uploadBody.append("image", form.photo_file);
-				uploadBody.append("targetId", data.id);
-				uploadBody.append("targetType", "children");
+				const body = new FormData();
+				body.append("image", form.photo_file);
+				body.append("targetId", data.id);
+				body.append("targetType", "children");
 
 				const imgRes = await fetch("/api/supabase/admin-upload-profile-image", {
 					method: "POST",
-					body: uploadBody,
+					body,
 				});
 
 				if (!imgRes.ok) {
-					console.error("Photo upload failed for new child", data.id);
+					setError(`Photo upload failed for new child ${data.id}`);
+					return;
 				}
 			}
 

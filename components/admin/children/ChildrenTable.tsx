@@ -13,7 +13,8 @@ import {
 } from "@heroui/react";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { ChildBaseData, StatusType } from "./types";
+import { ChildBaseData, ChildProfile, StatusType } from "./types";
+import EditChildDrawer from "./EditChildDrawer";
 
 const supabase = createClient();
 
@@ -37,6 +38,8 @@ export default function ChildrenTable({
 	const router = useRouter();
 	const [children, setChildren] = useState<ChildBaseData[]>([]);
 	const [error, setError] = useState<string | null>(null);
+	const [isEditOpen, setIsEditOpen] = useState(false);
+	const [editChild, setEditChild] = useState<ChildProfile | null>(null);
 
 	useEffect(() => {
 		setError(null);
@@ -80,6 +83,21 @@ export default function ChildrenTable({
 
 		return statusMatches && genderMatches && searchMatches;
 	});
+
+	async function openEdit(id: string) {
+		const res = await fetch(`/api/supabase/children/${id}`, {
+			method: "GET",
+		});
+
+		if (!res.ok) {
+			return;
+		}
+
+		const { child } = await res.json();
+
+		setEditChild(child);
+		setIsEditOpen(true);
+	}
 
 	return (
 		<div className="w-full">
@@ -142,8 +160,7 @@ export default function ChildrenTable({
 										View
 									</Button>
 									<Button
-										as={Link}
-										href="/admin/children/editpage"
+										onPress={() => openEdit(r.id)}
 										size="sm"
 										radius="md"
 										color="primary"
@@ -156,6 +173,12 @@ export default function ChildrenTable({
 					)}
 				</TableBody>
 			</Table>
+
+			<EditChildDrawer
+				child={editChild}
+				isOpen={isEditOpen}
+				onClose={() => setIsEditOpen(false)}
+			/>
 		</div>
 	);
 }
