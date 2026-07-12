@@ -3,331 +3,438 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerBody,
-  DrawerFooter,
-  Button,
+	Drawer,
+	DrawerContent,
+	DrawerHeader,
+	DrawerBody,
+	DrawerFooter,
+	Button,
 } from "@heroui/react";
 
-type AddForm = {
-  photoFile: File | null;
-  firstName: string;
-  lastName: string;
-  gender: string;
-  dob: string;
-  schoolLevel: string;
-  country: string;
-  language: string;
-  biography: string;
-  familyBiography: string;
-  guardianName: string;
-  guardianRelationship: string;
-  guardianNin: string;
-  guardianPhone: string;
-  guardianEmail: string;
-  guardianAddress: string;
-};
+import { CreateChild, GenderType } from "./types";
+import ProfileImageUpload from "@/components/profile-image-upload";
 
-const COUNTRIES = ["Select country", "Uganda", "Kenya", "Tanzania", "Rwanda"];
-const GENDERS = ["Select gender", "Male", "Female"];
-const SCHOOL_LEVELS = ["Select school level", "Primary", "Secondary", "University"];
+const COUNTRIES = ["Uganda", "Kenya", "Tanzania", "Rwanda"];
+const GENDERS: GenderType[] = ["Male", "Female", "Other"];
+
+const EMPTY_FORM: CreateChild = {
+	photo_file: null,
+	first_name: "",
+	last_name: "",
+	gender: "",
+	date_of_birth: "",
+	location: "",
+	language: "",
+	dream_job: "",
+	favorite_activity: "",
+	biography: "",
+	family_biography: "",
+	guardian_relationship: "",
+	guardian_name: "",
+	guardian_nin: "",
+	guardian_phone: "",
+	guardian_email: "",
+	guardian_address: "",
+};
 
 type AddChildDrawerProps = {
-  isOpen: boolean;
-  onClose: () => void;
+	isOpen: boolean;
+	onClose: () => void;
 };
 
-export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps) {
-  const router = useRouter();
-  const [form, setForm] = useState<AddForm>({
-    photoFile: null,
-    firstName: "",
-    lastName: "",
-    gender: "Select gender",
-    dob: "",
-    schoolLevel: "Select school level",
-    country: "Select country",
-    language: "",
-    biography: "",
-    familyBiography: "",
-    guardianName: "",
-    guardianRelationship: "",
-    guardianNin: "",
-    guardianPhone: "",
-    guardianEmail: "",
-    guardianAddress: "",
-  });
+export default function AddChildDrawer({
+	isOpen,
+	onClose,
+}: AddChildDrawerProps) {
+	const router = useRouter();
+	const [form, setForm] = useState<CreateChild>(EMPTY_FORM);
 
-  function update<K extends keyof AddForm>(key: K, value: AddForm[K]) {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  }
+	const [isSaving, setIsSaving] = useState(false);
+	const [error, setError] = useState<string | null>(null);
 
-  function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (file) {
-      update("photoFile", file);
-    }
-  }
+	function update<K extends keyof CreateChild>(key: K, value: CreateChild[K]) {
+		setForm((prev) => ({ ...prev, [key]: value }));
+	}
 
-  function handleSave() {
-    // TODO: persist to Supabase
-    console.log("Adding child:", form);
-    handleClose();
-  }
+	function validate(): string | null {
+		if (!form.first_name.trim()) return "First name is required.";
+		if (!form.last_name.trim()) return "Last name is required.";
+		if (!form.gender) return "Gender is required.";
+		if (!form.date_of_birth) return "Date of birth is required.";
+		if (!form.location) return "Country is required.";
+		return null;
+	}
 
-  function handleClose() {
-    onClose();
-    router.replace("/admin/children");
-  }
+	function handleClose() {
+		setForm(EMPTY_FORM);
+		setError(null);
+		onClose();
+		router.replace("/admin/children");
+	}
 
-  return (
-    <Drawer isOpen={isOpen} onOpenChange={handleClose} size="md" placement="right">
-      <DrawerContent>
-        {() => (
-          <>
-            <DrawerHeader className="border-b border-slate-200 text-lg font-semibold text-slate-900">
-              Add Child
-            </DrawerHeader>
+	async function handleSave() {
+		const validationError = validate();
+		if (validationError) {
+			setError(validationError);
+			return;
+		}
 
-            <DrawerBody className="space-y-6 py-5 overflow-y-auto">
-              {/* Photo Upload */}
-              <div>
-                <div className="rounded-xl border-2 border-dashed border-slate-300 p-8 text-center">
-                  <div className="mb-3 flex justify-center">
-                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <rect x="8" y="8" width="32" height="32" rx="2" stroke="#004a99" strokeWidth="2"/>
-                      <path d="M20 28L24 20L28 28" stroke="#004a99" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <circle cx="22" cy="16" r="2" fill="#004a99"/>
-                      <circle cx="38" cy="36" r="6" stroke="#004a99" strokeWidth="2"/>
-                      <path d="M38 33v6m-3-3h6" stroke="#004a99" strokeWidth="2" strokeLinecap="round"/>
-                    </svg>
-                  </div>
-                  <p className="text-sm font-medium text-slate-700">
-                    Drag photo here or{" "}
-                    <label className="cursor-pointer text-primary hover:underline">
-                      browse
-                      <input
-                        type="file"
-                        accept="image/jpeg,image/png"
-                        onChange={handlePhotoUpload}
-                        className="hidden"
-                      />
-                    </label>
-                  </p>
-                  <p className="mt-2 text-xs text-slate-500">
-                    Supported formats: JPG or PNG formats up to [number]mb
-                  </p>
-                </div>
-              </div>
+		setIsSaving(true);
+		setError(null);
 
-              {/* Child Details */}
-              <div>
-                <h3 className="mb-4 text-sm font-semibold text-slate-800">Child Details</h3>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="mb-1 block text-xs text-slate-500">First/given name</label>
-                      <input
-                        type="text"
-                        value={form.firstName}
-                        onChange={(e) => update("firstName", e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-                        placeholder="First name"
-                      />
-                    </div>
-                    <div>
-                      <label className="mb-1 block text-xs text-slate-500">Last/family name</label>
-                      <input
-                        type="text"
-                        value={form.lastName}
-                        onChange={(e) => update("lastName", e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-                        placeholder="Last name"
-                      />
-                    </div>
-                  </div>
+		try {
+			const res = await fetch("/api/supabase/children", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(form),
+			});
 
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <label className="mb-1 block text-xs text-slate-500">Gender</label>
-                      <select
-                        value={form.gender}
-                        onChange={(e) => update("gender", e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-                      >
-                        {GENDERS.map((g) => (
-                          <option key={g}>{g}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="mb-1 block text-xs text-slate-500">Date of birth</label>
-                      <input
-                        type="date"
-                        value={form.dob}
-                        onChange={(e) => update("dob", e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-                      />
-                    </div>
-                    <div>
-                      <label className="mb-1 block text-xs text-slate-500">School level</label>
-                      <select
-                        value={form.schoolLevel}
-                        onChange={(e) => update("schoolLevel", e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-                      >
-                        {SCHOOL_LEVELS.map((s) => (
-                          <option key={s}>{s}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
+			const data = await res.json().catch(() => ({}));
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="mb-1 block text-xs text-slate-500">Country</label>
-                      <select
-                        value={form.country}
-                        onChange={(e) => update("country", e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-                      >
-                        {COUNTRIES.map((c) => (
-                          <option key={c}>{c}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="mb-1 block text-xs text-slate-500">Language</label>
-                      <input
-                        type="text"
-                        value={form.language}
-                        onChange={(e) => update("language", e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-                        placeholder="e.g. Luganda"
-                      />
-                    </div>
-                  </div>
+			if (!res.ok) {
+				setError(data.error ?? "Failed to create child.");
+				return;
+			}
 
-                  <div>
-                    <label className="mb-1 block text-xs text-slate-500">Biography</label>
-                    <textarea
-                      value={form.biography}
-                      onChange={(e) => update("biography", e.target.value)}
-                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-                      placeholder="Child's biography"
-                      rows={4}
-                    />
-                  </div>
-                </div>
-              </div>
+			if (form.photo_file) {
+				const uploadBody = new FormData();
+				uploadBody.append("image", form.photo_file);
+				uploadBody.append("targetId", data.id);
+				uploadBody.append("targetType", "children");
 
-              {/* Family Details */}
-              <div>
-                <h3 className="mb-4 text-sm font-semibold text-slate-800">Family Details</h3>
-                <div>
-                  <label className="mb-1 block text-xs text-slate-500">Family description</label>
-                  <textarea
-                    value={form.familyBiography}
-                    onChange={(e) => update("familyBiography", e.target.value)}
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="Describe the family background"
-                    rows={4}
-                  />
-                </div>
-              </div>
+				const imgRes = await fetch("/api/supabase/admin-upload-profile-image", {
+					method: "POST",
+					body: uploadBody,
+				});
 
-              {/* Guardian 1 */}
-              <div>
-                <h3 className="mb-4 text-sm font-semibold text-slate-800">Guardian 1</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="mb-1 block text-xs text-slate-500">Guardian name</label>
-                    <input
-                      type="text"
-                      value={form.guardianName}
-                      onChange={(e) => update("guardianName", e.target.value)}
-                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-                      placeholder="Full name"
-                    />
-                  </div>
+				if (!imgRes.ok) {
+					console.error("Photo upload failed for new child", data.id);
+				}
+			}
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="mb-1 block text-xs text-slate-500">Relationship</label>
-                      <input
-                        type="text"
-                        value={form.guardianRelationship}
-                        onChange={(e) => update("guardianRelationship", e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-                        placeholder="e.g. Mother"
-                      />
-                    </div>
-                    <div>
-                      <label className="mb-1 block text-xs text-slate-500">NIN/ID</label>
-                      <input
-                        type="text"
-                        value={form.guardianNin}
-                        onChange={(e) => update("guardianNin", e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-                        placeholder="National ID"
-                      />
-                    </div>
-                  </div>
+			router.refresh();
+			handleClose();
+		} finally {
+			setIsSaving(false);
+		}
+	}
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="mb-1 block text-xs text-slate-500">Phone</label>
-                      <input
-                        type="tel"
-                        value={form.guardianPhone}
-                        onChange={(e) => update("guardianPhone", e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-                        placeholder="Phone number"
-                      />
-                    </div>
-                    <div>
-                      <label className="mb-1 block text-xs text-slate-500">Email</label>
-                      <input
-                        type="email"
-                        value={form.guardianEmail}
-                        onChange={(e) => update("guardianEmail", e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-                        placeholder="Email address"
-                      />
-                    </div>
-                  </div>
+	return (
+		<Drawer
+			isOpen={isOpen}
+			onOpenChange={handleClose}
+			size="2xl"
+			placement="right"
+		>
+			<DrawerContent>
+				{() => (
+					<>
+						<DrawerHeader className="border-b border-slate-200 text-lg font-semibold text-slate-900">
+							Add Child
+						</DrawerHeader>
 
-                  <div>
-                    <label className="mb-1 block text-xs text-slate-500">Address</label>
-                    <input
-                      type="text"
-                      value={form.guardianAddress}
-                      onChange={(e) => update("guardianAddress", e.target.value)}
-                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-                      placeholder="Full address"
-                    />
-                  </div>
-                </div>
-              </div>
-            </DrawerBody>
+						<DrawerBody className="space-y-6 py-5 overflow-y-auto">
+							{error && (
+								<div className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+									{error}
+								</div>
+							)}
 
-            <DrawerFooter className="border-t border-slate-200 gap-2">
-              <Button
-                variant="bordered"
-                onPress={handleClose}
-                className="border-slate-300 text-slate-700"
-              >
-                Cancel
-              </Button>
-              <Button onPress={handleSave} className="bg-primary text-white">
-                Add child
-              </Button>
-            </DrawerFooter>
-          </>
-        )}
-      </DrawerContent>
-    </Drawer>
-  );
+							{/* Photo Upload */}
+							<div>
+								<ProfileImageUpload
+									name={`${form.first_name} ${form.last_name}`.trim()}
+									onChange={(file) => update("photo_file", file)}
+									size={200}
+								/>
+							</div>
+
+							{/* Child Details */}
+							<div>
+								<h3 className="mb-4 text-sm font-semibold text-slate-800">
+									Child Details
+								</h3>
+								<div className="space-y-4">
+									<div className="grid grid-cols-2 gap-4">
+										<div>
+											<label className="mb-1 block text-xs text-slate-500">
+												First/given name
+											</label>
+											<input
+												type="text"
+												required
+												value={form.first_name}
+												onChange={(e) => update("first_name", e.target.value)}
+												className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+												placeholder="First name"
+											/>
+										</div>
+										<div>
+											<label className="mb-1 block text-xs text-slate-500">
+												Last/family name
+											</label>
+											<input
+												type="text"
+												required
+												value={form.last_name}
+												onChange={(e) => update("last_name", e.target.value)}
+												className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+												placeholder="Last name"
+											/>
+										</div>
+									</div>
+
+									<div className="grid grid-cols-2 gap-4">
+										<div>
+											<label className="mb-1 block text-xs text-slate-500">
+												Gender
+											</label>
+											<select
+												required
+												value={form.gender}
+												onChange={(e) =>
+													update("gender", e.target.value as GenderType)
+												}
+												className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+											>
+												<option value="">Select gender</option>
+												{GENDERS.map((g) => (
+													<option
+														key={g}
+														value={g}
+													>
+														{g}
+													</option>
+												))}
+											</select>
+										</div>
+										<div>
+											<label className="mb-1 block text-xs text-slate-500">
+												Date of birth
+											</label>
+											<input
+												type="date"
+												required
+												value={form.date_of_birth}
+												onChange={(e) =>
+													update("date_of_birth", e.target.value)
+												}
+												className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+											/>
+										</div>
+									</div>
+
+									<div className="grid grid-cols-2 gap-4">
+										<div>
+											<label className="mb-1 block text-xs text-slate-500">
+												Country
+											</label>
+											<select
+												required
+												value={form.location}
+												onChange={(e) => update("location", e.target.value)}
+												className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+											>
+												<option value="">Select country</option>
+												{COUNTRIES.map((c) => (
+													<option
+														key={c}
+														value={c}
+													>
+														{c}
+													</option>
+												))}
+											</select>
+										</div>
+										<div>
+											<label className="mb-1 block text-xs text-slate-500">
+												Language
+											</label>
+											<input
+												type="text"
+												value={form.language ?? ""}
+												onChange={(e) => update("language", e.target.value)}
+												className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+												placeholder="e.g. Luganda"
+											/>
+										</div>
+									</div>
+
+									<div>
+										<label className="mb-1 block text-xs text-slate-500">
+											Dream job
+										</label>
+										<input
+											type="text"
+											value={form.dream_job ?? ""}
+											onChange={(e) => update("dream_job", e.target.value)}
+											className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+										/>
+									</div>
+									<div>
+										<label className="mb-1 block text-xs text-slate-500">
+											Favorite activities
+										</label>
+										<input
+											type="text"
+											value={form.favorite_activity ?? ""}
+											onChange={(e) =>
+												update("favorite_activity", e.target.value)
+											}
+											className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+										/>
+									</div>
+
+									<div>
+										<label className="mb-1 block text-xs text-slate-500">
+											Biography
+										</label>
+										<textarea
+											value={form.biography ?? ""}
+											onChange={(e) => update("biography", e.target.value)}
+											className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+											placeholder="Child's biography"
+											rows={4}
+										/>
+									</div>
+								</div>
+							</div>
+
+							{/* Family Details */}
+							<div>
+								<h3 className="mb-4 text-sm font-semibold text-slate-800">
+									Family Details
+								</h3>
+								<div>
+									<label className="mb-1 block text-xs text-slate-500">
+										Family description
+									</label>
+									<textarea
+										value={form.family_biography ?? ""}
+										onChange={(e) => update("family_biography", e.target.value)}
+										className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+										placeholder="Describe the family background"
+										rows={4}
+									/>
+								</div>
+							</div>
+
+							{/* Guardian */}
+							<div>
+								<h3 className="mb-4 text-sm font-semibold text-slate-800">
+									Guardian
+								</h3>
+								<div className="space-y-4">
+									<div>
+										<label className="mb-1 block text-xs text-slate-500">
+											Guardian name
+										</label>
+										<input
+											value={form.guardian_name ?? ""}
+											onChange={(e) => update("guardian_name", e.target.value)}
+											className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+											placeholder="Full name"
+										/>
+									</div>
+
+									<div className="grid grid-cols-2 gap-4">
+										<div>
+											<label className="mb-1 block text-xs text-slate-500">
+												Relationship
+											</label>
+											<input
+												type="text"
+												value={form.guardian_relationship ?? ""}
+												onChange={(e) =>
+													update("guardian_relationship", e.target.value)
+												}
+												className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+												placeholder="e.g. Mother"
+											/>
+										</div>
+										<div>
+											<label className="mb-1 block text-xs text-slate-500">
+												NIN/ID
+											</label>
+											<input
+												type="text"
+												value={form.guardian_nin ?? ""}
+												onChange={(e) => update("guardian_nin", e.target.value)}
+												className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+												placeholder="National ID"
+											/>
+										</div>
+									</div>
+
+									<div className="grid grid-cols-2 gap-4">
+										<div>
+											<label className="mb-1 block text-xs text-slate-500">
+												Phone
+											</label>
+											<input
+												type="tel"
+												value={form.guardian_phone}
+												onChange={(e) =>
+													update("guardian_phone", e.target.value)
+												}
+												className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+												placeholder="Phone number"
+											/>
+										</div>
+										<div>
+											<label className="mb-1 block text-xs text-slate-500">
+												Email
+											</label>
+											<input
+												type="email"
+												value={form.guardian_email ?? ""}
+												onChange={(e) =>
+													update("guardian_email", e.target.value)
+												}
+												className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+												placeholder="Email address"
+											/>
+										</div>
+									</div>
+
+									<div>
+										<label className="mb-1 block text-xs text-slate-500">
+											Address
+										</label>
+										<input
+											type="text"
+											value={form.guardian_address ?? ""}
+											onChange={(e) =>
+												update("guardian_address", e.target.value)
+											}
+											className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+											placeholder="Full address"
+										/>
+									</div>
+								</div>
+							</div>
+						</DrawerBody>
+
+						<DrawerFooter className="border-t border-slate-200 gap-2">
+							<Button
+								variant="bordered"
+								onPress={handleClose}
+								isDisabled={isSaving}
+								className="border-slate-300 text-slate-700"
+							>
+								Cancel
+							</Button>
+							<Button
+								onPress={handleSave}
+								isLoading={isSaving}
+								className="bg-primary text-white"
+							>
+								Add child
+							</Button>
+						</DrawerFooter>
+					</>
+				)}
+			</DrawerContent>
+		</Drawer>
+	);
 }

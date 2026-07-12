@@ -13,7 +13,7 @@ export function GuardianSection({ guardian }: GuardianSectionProps) {
 			<div className="mt-6 grid grid-cols-3 gap-x-12 gap-y-8">
 				<DetailItem
 					label="Guardian name"
-					value={guardian.name}
+					value={guardian.full_name}
 				/>
 				<DetailItem
 					label="Relationship to child"

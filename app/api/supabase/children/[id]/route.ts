@@ -33,7 +33,7 @@ export async function GET(
 
 		if (gData) {
 			guardian = {
-				name: gData.full_name,
+				full_name: gData.full_name,
 				relationship: data.guardian_relationship ?? "",
 				nin: gData.nin ?? "",
 				phone: gData.phone_number ?? "",

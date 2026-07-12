@@ -46,7 +46,6 @@ export default function ChildProfilePage({ child }: ChildProfilePageProps) {
 							<Image
 								src={child.image_url}
 								alt={`${child.first_name} ${child.last_name}`}
-								fill
 								className="object-cover object-[center_30%] h-[340px] w-full rounded-xl "
 								width={320}
 								height={340}
@@ -108,10 +107,6 @@ export default function ChildProfilePage({ child }: ChildProfilePageProps) {
 								<DetailItem
 									label="Date of birth"
 									value={child.date_of_birth}
-								/>
-								<DetailItem
-									label="School level"
-									value={child.school_grade.toString()}
 								/>
 								<DetailItem
 									label="Country"

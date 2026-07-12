@@ -58,19 +58,14 @@ export function AdminSidebar() {
 	const pathname = usePathname();
 	const router = useRouter();
 	const { user, loading } = useAuth();
-	const [mounted, setMounted] = useState(false);
+
 	const [target, setTarget] = useState<string>("");
-	const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
 
 	const logout = async () => {
 		const supabase = createClient();
 		await supabase.auth.signOut();
 		router.push("/auth/admin-login");
 	};
-
-	useEffect(() => {
-		setMounted(true);
-	}, []);
 
 	useEffect(() => {
 		//get the sponsors data from db
@@ -84,43 +79,7 @@ export function AdminSidebar() {
 		} else if (role === "super_admin") {
 			setTarget("super_admins");
 		}
-
-		const fetchProfileImage = async () => {
-			const supabase = createClient();
-			const { data, error } = await supabase
-				.from(target)
-				.select("*")
-				.eq("id", user.id)
-				.single();
-
-			if (error || !data) {
-				return;
-			}
-
-			let signedUrl: string | undefined;
-
-			if (data.photo_path && target) {
-				const res = await fetch(
-					`/api/supabase/signed-url/${target}?path=${data.photo_path}`,
-					{ method: "GET" },
-				);
-
-				if (res.ok) {
-					signedUrl = (await res.json()).signedUrl;
-				}
-			}
-
-			setAvatarUrl(signedUrl);
-		};
-
-		if (user && target) {
-			fetchProfileImage();
-		}
 	}, [user, target]);
-
-	const userFirstName =
-		user?.user_metadata.first_name || user?.email?.split("@")[0] || "User";
-	const userLastName = user?.user_metadata.last_name || "";
 
 	return (
 		<aside className="w-80 bg-primary text-white h-screen flex flex-col">

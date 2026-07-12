@@ -10,45 +10,7 @@ import {
 	DrawerFooter,
 	Button,
 } from "@heroui/react";
-import type { ChildProfile } from "./types";
-
-type EditForm = {
-	firstName: string;
-	lastName: string;
-	gender: string;
-	dob: string;
-	schoolLevel: string;
-	country: string;
-	language: string;
-	biography: string;
-	familyBiography: string;
-	guardianName: string;
-	guardianRelationship: string;
-	guardianNin: string;
-	guardianPhone: string;
-	guardianEmail: string;
-	guardianAddress: string;
-};
-
-function toForm(child: ChildProfile): EditForm {
-	return {
-		firstName: child.first_name,
-		lastName: child.last_name,
-		gender: child.gender,
-		dob: child.date_of_birth,
-		schoolLevel: child.school_grade.toString(),
-		country: child.location,
-		language: child.language ?? "",
-		biography: child.biography ?? "",
-		familyBiography: child.family_details ?? "",
-		guardianName: child.guardian?.name ?? "",
-		guardianRelationship: child.guardian?.relationship ?? "",
-		guardianNin: child.guardian?.nin ?? "",
-		guardianPhone: child.guardian?.phone ?? "",
-		guardianEmail: child.guardian?.email ?? "",
-		guardianAddress: child.guardian?.address ?? "",
-	};
-}
+import type { ChildProfile, CreateChild } from "./types";
 
 type EditChildDrawerProps = {
 	child: ChildProfile;
@@ -61,21 +23,32 @@ export default function EditChildDrawer({
 	isOpen,
 	onClose,
 }: EditChildDrawerProps) {
-	const [form, setForm] = useState<EditForm>(() => toForm(child));
-
 	// Reset form to current child data whenever the drawer opens
-	useEffect(() => {
-		if (isOpen) setForm(toForm(child));
-	}, [isOpen, child]);
+	// useEffect(() => {
+	// 	if (isOpen) setForm(toForm(child));
+	// }, [isOpen, child]);
 
-	function update<K extends keyof EditForm>(key: K, value: EditForm[K]) {
-		setForm((prev) => ({ ...prev, [key]: value }));
-	}
+	// function update<K extends keyof EditForm>(key: K, value: EditForm[K]) {
+	// 	setForm((prev) => ({ ...prev, [key]: value }));
+	// }
 
-	function handleSave() {
-		// TODO: persist to Supabase
-		console.log("Saving child edits:", form);
-		onClose();
+	// function handleSave() {
+	// 	// TODO: persist to Supabase
+	// 	console.log("Saving child edits:", form);
+	// 	onClose();
+	// }
+
+	async function handleSave(e: React.FormEvent<HTMLFormElement>) {
+		e.preventDefault();
+
+		try {
+			const form = e.currentTarget;
+			const formData = new FormData(form);
+
+			console.log(formData);
+		} catch (err) {
+			console.log(err);
+		}
 	}
 
 	return (
