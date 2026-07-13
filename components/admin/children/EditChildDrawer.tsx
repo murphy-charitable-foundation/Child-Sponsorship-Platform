@@ -130,7 +130,7 @@ export default function EditChildDrawer({
 			<DrawerContent>
 				{(closeDrawer) => (
 					<>
-						<DrawerHeader className="border-b border-slate-200 text-lg font-semibold text-slate-900">
+						<DrawerHeader className="border-b border-slate-200 text-2xl font-semibold text-primary">
 							Edit Child
 						</DrawerHeader>
 

@@ -1,6 +1,7 @@
 export type GenderType = "Male" | "Female" | "Other";
 export type StatusType = "Active" | "Waiting" | "Exited";
 export type SponsorshipStatus = "Active" | "Inactive";
+export type ConsentMethod = "InPerson" | "Phone";
 
 export type ChildBaseData = {
 	id: string;
@@ -23,6 +24,15 @@ export type Guardian = {
 	address: string | null;
 };
 
+export type GuardianConsent = {
+	id: string;
+	full_name?: string;
+	status: StatusType | null;
+	consent_date?: string | null;
+	consent_method?: ConsentMethod | null;
+	homepage_visibility?: boolean;
+};
+
 export type ChildProfile = {
 	id: string;
 	first_name: string;
@@ -42,6 +52,7 @@ export type ChildProfile = {
 	image_url?: string | null;
 	guardian?: Guardian;
 	sponsorship_status: SponsorshipStatus;
+	homepage_visibility: boolean;
 };
 
 export type CreateChild = {

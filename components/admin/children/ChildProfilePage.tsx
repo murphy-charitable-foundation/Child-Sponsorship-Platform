@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { SquarePen } from "lucide-react";
 import { ChildProfileHeader } from "@/components/admin/children/ChildProfileHeader";
 import { ProfileTabs, TabKey } from "@/components/admin/children/ProfileTabs";
-import { ChildSummaryCard } from "@/components/admin/children/ChildSummaryCard";
 import { DetailItem } from "@/components/admin/children/DetailItem";
 import { GuardianSection } from "@/components/admin/children/GuardianSection";
 import ChildSponsorsTab from "@/components/admin/children/ChildSponsorsTab";
@@ -14,6 +14,7 @@ import ChildConsentTab from "@/components/admin/children/ChildConsentTab";
 import EditChildDrawer from "@/components/admin/children/EditChildDrawer";
 import { ChildProfile } from "./types";
 import { Avatar } from "@heroui/react";
+import GuardianConsentDrawer from "./GuardianConsentDrawer";
 
 type ChildProfilePageProps = {
 	child: ChildProfile;
@@ -25,6 +26,7 @@ export default function ChildProfilePage({
 	const [child, setChild] = useState<ChildProfile>(initialChild);
 	const [activeTab, setActiveTab] = useState<TabKey>("profile");
 	const [isEditOpen, setIsEditOpen] = useState(false);
+	const [isConsentOpen, setIsConsentOpen] = useState(false);
 
 	const childHeaderData = {
 		id: child.id,
@@ -32,6 +34,15 @@ export default function ChildProfilePage({
 		enrolled: child.created_at,
 		age: child.age,
 		status: child.status,
+	};
+
+	const consentData = {
+		id: child.id,
+		full_name: child.guardian?.full_name,
+		status: null,
+		consent_date: null,
+		consent_method: null,
+		homepage_visibility: child.homepage_visibility,
 	};
 
 	function handleChildSaved(updated: ChildProfile) {
@@ -71,38 +82,38 @@ export default function ChildProfilePage({
 							/>
 						)}
 
-						<div className="mt-4 space-y-3">
-							<ChildSummaryCard
-								label="Age"
-								value={String(child.age)}
-							/>
-							<ChildSummaryCard
-								label="ID"
-								value={child.id}
-							/>
-							<ChildSummaryCard
-								label="Enrolled"
-								value={child.created_at.split("T")[0]}
-							/>
-							<ChildSummaryCard
-								label="Sponsorship Status"
-								value={child.sponsorship_status}
-								valueClassName="text-green-600"
-							/>
+						<div className="min-w-0 flex-1 border p-6 rounded-md  mt-6 space-y-3  border-slate-300 bg-white">
+							<div className="flex justify-between items-center">
+								<h2 className="text-xl font-semibold text-primary">
+									Website visibility
+								</h2>
+								<button
+									onClick={() => setIsConsentOpen(true)}
+									className="flex items-center justify-center"
+								>
+									<SquarePen className="size-5 text-primary" />
+								</button>
+							</div>
+
+							<section className="mt-6">
+								<h3 className="text-lg font-semibold text-slate-800">
+									Guardian Consent
+								</h3>
+							</section>
 						</div>
 					</div>
 
 					{/* Right column — detail sections */}
-					<div className="min-w-0 flex-1">
-						<div className="flex items-start justify-between">
-							<h2 className="text-2xl font-semibold text-slate-800">
-								{child.full_name}
+					<div className="min-w-0 flex-1 border p-6 rounded-md bg-white">
+						<div className="flex justify-between items-center">
+							<h2 className="text-xl font-semibold text-primary">
+								Child Profile
 							</h2>
 							<button
 								onClick={() => setIsEditOpen(true)}
-								className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+								className="flex items-center justify-center"
 							>
-								Edit Profile
+								<SquarePen className="size-5 text-primary" />
 							</button>
 						</div>
 
@@ -127,6 +138,14 @@ export default function ChildProfilePage({
 								<DetailItem
 									label="Language"
 									value={child.language ?? ""}
+								/>
+								<DetailItem
+									label="Favorite activity"
+									value={child.favorite_activity ?? ""}
+								/>
+								<DetailItem
+									label="Dream job"
+									value={child.dream_job ?? ""}
 								/>
 							</div>
 
@@ -191,6 +210,13 @@ export default function ChildProfilePage({
 				child={child}
 				isOpen={isEditOpen}
 				onClose={() => setIsEditOpen(false)}
+				onSaved={handleChildSaved}
+			/>
+
+			<GuardianConsentDrawer
+				data={consentData}
+				isOpen={isConsentOpen}
+				onClose={() => setIsConsentOpen(false)}
 				onSaved={handleChildSaved}
 			/>
 		</div>
