@@ -11,6 +11,8 @@ import { Avatar } from "@heroui/react";
 import { SquarePen } from "lucide-react";
 import { DetailItem } from "../children/DetailItem";
 
+type Props = { sponsor: SponsorProfile };
+
 export type SPTabKey = "profile" | "sponsorships" | "reports" | "messages";
 
 export const SPTabs: { key: SPTabKey; label: string }[] = [
@@ -19,8 +21,6 @@ export const SPTabs: { key: SPTabKey; label: string }[] = [
 	{ key: "reports", label: "Reports" },
 	{ key: "messages", label: "Messages" },
 ];
-
-type Props = { sponsor: SponsorProfile };
 
 export default function SponsorProfilePage({ sponsor }: Props) {
 	const [activeTab, setActiveTab] = useState<SPTabKey>("profile");
@@ -98,14 +98,19 @@ export default function SponsorProfilePage({ sponsor }: Props) {
 									label="Sponsor type"
 									value={SPONSOR_TYPE_LABELS[sponsor.sponsor_type]}
 								/>
-								<DetailItem
-									label="Phone Number"
-									value={sponsor.phone_number ?? ""}
-								/>
-								<DetailItem
-									label="Email"
-									value={sponsor.email ?? ""}
-								/>
+
+								{sponsor.sponsor_type == "individual" && (
+									<>
+										<DetailItem
+											label="Phone Number"
+											value={sponsor.phone_number ?? ""}
+										/>
+										<DetailItem
+											label="Email"
+											value={sponsor.email ?? ""}
+										/>
+									</>
+								)}
 								<DetailItem
 									label="Country"
 									value={sponsor.country}
@@ -125,6 +130,40 @@ export default function SponsorProfilePage({ sponsor }: Props) {
 								/>
 							</div>
 						</section>
+
+						{sponsor.sponsor_type !== "individual" && (
+							<section className="mt-6">
+								<h3 className="text-lg font-semibold text-slate-800">
+									Group Primary Contact Details
+								</h3>
+								<div className="mt-6 grid grid-cols-3 gap-x-12 gap-y-8">
+									<DetailItem
+										label="Group name"
+										value={sponsor.group_name ?? ""}
+									/>
+									<DetailItem
+										label="First name"
+										value={sponsor.first_name ?? ""}
+									/>
+									<DetailItem
+										label="Last name"
+										value={sponsor.last_name ?? ""}
+									/>
+									<DetailItem
+										label="Phone number"
+										value={sponsor.phone_number ?? ""}
+									/>
+									<DetailItem
+										label="Email"
+										value={sponsor.email ?? ""}
+									/>
+									<DetailItem
+										label="Job title"
+										value={sponsor.job_title ?? ""}
+									/>
+								</div>
+							</section>
+						)}
 					</div>
 				</div>
 			)}
