@@ -157,7 +157,12 @@ export function AppNavbar() {
           {mounted && !loading && user && (
             <Dropdown>
               <DropdownTrigger>
-                <Button isIconOnly radius="full" variant="light">
+                <Button
+                  isIconOnly
+                  radius="full"
+                  variant="light"
+                  aria-label="User menu"
+                >
                   <Avatar
                     name={`${userFirstName} ${userLastName}`}
                     src={avatarUrl}

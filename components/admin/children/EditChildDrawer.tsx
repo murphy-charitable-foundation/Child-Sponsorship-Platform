@@ -124,7 +124,7 @@ export default function EditChildDrawer({
 		<Drawer
 			isOpen={isOpen}
 			onOpenChange={onClose}
-			size="2xl"
+			size="lg"
 			placement="right"
 		>
 			<DrawerContent>

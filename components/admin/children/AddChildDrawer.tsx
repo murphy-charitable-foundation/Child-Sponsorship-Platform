@@ -109,13 +109,13 @@ export default function AddChildDrawer({
 		<Drawer
 			isOpen={isOpen}
 			onOpenChange={handleClose}
-			size="2xl"
+			size="lg"
 			placement="right"
 		>
 			<DrawerContent>
 				{() => (
 					<>
-						<DrawerHeader className="border-b border-slate-200 text-lg font-semibold text-slate-900">
+						<DrawerHeader className="border-b border-slate-200 text-2xl font-semibold text-primary">
 							Add Child
 						</DrawerHeader>
 

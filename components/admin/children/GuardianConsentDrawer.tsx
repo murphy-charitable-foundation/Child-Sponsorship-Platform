@@ -83,7 +83,7 @@ export default function GuardianConsentDrawer({
 		<Drawer
 			isOpen={isOpen}
 			onOpenChange={onClose}
-			size="2xl"
+			size="lg"
 			placement="right"
 		>
 			<DrawerContent>

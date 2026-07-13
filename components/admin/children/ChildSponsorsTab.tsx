@@ -77,7 +77,6 @@ export default function ChildSponsorsTab({ child }: ChildSponsorsTabProps) {
 	return (
 		<div className="space-y-6">
 			<ChildTabHeader
-				child={child}
 				subtitle={`Active sponsors: ${sponsors.filter((s) => s.sponsorship_active).length}`}
 				actionLabel="Create sponsorship"
 				onActionClick={() => setIsCreateOpen(true)}

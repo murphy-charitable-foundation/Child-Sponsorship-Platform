@@ -81,6 +81,7 @@ export function SponsorsFilter({
 				<div className="flex gap-4 items-end">
 					<div className="flex-1">
 						<Input
+							aria-label="Search"
 							placeholder={
 								isGroupsTab
 									? "Search by group name"
@@ -101,6 +102,7 @@ export function SponsorsFilter({
 					{isGroupsTab && (
 						<div className="w-1/5">
 							<Select
+								aria-label="Type"
 								selectedKeys={[typeValue]}
 								onChange={handleTypeChange}
 								className="w-full"
@@ -119,6 +121,7 @@ export function SponsorsFilter({
 
 					<div className={isGroupsTab ? "w-1/5" : "w-1/4"}>
 						<Select
+							aria-label="Location"
 							selectedKeys={[locationValue]}
 							onChange={handleLocationChange}
 							className="w-full"
@@ -137,6 +140,7 @@ export function SponsorsFilter({
 
 					<div className={isGroupsTab ? "w-1/5" : "w-1/4"}>
 						<Select
+							aria-label="Status"
 							selectedKeys={[statusValue]}
 							onChange={handleStatusChange}
 							className="w-full"

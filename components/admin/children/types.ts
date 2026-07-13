@@ -3,7 +3,7 @@ export type StatusType = "Active" | "Waiting" | "Exited";
 export type SponsorshipStatus = "Active" | "Inactive";
 export type ConsentMethod = "InPerson" | "Phone";
 
-export type ChildBaseData = {
+export type ChildTableData = {
 	id: string;
 	first_name: string;
 	last_name: string;

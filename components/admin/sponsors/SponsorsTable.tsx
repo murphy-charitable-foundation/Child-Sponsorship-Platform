@@ -1,7 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Sponsor, SponsorGroup } from "./types";
+import {
+	Sponsor,
+	SponsorGroup,
+	SponsorGroupTableData,
+	SponsorTableData,
+} from "./types";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -104,20 +109,24 @@ export function SponsorsTable({
 }: SponsorsTableProps) {
 	const router = useRouter();
 	const isGroupsTab = activeTab === "groups";
-	const [sponsors, setSponsors] = useState<(Sponsor | SponsorGroup)[]>([]);
+	const [sponsors, setSponsors] = useState<
+		(SponsorTableData | SponsorGroupTableData)[]
+	>([]);
+	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
 		async function fetchSponsors() {
 			try {
-				const [
-					{ data, error: sponsorsError },
-					{ data: sponsorshipCounts, error: countsError },
-				] = await Promise.all([
-					supabase.from("sponsors").select("*"),
-					supabase.from("sponsorships").select("sponsor_id"),
-				]);
+				const { data, error: sponsorsError } = await supabase
+					.from("sponsors")
+					.select(
+						"last_name, first_name, id, country, status, sponsor_type, sponsorships(count)",
+					)
+					.eq("sponsor_type", "Group")
+					.order("created_at");
 
 				if (sponsorsError) {
+					setError("Failed to get sponsors data");
 					console.error("Error fetching sponsors:", sponsorsError);
 					return;
 				}
@@ -127,28 +136,53 @@ export function SponsorsTable({
 					return;
 				}
 
-				if (countsError) {
-					console.error("Error fetching sponsorship counts:", countsError);
+				const sponsorsWithCounts = data.map((s) => ({
+					...s,
+					children_count: s.sponsorships?.[0]?.count ?? 0,
+				}));
+
+				setSponsors(sponsorsWithCounts as SponsorTableData[]);
+			} catch (err) {
+				console.error("Failed to fetch sponsors:", err);
+			}
+		}
+
+		async function fetchGroupSponsors() {
+			try {
+				const { data, error: sponsorsError } = await supabase
+					.from("sponsors")
+					.select(
+						"id, country, status, sponsor_type, group_name, group_type, sponsorships(count)",
+					)
+					.eq("sponsor_type", "Groups")
+					.order("created_at");
+
+				if (sponsorsError) {
+					setError("Failed to get sponsors data");
+					console.error("Error fetching sponsors:", sponsorsError);
+					return;
 				}
 
-				const countMap: Record<string, number> = {};
-				for (const row of sponsorshipCounts ?? []) {
-					countMap[row.sponsor_id] = (countMap[row.sponsor_id] ?? 0) + 1;
+				console.log(data);
+
+				if (!data || data.length === 0) {
+					setSponsors([]);
+					return;
 				}
 
 				const sponsorsWithCounts = data.map((s) => ({
 					...s,
-					children_count: countMap[s.id] ?? 0,
+					children_count: s.sponsorships?.[0]?.count ?? 0,
 				}));
 
-				setSponsors(sponsorsWithCounts as Sponsor[]);
+				setSponsors(sponsorsWithCounts as SponsorGroupTableData[]);
 			} catch (err) {
 				console.error("Failed to fetch sponsors:", err);
 			}
 		}
 
 		if (isGroupsTab) {
-			setSponsors(GROUPS_DATA);
+			fetchGroupSponsors();
 		} else {
 			fetchSponsors();
 		}

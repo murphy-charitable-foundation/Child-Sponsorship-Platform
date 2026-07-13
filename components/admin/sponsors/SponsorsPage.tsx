@@ -52,7 +52,7 @@ export default function SponsorPage() {
 	}
 
 	return (
-		<div className="px-10 py-8">
+		<div>
 			<div className="flex items-center justify-between">
 				<h1 className="text-2xl font-semibold text-primary">Sponsors</h1>
 				<button
@@ -63,7 +63,7 @@ export default function SponsorPage() {
 				</button>
 			</div>
 
-			<div className="mt-6 grid w-full grid-cols-3 gap-4">
+			<div className="mt-6 grid w-full grid-cols-3 gap-10">
 				<KpiCard
 					title="Active Sponsorships"
 					subtitle="Need KPI visualization"

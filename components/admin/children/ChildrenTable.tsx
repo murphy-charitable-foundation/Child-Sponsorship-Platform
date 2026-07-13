@@ -13,7 +13,7 @@ import {
 } from "@heroui/react";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { ChildBaseData, ChildProfile, StatusType } from "./types";
+import { ChildTableData, ChildProfile, StatusType } from "./types";
 import EditChildDrawer from "./EditChildDrawer";
 
 const supabase = createClient();
@@ -36,7 +36,7 @@ export default function ChildrenTable({
 	searchQuery,
 }: ChildrenTableProps) {
 	const router = useRouter();
-	const [children, setChildren] = useState<ChildBaseData[]>([]);
+	const [children, setChildren] = useState<ChildTableData[]>([]);
 	const [error, setError] = useState<string | null>(null);
 	const [isEditOpen, setIsEditOpen] = useState(false);
 	const [editChild, setEditChild] = useState<ChildProfile | null>(null);
