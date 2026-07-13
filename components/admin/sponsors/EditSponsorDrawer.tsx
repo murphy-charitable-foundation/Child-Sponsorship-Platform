@@ -117,7 +117,7 @@ export default function EditSponsorDrawer({
 				}
 			}
 
-			const refreshRes = await fetch(`/api/supabase/sponsor/${form.id}`);
+			const refreshRes = await fetch(`/api/supabase/sponsors/${form.id}`);
 
 			if (refreshRes.ok) {
 				const { sponsor: updatedSponsor } = await refreshRes.json();

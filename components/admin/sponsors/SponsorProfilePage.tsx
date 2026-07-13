@@ -22,7 +22,8 @@ export const SPTabs: { key: SPTabKey; label: string }[] = [
 	{ key: "messages", label: "Messages" },
 ];
 
-export default function SponsorProfilePage({ sponsor }: Props) {
+export default function SponsorProfilePage({ sponsor: initialSponsor }: Props) {
+	const [sponsor, setSponsor] = useState<SponsorProfile>(initialSponsor);
 	const [activeTab, setActiveTab] = useState<SPTabKey>("profile");
 	const [isEditOpen, setIsEditOpen] = useState(false);
 
@@ -35,6 +36,10 @@ export default function SponsorProfilePage({ sponsor }: Props) {
 		enrolled: sponsor.created_at,
 		status: sponsor.status,
 	};
+
+	function handleSponsorSaved(updated: SponsorProfile) {
+		setSponsor(updated);
+	}
 
 	return (
 		<div className="px-10 py-8">
@@ -187,6 +192,7 @@ export default function SponsorProfilePage({ sponsor }: Props) {
 				sponsor={sponsor}
 				isOpen={isEditOpen}
 				onClose={() => setIsEditOpen(false)}
+				onSaved={handleSponsorSaved}
 			/>
 		</div>
 	);
