@@ -14,6 +14,7 @@ export type SponsorTableData = {
 	status: SponsorStatus;
 	sponsor_type: SponsorType;
 	group_name?: string;
+	children_count?: number;
 };
 
 export type SponsorGroupTableData = {
@@ -22,19 +23,25 @@ export type SponsorGroupTableData = {
 	group_name: string;
 	country: string;
 	status: SponsorStatus;
+	children_count?: number;
 };
 
-export type Sponsor = {
+export type SponsorProfile = {
 	id: string;
 	first_name: string;
 	last_name: string;
 	sponsor_type: SponsorType;
-	notes?: string;
-	active: boolean;
-	photo_path?: string;
-	image_url?: string;
-	location?: string;
-	children_count?: number;
+	group_name?: string | null;
+	address_line1: string | null;
+	address_line2?: string | null;
+	city: string;
+	state: string;
+	zip: string;
+	country: string;
+	phone_number: string | null;
+	email: string | null;
+	job_title: string | null;
+	image_url?: string | null;
 };
 
 export type SponsorGroup = {
@@ -49,6 +56,24 @@ export type SponsorGroup = {
 
 export type CreateSponsor = {
 	photo_file: File | null;
+	first_name: string;
+	last_name: string;
+	sponsor_type: SponsorType | null;
+	group_name?: string | null;
+	address_line1: string | null;
+	address_line2?: string | null;
+	city: string;
+	state: string;
+	zip: string;
+	country: string;
+	phone_number: string | null;
+	email: string | null;
+	job_title: string | null;
+};
+
+export type EditSponsor = {
+	id: string;
+	photo_path?: string;
 	first_name: string;
 	last_name: string;
 	sponsor_type: SponsorType | null;

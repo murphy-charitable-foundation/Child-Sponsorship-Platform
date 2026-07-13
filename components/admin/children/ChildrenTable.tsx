@@ -18,7 +18,7 @@ import EditChildDrawer from "./EditChildDrawer";
 
 const supabase = createClient();
 
-function statusChipColor(status: StatusType) {
+export function statusChipColor(status: StatusType) {
 	if (status === "Active") return "success";
 	if (status === "Waiting") return "warning";
 	return "default"; // for Exited

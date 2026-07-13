@@ -2,18 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-	Drawer,
-	DrawerContent,
-	DrawerHeader,
-	DrawerBody,
-	DrawerFooter,
-	Button,
-} from "@heroui/react";
 
 import { CreateChild, GenderType } from "./types";
 import ProfileImageUpload from "@/components/profile-image-upload";
-import { Field, inputCls, textareaCls } from "./EditChildDrawer";
+import FormDrawer, { Field, inputCls, textareaCls } from "../shared/FormDrawer";
 
 export const COUNTRIES = ["Uganda", "Kenya", "Tanzania", "Rwanda"];
 export const GENDERS: GenderType[] = ["Male", "Female", "Other"];
@@ -63,7 +55,8 @@ export default function AddChildDrawer({
 		router.replace("/admin/children");
 	}
 
-	async function handleSave() {
+	async function handleSave(e: React.FormEvent) {
+		e.preventDefault();
 		setIsSaving(true);
 		setError(null);
 
@@ -106,276 +99,231 @@ export default function AddChildDrawer({
 	}
 
 	return (
-		<Drawer
+		<FormDrawer
 			isOpen={isOpen}
-			onOpenChange={handleClose}
-			size="lg"
-			placement="right"
+			onClose={handleClose}
+			title="Add Child"
+			formId="add-child-form"
+			onSubmit={handleSave}
+			isSaving={isSaving}
+			error={error}
+			saveLabel="Add child"
+			bodyClassName="space-y-6 py-5 overflow-y-auto"
 		>
-			<DrawerContent>
-				{() => (
-					<>
-						<DrawerHeader className="border-b border-slate-200 text-2xl font-semibold text-primary">
-							Add Child
-						</DrawerHeader>
+			{/* Photo Upload */}
+			<div>
+				<ProfileImageUpload
+					name={`${form.first_name} ${form.last_name}`.trim()}
+					onChange={(file) => update("photo_file", file)}
+					size={200}
+				/>
+			</div>
 
-						<DrawerBody className="space-y-6 py-5 overflow-y-auto">
-							{error && (
-								<div className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
-									{error}
-								</div>
-							)}
+			{/* Child Details */}
+			<section>
+				<h3 className="mb-4 text-sm font-semibold text-slate-800">
+					Child Details
+				</h3>
+				<div className="space-y-4">
+					<div className="grid grid-cols-2 gap-4">
+						<Field label="First/given name">
+							<input
+								type="text"
+								required
+								value={form.first_name}
+								onChange={(e) => update("first_name", e.target.value)}
+								className={inputCls}
+								placeholder="First name"
+							/>
+						</Field>
 
-							{/* Photo Upload */}
-							<div>
-								<ProfileImageUpload
-									name={`${form.first_name} ${form.last_name}`.trim()}
-									onChange={(file) => update("photo_file", file)}
-									size={200}
-								/>
-							</div>
+						<Field label="Last/family name">
+							<input
+								type="text"
+								required
+								value={form.last_name}
+								onChange={(e) => update("last_name", e.target.value)}
+								className={inputCls}
+								placeholder="Last name"
+							/>
+						</Field>
+					</div>
 
-							{/* Child Details */}
-							<section>
-								<h3 className="mb-4 text-sm font-semibold text-slate-800">
-									Child Details
-								</h3>
-								<div className="space-y-4">
-									<div className="grid grid-cols-2 gap-4">
-										<Field label="First/given name">
-											<input
-												type="text"
-												required
-												value={form.first_name}
-												onChange={(e) => update("first_name", e.target.value)}
-												className={inputCls}
-												placeholder="First name"
-											/>
-										</Field>
-
-										<Field label="Last/family name">
-											<input
-												type="text"
-												required
-												value={form.last_name}
-												onChange={(e) => update("last_name", e.target.value)}
-												className={inputCls}
-												placeholder="Last name"
-											/>
-										</Field>
-									</div>
-
-									<div className="grid grid-cols-2 gap-4">
-										<Field label="Gender">
-											<select
-												required
-												value={form?.gender}
-												onChange={(e) =>
-													update("gender", e.target.value as GenderType)
-												}
-												className={inputCls}
-											>
-												<option value="">Select gender</option>
-												{GENDERS.map((g) => (
-													<option
-														key={g}
-														value={g}
-													>
-														{g}
-													</option>
-												))}
-											</select>
-										</Field>
-
-										<Field label="Date of birth">
-											<input
-												type="date"
-												required
-												value={form?.date_of_birth}
-												onChange={(e) =>
-													update("date_of_birth", e.target.value)
-												}
-												className={inputCls}
-											/>
-										</Field>
-									</div>
-
-									<div className="grid grid-cols-2 gap-4">
-										<Field label="Country">
-											<select
-												required
-												value={form?.location}
-												onChange={(e) => update("location", e.target.value)}
-												className={inputCls}
-											>
-												<option value="">Select country</option>
-												{COUNTRIES.map((c) => (
-													<option
-														key={c}
-														value={c}
-													>
-														{c}
-													</option>
-												))}
-											</select>
-										</Field>
-
-										<Field label="Language">
-											<input
-												type="text"
-												value={form?.language}
-												onChange={(e) => update("language", e.target.value)}
-												className={inputCls}
-												placeholder="e.g. Luganda"
-											/>
-										</Field>
-									</div>
-
-									<Field label="Dream job">
-										<input
-											type="text"
-											value={form?.dream_job ?? ""}
-											onChange={(e) => update("dream_job", e.target.value)}
-											className={inputCls}
-										/>
-									</Field>
-									<Field label="Favorite activities">
-										<input
-											type="text"
-											value={form?.favorite_activity ?? ""}
-											onChange={(e) =>
-												update("favorite_activity", e.target.value)
-											}
-											className={inputCls}
-										/>
-									</Field>
-
-									<Field label="Biography">
-										<textarea
-											value={form?.biography ?? ""}
-											onChange={(e) => update("biography", e.target.value)}
-											className={textareaCls}
-											placeholder="Child's biography"
-											rows={4}
-										/>
-									</Field>
-								</div>
-							</section>
-
-							{/* Family Details */}
-							<div>
-								<h3 className="mb-4 text-sm font-semibold text-slate-800">
-									Family Details
-								</h3>
-								<Field label="Family description">
-									<textarea
-										value={form?.family_biography ?? ""}
-										onChange={(e) => update("family_biography", e.target.value)}
-										className={textareaCls}
-										placeholder="Describe the family background"
-										rows={4}
-									/>
-								</Field>
-							</div>
-
-							{/* Guardian */}
-							<div>
-								<h3 className="mb-4 text-sm font-semibold text-slate-800">
-									Guardian
-								</h3>
-								<div className="space-y-4">
-									<Field label="Guardian name">
-										<input
-											value={form?.guardian_name ?? ""}
-											onChange={(e) => update("guardian_name", e.target.value)}
-											className={inputCls}
-											placeholder="Full name"
-										/>
-									</Field>
-
-									<div className="grid grid-cols-2 gap-4">
-										<Field label="Relationship">
-											<input
-												type="text"
-												value={form?.guardian_relationship ?? ""}
-												onChange={(e) =>
-													update("guardian_relationship", e.target.value)
-												}
-												className={inputCls}
-												placeholder="e.g. Mother"
-											/>
-										</Field>
-										<Field label="NIN/ID">
-											<input
-												type="text"
-												value={form?.guardian_nin ?? ""}
-												onChange={(e) => update("guardian_nin", e.target.value)}
-												className={inputCls}
-												placeholder="National ID"
-											/>
-										</Field>
-									</div>
-
-									<div className="grid grid-cols-2 gap-4">
-										<Field label="Phone">
-											<input
-												type="tel"
-												value={form?.guardian_phone ?? ""}
-												onChange={(e) =>
-													update("guardian_phone", e.target.value)
-												}
-												className={inputCls}
-												placeholder="Phone number"
-											/>
-										</Field>
-										<Field label="Email">
-											<input
-												type="email"
-												value={form?.guardian_email ?? ""}
-												onChange={(e) =>
-													update("guardian_email", e.target.value)
-												}
-												className={inputCls}
-												placeholder="Email address"
-											/>
-										</Field>
-									</div>
-
-									<Field label="Address">
-										<input
-											type="text"
-											value={form?.guardian_address ?? ""}
-											onChange={(e) =>
-												update("guardian_address", e.target.value)
-											}
-											className={textareaCls}
-											placeholder="Full address"
-										/>
-									</Field>
-								</div>
-							</div>
-						</DrawerBody>
-
-						<DrawerFooter className="border-t border-slate-200 gap-2">
-							<Button
-								variant="bordered"
-								onPress={handleClose}
-								isDisabled={isSaving}
-								className="border-slate-300 text-slate-700"
+					<div className="grid grid-cols-2 gap-4">
+						<Field label="Gender">
+							<select
+								required
+								value={form?.gender}
+								onChange={(e) => update("gender", e.target.value as GenderType)}
+								className={inputCls}
 							>
-								Cancel
-							</Button>
-							<Button
-								onPress={handleSave}
-								isLoading={isSaving}
-								className="bg-primary text-white"
+								<option value="">Select gender</option>
+								{GENDERS.map((g) => (
+									<option
+										key={g}
+										value={g}
+									>
+										{g}
+									</option>
+								))}
+							</select>
+						</Field>
+
+						<Field label="Date of birth">
+							<input
+								type="date"
+								required
+								value={form?.date_of_birth}
+								onChange={(e) => update("date_of_birth", e.target.value)}
+								className={inputCls}
+							/>
+						</Field>
+					</div>
+
+					<div className="grid grid-cols-2 gap-4">
+						<Field label="Country">
+							<select
+								required
+								value={form?.location}
+								onChange={(e) => update("location", e.target.value)}
+								className={inputCls}
 							>
-								Add child
-							</Button>
-						</DrawerFooter>
-					</>
-				)}
-			</DrawerContent>
-		</Drawer>
+								<option value="">Select country</option>
+								{COUNTRIES.map((c) => (
+									<option
+										key={c}
+										value={c}
+									>
+										{c}
+									</option>
+								))}
+							</select>
+						</Field>
+
+						<Field label="Language">
+							<input
+								type="text"
+								value={form?.language}
+								onChange={(e) => update("language", e.target.value)}
+								className={inputCls}
+								placeholder="e.g. Luganda"
+							/>
+						</Field>
+					</div>
+
+					<Field label="Dream job">
+						<input
+							type="text"
+							value={form?.dream_job ?? ""}
+							onChange={(e) => update("dream_job", e.target.value)}
+							className={inputCls}
+						/>
+					</Field>
+					<Field label="Favorite activities">
+						<input
+							type="text"
+							value={form?.favorite_activity ?? ""}
+							onChange={(e) => update("favorite_activity", e.target.value)}
+							className={inputCls}
+						/>
+					</Field>
+
+					<Field label="Biography">
+						<textarea
+							value={form?.biography ?? ""}
+							onChange={(e) => update("biography", e.target.value)}
+							className={textareaCls}
+							placeholder="Child's biography"
+							rows={4}
+						/>
+					</Field>
+				</div>
+			</section>
+
+			{/* Family Details */}
+			<div>
+				<h3 className="mb-4 text-sm font-semibold text-slate-800">
+					Family Details
+				</h3>
+				<Field label="Family description">
+					<textarea
+						value={form?.family_biography ?? ""}
+						onChange={(e) => update("family_biography", e.target.value)}
+						className={textareaCls}
+						placeholder="Describe the family background"
+						rows={4}
+					/>
+				</Field>
+			</div>
+
+			{/* Guardian */}
+			<div>
+				<h3 className="mb-4 text-sm font-semibold text-slate-800">Guardian</h3>
+				<div className="space-y-4">
+					<Field label="Guardian name">
+						<input
+							value={form?.guardian_name ?? ""}
+							onChange={(e) => update("guardian_name", e.target.value)}
+							className={inputCls}
+							placeholder="Full name"
+						/>
+					</Field>
+
+					<div className="grid grid-cols-2 gap-4">
+						<Field label="Relationship">
+							<input
+								type="text"
+								value={form?.guardian_relationship ?? ""}
+								onChange={(e) =>
+									update("guardian_relationship", e.target.value)
+								}
+								className={inputCls}
+								placeholder="e.g. Mother"
+							/>
+						</Field>
+						<Field label="NIN/ID">
+							<input
+								type="text"
+								value={form?.guardian_nin ?? ""}
+								onChange={(e) => update("guardian_nin", e.target.value)}
+								className={inputCls}
+								placeholder="National ID"
+							/>
+						</Field>
+					</div>
+
+					<div className="grid grid-cols-2 gap-4">
+						<Field label="Phone">
+							<input
+								type="tel"
+								value={form?.guardian_phone ?? ""}
+								onChange={(e) => update("guardian_phone", e.target.value)}
+								className={inputCls}
+								placeholder="Phone number"
+							/>
+						</Field>
+						<Field label="Email">
+							<input
+								type="email"
+								value={form?.guardian_email ?? ""}
+								onChange={(e) => update("guardian_email", e.target.value)}
+								className={inputCls}
+								placeholder="Email address"
+							/>
+						</Field>
+					</div>
+
+					<Field label="Address">
+						<input
+							type="text"
+							value={form?.guardian_address ?? ""}
+							onChange={(e) => update("guardian_address", e.target.value)}
+							className={textareaCls}
+							placeholder="Full address"
+						/>
+					</Field>
+				</div>
+			</div>
+		</FormDrawer>
 	);
 }

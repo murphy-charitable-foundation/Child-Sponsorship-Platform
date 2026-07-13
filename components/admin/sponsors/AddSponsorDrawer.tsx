@@ -2,18 +2,11 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import {
-	Drawer,
-	DrawerContent,
-	DrawerHeader,
-	DrawerBody,
-	DrawerFooter,
-	Button,
-} from "@heroui/react";
 import { CreateSponsor } from "./types";
 import { useRouter } from "next/navigation";
 import AddIndividualForm from "./AddIndividualForm";
 import AddGroupForm from "./AddGroupForm";
+import FormDrawer from "../shared/FormDrawer";
 
 type SponsorType = "none" | "individual" | "group";
 
@@ -115,123 +108,88 @@ export default function AddSponsorDrawer({
 	}
 
 	return (
-		<Drawer
+		<FormDrawer
 			isOpen={isOpen}
-			onOpenChange={handleClose}
-			size="lg"
-			placement="right"
+			onClose={handleClose}
+			title="Add Sponsor"
+			formId="add-sponsor-form"
+			onSubmit={handleSave}
+			isSaving={isSaving}
+			error={error}
+			saveLabel="Add sponsor"
+			saveDisabled={sponsorType === "none"}
 		>
-			<DrawerContent>
-				{() => (
-					<>
-						<DrawerHeader className="border-b border-slate-200 text-2xl font-semibold text-primary">
-							Add Sponsor
-						</DrawerHeader>
+			{/* Sponsor type selector — always visible */}
+			<div>
+				<p className="mb-3 text-xs font-semibold tracking-wide text-slate-500">
+					Sponsor Type
+				</p>
+				<div className="flex w-full">
+					<button
+						type="button"
+						onClick={() => handleSponsorTypeUpdate("individual")}
+						className={`flex h-10 flex-1 items-center justify-center gap-2 rounded-l-md border px-5 text-sm font-medium transition-colors ${
+							sponsorType === "individual"
+								? "border-primary bg-primary text-white"
+								: "border-slate-300 bg-white text-slate-700 hover:border-primary hover:text-primary"
+						}`}
+					>
+						<span>
+							<Image
+								src="/individual.svg"
+								alt=""
+								width={10}
+								height={18}
+								className="h-[18px] w-[10px]"
+							/>
+						</span>
+						Individual
+					</button>
+					<button
+						type="button"
+						onClick={() => handleSponsorTypeUpdate("group")}
+						className={`flex h-10 flex-1 items-center justify-center gap-2 rounded-r-md border px-5 text-sm font-medium transition-colors ${
+							sponsorType === "group"
+								? "border-primary bg-primary text-white"
+								: "border-slate-300 bg-white text-slate-700 hover:border-primary hover:text-primary"
+						}`}
+					>
+						<span>
+							<Image
+								src="/groups.svg"
+								alt=""
+								width={25}
+								height={18}
+								className="h-[18px] w-[25px]"
+							/>
+						</span>
+						Group
+					</button>
+				</div>
+			</div>
 
-						<DrawerBody className="py-6">
-							<form
-								id="add-sponsor-form"
-								onSubmit={handleSave}
-							>
-								{error && (
-									<div className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 mb-4">
-										{error}
-									</div>
-								)}
+			{/* Default state */}
+			{sponsorType === "none" && (
+				<div className="flex flex-col items-center justify-center py-16 mt-20">
+					<p>Select sponsor type to get started</p>
+				</div>
+			)}
 
-								{/* Sponsor type selector — always visible */}
-								<div>
-									<p className="mb-3 text-xs font-semibold tracking-wide text-slate-500">
-										Sponsor Type
-									</p>
-									<div className="flex w-full">
-										<button
-											type="button"
-											onClick={() => handleSponsorTypeUpdate("individual")}
-											className={`flex h-10 flex-1 items-center justify-center gap-2 rounded-l-md border px-5 text-sm font-medium transition-colors ${
-												sponsorType === "individual"
-													? "border-primary bg-primary text-white"
-													: "border-slate-300 bg-white text-slate-700 hover:border-primary hover:text-primary"
-											}`}
-										>
-											<span>
-												<Image
-													src="/individual.svg"
-													alt=""
-													width={10}
-													height={18}
-												/>
-											</span>
-											Individual
-										</button>
-										<button
-											type="button"
-											onClick={() => handleSponsorTypeUpdate("group")}
-											className={`flex h-10 flex-1 items-center justify-center gap-2 rounded-r-md border px-5 text-sm font-medium transition-colors ${
-												sponsorType === "group"
-													? "border-primary bg-primary text-white"
-													: "border-slate-300 bg-white text-slate-700 hover:border-primary hover:text-primary"
-											}`}
-										>
-											<span>
-												<Image
-													src="/groups.svg"
-													alt=""
-													width={25}
-													height={18}
-												/>
-											</span>
-											Group
-										</button>
-									</div>
-								</div>
+			{/* Individual form */}
+			{sponsorType === "individual" && (
+				<AddIndividualForm
+					form={form}
+					update={update}
+				/>
+			)}
 
-								{/* Default state */}
-								{sponsorType === "none" && (
-									<div className="flex flex-col items-center justify-center py-16 mt-20">
-										<p>Select sponsor type to get started</p>
-									</div>
-								)}
-
-								{/* Individual form */}
-								{sponsorType === "individual" && (
-									<AddIndividualForm
-										form={form}
-										update={update}
-									/>
-								)}
-
-								{/* Group form */}
-								{sponsorType === "group" && (
-									<AddGroupForm
-										form={form}
-										update={update}
-									/>
-								)}
-							</form>
-						</DrawerBody>
-
-						<DrawerFooter className="border-t border-slate-200">
-							<Button
-								variant="light"
-								onPress={handleClose}
-								className="border-slate-300 text-slate-700"
-							>
-								Cancel
-							</Button>
-							<Button
-								type="submit"
-								form="add-sponsor-form"
-								className="bg-primary text-white"
-								isDisabled={sponsorType === "none" || isSaving}
-								isLoading={isSaving}
-							>
-								Add sponsor
-							</Button>
-						</DrawerFooter>
-					</>
-				)}
-			</DrawerContent>
-		</Drawer>
+			{/* Group form */}
+			{sponsorType === "group" && (
+				<AddGroupForm
+					form={form}
+					update={update}
+				/>
+			)}
+		</FormDrawer>
 	);
 }

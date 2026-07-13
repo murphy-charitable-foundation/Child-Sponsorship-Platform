@@ -1,6 +1,6 @@
 import ProfileImageUpload from "@/components/profile-image-upload";
-import { Field, inputCls } from "../children/EditChildDrawer";
 import { CreateSponsor } from "./types";
+import { Field, inputCls } from "../shared/FormDrawer";
 
 export const SP_COUNTRIES = [
 	"USA",
@@ -37,7 +37,7 @@ export default function AddIndividualForm({
 					/>
 				</div>
 
-				<h3 className="py-10 text-base font-semibold text-slate-900">
+				<h3 className="py-6 text-base font-semibold text-slate-900">
 					Name and Address
 				</h3>
 				<div className="space-y-3">

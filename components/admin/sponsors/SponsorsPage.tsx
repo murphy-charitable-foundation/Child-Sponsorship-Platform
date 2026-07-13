@@ -6,50 +6,40 @@ import { SponsorsFilter } from "./SponsorsFilter";
 
 import { TabSelection } from "./TabSelection";
 import AddSponsorDrawer from "./AddSponsorDrawer";
-import EditSponsorDrawer from "./EditSponsorDrawer";
-import type { SponsorProfile } from "./SponsorProfilePage";
-import { Sponsor, SponsorGroup } from "./types";
 import { SponsorsTable } from "./SponsorsTable";
 
-function toSponsorProfile(row: Sponsor | SponsorGroup): SponsorProfile {
-	const isGroup = "group_name" in row;
-	return {
-		id: isGroup ? row.group_id : row.id,
-		firstName: isGroup ? row.group_name : row.first_name,
-		lastName: isGroup ? "" : row.last_name,
-		sponsorType: isGroup ? "Group" : "Individual",
-		sponsoringSince: "",
-		sponsorshipStatus: row.active ? "Active" : "Inactive",
-		address: {
-			line1: "",
-			line2: "",
-			city: "",
-			state: "",
-			zip: "",
-			country: "",
-		},
-		phone: "",
-		email: "",
-		sponsoredChildren: [],
-	};
-}
+// function toSponsorProfile(row: Sponsor | SponsorGroup): SponsorProfile {
+// 	const isGroup = "group_name" in row;
+// 	return {
+// 		id: isGroup ? row.group_id : row.id,
+// 		firstName: isGroup ? row.group_name : row.first_name,
+// 		lastName: isGroup ? "" : row.last_name,
+// 		sponsorType: isGroup ? "Group" : "Individual",
+// 		sponsoringSince: "",
+// 		sponsorshipStatus: row.active ? "Active" : "Inactive",
+// 		address: {
+// 			line1: "",
+// 			line2: "",
+// 			city: "",
+// 			state: "",
+// 			zip: "",
+// 			country: "",
+// 		},
+// 		phone: "",
+// 		email: "",
+// 		sponsoredChildren: [],
+// 	};
+// }
 
 export default function SponsorPage() {
 	const [activeTab, setActiveTab] = useState<"individuals" | "groups">(
 		"individuals",
 	);
 	const [isAddOpen, setIsAddOpen] = useState(false);
-	const [editingSponsor, setEditingSponsor] = useState<SponsorProfile | null>(
-		null,
-	);
 	const [searchValue, setSearchValue] = useState("");
 	const [locationValue, setLocationValue] = useState("all");
 	const [statusValue, setStatusValue] = useState("all");
 	const [typeValue, setTypeValue] = useState("all");
-
-	function handleEdit(row: Sponsor | SponsorGroup) {
-		setEditingSponsor(toSponsorProfile(row));
-	}
 
 	return (
 		<div>
@@ -106,7 +96,6 @@ export default function SponsorPage() {
 				<div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
 					<SponsorsTable
 						activeTab={activeTab}
-						onEdit={handleEdit}
 						searchValue={searchValue}
 						locationValue={locationValue}
 						statusValue={statusValue}
@@ -119,14 +108,6 @@ export default function SponsorPage() {
 				isOpen={isAddOpen}
 				onClose={() => setIsAddOpen(false)}
 			/>
-
-			{editingSponsor && (
-				<EditSponsorDrawer
-					sponsor={editingSponsor}
-					isOpen={!!editingSponsor}
-					onClose={() => setEditingSponsor(null)}
-				/>
-			)}
 		</div>
 	);
 }

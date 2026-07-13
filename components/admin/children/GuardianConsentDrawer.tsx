@@ -20,7 +20,7 @@ import {
 	StatusType,
 } from "./types";
 
-import { Field, inputCls } from "./EditChildDrawer";
+import { Field, inputCls } from "../shared/FormDrawer";
 
 export const CONSENT_METHOD: ConsentMethod[] = ["InPerson", "Phone"];
 

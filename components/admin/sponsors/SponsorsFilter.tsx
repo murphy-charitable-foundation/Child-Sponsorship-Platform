@@ -112,8 +112,9 @@ export function SponsorsFilter({
 								}}
 							>
 								<SelectItem key="all">All types</SelectItem>
-								<SelectItem key="company">Company</SelectItem>
-								<SelectItem key="organization">Organization</SelectItem>
+								<SelectItem key="family">Family</SelectItem>
+								<SelectItem key="company">Company / Business</SelectItem>
+								<SelectItem key="ngo">Organization / NGO</SelectItem>
 								<SelectItem key="religious">Religious</SelectItem>
 							</Select>
 						</div>
