@@ -6,6 +6,14 @@ export type SponsorType =
 	| "religious";
 export type SponsorStatus = "Active" | "Inactive";
 
+export const SPONSOR_TYPE_LABELS: Record<SponsorType, string> = {
+	individual: "Individual",
+	family: "Family",
+	company: "Company / Business",
+	ngo: "Organization / NGO",
+	religious: "Religious Institution",
+};
+
 export type SponsorTableData = {
 	id: string;
 	first_name: string;
@@ -42,6 +50,8 @@ export type SponsorProfile = {
 	email: string | null;
 	job_title: string | null;
 	image_url?: string | null;
+	created_at: string;
+	status: SponsorStatus;
 };
 
 export type SponsorGroup = {

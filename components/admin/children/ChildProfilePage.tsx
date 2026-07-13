@@ -3,8 +3,6 @@
 import { useState } from "react";
 import Image from "next/image";
 import { SquarePen } from "lucide-react";
-import { ChildProfileHeader } from "@/components/admin/children/ChildProfileHeader";
-import { ProfileTabs, TabKey } from "@/components/admin/children/ProfileTabs";
 import { DetailItem } from "@/components/admin/children/DetailItem";
 import { GuardianSection } from "@/components/admin/children/GuardianSection";
 import ChildSponsorsTab from "@/components/admin/children/ChildSponsorsTab";
@@ -15,16 +13,33 @@ import EditChildDrawer from "@/components/admin/children/EditChildDrawer";
 import { ChildProfile } from "./types";
 import { Avatar } from "@heroui/react";
 import GuardianConsentDrawer from "./GuardianConsentDrawer";
+import { ProfileHeader } from "../shared/ProfileHeader";
+import { ProfileTabs } from "../shared/ProfileTabs";
 
 type ChildProfilePageProps = {
 	child: ChildProfile;
 };
 
+export type ChildTabKey =
+	| "profile"
+	| "sponsors"
+	| "reports"
+	| "messages"
+	| "consent";
+
+export const ChildTabs: { key: ChildTabKey; label: string }[] = [
+	{ key: "profile", label: "Profile" },
+	{ key: "sponsors", label: "Sponsors" },
+	{ key: "reports", label: "Reports" },
+	{ key: "messages", label: "Messages" },
+	{ key: "consent", label: "Consent" },
+];
+
 export default function ChildProfilePage({
 	child: initialChild,
 }: ChildProfilePageProps) {
 	const [child, setChild] = useState<ChildProfile>(initialChild);
-	const [activeTab, setActiveTab] = useState<TabKey>("profile");
+	const [activeTab, setActiveTab] = useState<ChildTabKey>("profile");
 	const [isEditOpen, setIsEditOpen] = useState(false);
 	const [isConsentOpen, setIsConsentOpen] = useState(false);
 
@@ -51,10 +66,15 @@ export default function ChildProfilePage({
 
 	return (
 		<div>
-			<ChildProfileHeader child={childHeaderData} />
+			<ProfileHeader
+				data={childHeaderData}
+				type="child"
+				href="/admin/children"
+			/>
 
 			<div className="mt-6">
 				<ProfileTabs
+					tabs={ChildTabs}
 					activeTab={activeTab}
 					onChange={setActiveTab}
 				/>

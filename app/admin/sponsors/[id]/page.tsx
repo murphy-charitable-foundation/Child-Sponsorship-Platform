@@ -1,63 +1,74 @@
-import { cache } from "react";
-import SponsorProfilePage, {
-  SponsorProfile,
-} from "@/components/admin/sponsors/SponsorProfilePage";
+"use client";
 
-// TODO: accept id: string, replace body with Supabase fetch
-const getSponsor = cache(async (): Promise<SponsorProfile> => {
-  return {
-    id: "SI24-0008",
-    firstName: "Carlos",
-    lastName: "Martinez",
-    sponsorType: "Individual",
-    sponsoringSince: "2019-02-16",
-    sponsorshipStatus: "Active",
-    address: {
-      line1: "1001 Tennessee Street",
-      line2: "Apt 400",
-      city: "Anytown",
-      state: "IL",
-      zip: "60131",
-      country: "United States",
-    },
-    phone: "1-213-985-7722",
-    email: "cmartinez@gmail.com",
-    sponsoredChildren: [
-      {
-        id: "CH20-0034",
-        name: "Agnes Katende",
-        gender: "Female",
-        dob: "2014-03-15",
-        schoolLevel: "Primary 6",
-        country: "Uganda",
-        language: "Swahili",
-        biography:
-          "Agnes is a thoughtful and determined girl who lives with her mother, grandmother, and three younger brothers in a village near Kampala. Known for her kind heart and helpful nature, she often assists her mother with household chores and loves caring for her younger brothers, especially helping them with their schoolwork.\n\nAgnes likes to read and dreams of becoming a nurse one day so she can help people in her community stay healthy. In her free time, she sings in the church choir and tends to the small flower garden she planted outside their home.",
-        age: 12,
-        sponsorshipStartDate: "2025-12-01",
-        sponsorshipStatus: "Active",
-        imageUrl: "/children/girl2.jpg",
-      },
-      {
-        id: "CH20-0041",
-        name: "Joseph Okello",
-        gender: "Male",
-        dob: "2007-08-22",
-        schoolLevel: "Senior 4",
-        country: "Uganda",
-        language: "Swahili",
-        biography:
-          "Joseph is a hardworking and ambitious young man who excels in science subjects at school. He dreams of studying engineering and helping to build infrastructure in his community.",
-        age: 17,
-        sponsorshipStartDate: "2024-06-10",
-        sponsorshipStatus: "Active",
-        imageUrl: "/children/boy1.png",
-      },
-    ],
-  };
-});
+import { Suspense, useEffect, useState } from "react";
 
-export default async function Page() {
-  const sponsor = await getSponsor();
-  return <SponsorProfilePage sponsor={sponsor} />;
+import { useParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { SponsorProfile } from "@/components/admin/sponsors/types";
+import SponsorProfilePage from "@/components/admin/sponsors/SponsorProfilePage";
+
+export default function SponsorEditPageWrapper() {
+	return (
+		<Suspense
+			fallback={
+				<div className="flex min-h-screen items-center justify-center bg-blue-50">
+					<p className="text-zinc-500">Loading...</p>
+				</div>
+			}
+		>
+			<SponsorEditPage />
+		</Suspense>
+	);
+}
+function SponsorEditPage() {
+	const { id } = useParams<{ id: string }>();
+	const [loading, setLoading] = useState(true);
+	const [notFound, setNotFound] = useState(false);
+	const [sponsor, setSponsor] = useState<SponsorProfile>();
+
+	useEffect(() => {
+		if (!id) return;
+
+		const fetchSponsor = async () => {
+			const res = await fetch(`/api/supabase/sponsors/${id}`, {
+				method: "GET",
+			});
+
+			if (!res.ok) {
+				setNotFound(true);
+				setLoading(false);
+				return;
+			}
+
+			const { sponsor } = await res.json();
+
+			setSponsor(sponsor);
+			setLoading(false);
+		};
+
+		fetchSponsor();
+	}, [id]);
+
+	if (loading) {
+		return (
+			<div className="flex min-h-screen items-center justify-center bg-blue-50">
+				<p className="text-zinc-500">Loading...</p>
+			</div>
+		);
+	}
+
+	if (notFound || !sponsor) {
+		return (
+			<div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-blue-50">
+				<p className="text-xl font-semibold ">Sponsor not found.</p>
+
+				<Button variant="outline">
+					<Link href="/sponsorship/sponsors">← Back to All Sponsors</Link>
+				</Button>
+			</div>
+		);
+	}
+
+	return <SponsorProfilePage sponsor={sponsor} />;
 }

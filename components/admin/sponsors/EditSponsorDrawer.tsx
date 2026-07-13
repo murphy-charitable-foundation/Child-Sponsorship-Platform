@@ -67,6 +67,11 @@ export default function EditSponsorDrawer({
 		});
 	}
 
+	function handleClose() {
+		setError(null);
+		onClose();
+	}
+
 	function handleSponsorTypeUpdate(type: "individual" | "group") {
 		setSponsorType(type);
 
@@ -129,7 +134,7 @@ export default function EditSponsorDrawer({
 	return (
 		<FormDrawer
 			isOpen={isOpen}
-			onClose={onClose}
+			onClose={handleClose}
 			title="Edit Sponsor"
 			formId="edit-sponsor-form"
 			onSubmit={handleSave}
@@ -255,36 +260,6 @@ export default function EditSponsorDrawer({
 							/>
 						</Field>
 					</div>
-					{sponsorType === "group" && (
-						<>
-							<Field label="Group type">
-								<select
-									className={inputCls}
-									value={form?.sponsor_type ?? ""}
-									onChange={(e) =>
-										update("sponsor_type", e.target.value as SponsorType)
-									}
-								>
-									<option value="">Select group description</option>
-									{GROUP_TYPES.map((t) => (
-										<option
-											key={t.key}
-											value={t.key}
-										>
-											{t.label}
-										</option>
-									))}
-								</select>
-							</Field>
-							<Field label="Job title">
-								<input
-									className={inputCls}
-									value={form?.group_name ?? ""}
-									onChange={(e) => update("group_name", e.target.value)}
-								/>
-							</Field>
-						</>
-					)}
 					<Field label="Address line 1">
 						<input
 							className={inputCls}
@@ -344,7 +319,7 @@ export default function EditSponsorDrawer({
 				<h3 className="mb-4 text-base font-semibold text-slate-900">
 					Contact Information
 				</h3>
-				<div className="grid grid-cols-2 gap-3">
+				<div className="grid grid-cols-2 gap-3 mb-4">
 					<Field label="Phone number">
 						<input
 							type="tel"
@@ -362,6 +337,16 @@ export default function EditSponsorDrawer({
 						/>
 					</Field>
 				</div>
+
+				{sponsorType === "group" && (
+					<Field label="Job title">
+						<input
+							className={inputCls}
+							value={form?.job_title ?? ""}
+							onChange={(e) => update("job_title", e.target.value)}
+						/>
+					</Field>
+				)}
 			</section>
 		</FormDrawer>
 	);

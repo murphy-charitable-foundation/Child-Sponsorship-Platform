@@ -167,6 +167,23 @@ export function SponsorsTable({
 		setIsEditOpen(true);
 	}
 
+	function handleSponsorSaved(updated: SponsorProfile) {
+		setSponsors((prev) =>
+			prev.map((c) =>
+				c.id === updated.id
+					? {
+							...c,
+							first_name: updated.first_name,
+							last_name: updated.last_name,
+							sponsor_type: updated.sponsor_type,
+							group_name: updated.group_name ?? c.group_name,
+							country: updated.country,
+						}
+					: c,
+			),
+		);
+	}
+
 	return (
 		<div className="w-full">
 			{error && (
@@ -304,7 +321,7 @@ export function SponsorsTable({
 				sponsor={editSponsor}
 				isOpen={isEditOpen}
 				onClose={() => setIsEditOpen(false)}
-				// onSaved={handleChildSaved}
+				onSaved={handleSponsorSaved}
 			/>
 		</div>
 	);

@@ -1,29 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import Image from "next/image";
 import SponsorSponsorshipsTab from "./SponsorSponsorshipsTab";
 import EditSponsorDrawer from "./EditSponsorDrawer";
-import { SponsorProfile } from "./types";
+import { SponsorProfile, SPONSOR_TYPE_LABELS } from "./types";
+import { ProfileHeader } from "../shared/ProfileHeader";
+import { ProfileTabs } from "../shared/ProfileTabs";
+import { Avatar } from "@heroui/react";
+import { SquarePen } from "lucide-react";
+import { DetailItem } from "../children/DetailItem";
 
-export type SponsoredChild = {
-	id: string;
-	name: string;
-	gender: string;
-	dob: string;
-	schoolLevel: string;
-	country: string;
-	language: string;
-	biography: string;
-	age: number;
-	sponsorshipStartDate: string;
-	sponsorshipStatus: string;
-	imageUrl: string;
-};
+export type SPTabKey = "profile" | "sponsorships" | "reports" | "messages";
 
-type TabKey = "profile" | "sponsorships" | "reports" | "messages";
-
-const TABS: { key: TabKey; label: string }[] = [
+export const SPTabs: { key: SPTabKey; label: string }[] = [
 	{ key: "profile", label: "Profile" },
 	{ key: "sponsorships", label: "Sponsorships" },
 	{ key: "reports", label: "Reports" },
@@ -33,97 +23,108 @@ const TABS: { key: TabKey; label: string }[] = [
 type Props = { sponsor: SponsorProfile };
 
 export default function SponsorProfilePage({ sponsor }: Props) {
-	const [activeTab, setActiveTab] = useState<TabKey>("profile");
+	const [activeTab, setActiveTab] = useState<SPTabKey>("profile");
 	const [isEditOpen, setIsEditOpen] = useState(false);
+
+	const sponsorHeaderData = {
+		id: sponsor.id,
+		full_name:
+			sponsor.sponsor_type === "individual"
+				? `${sponsor.first_name} ${sponsor.last_name}`
+				: (sponsor.group_name ?? ""),
+		enrolled: sponsor.created_at,
+		status: sponsor.status,
+	};
 
 	return (
 		<div className="px-10 py-8">
 			{/* Header */}
-			<h1 className="text-2xl font-semibold text-primary">Sponsor Profile</h1>
-			<Link
+			<ProfileHeader
+				data={sponsorHeaderData}
+				type="sponsor"
 				href="/admin/sponsors"
-				className="mt-2 flex w-fit items-center gap-1 text-sm font-medium text-primary hover:underline"
-			>
-				<span>←</span> Sponsors
-			</Link>
+			/>
 
 			{/* Tabs */}
-			<div className="mt-6 grid grid-cols-4 rounded-2xl bg-slate-100 p-1">
-				{TABS.map((tab) => (
-					<button
-						key={tab.key}
-						onClick={() => setActiveTab(tab.key)}
-						className={`rounded-xl py-2.5 text-center text-sm font-medium transition-colors ${
-							activeTab === tab.key
-								? "bg-primary text-white"
-								: "text-slate-700 hover:text-slate-900"
-						}`}
-					>
-						{tab.label}
-					</button>
-				))}
+			<div className="mt-6">
+				<ProfileTabs
+					tabs={SPTabs}
+					activeTab={activeTab}
+					onChange={setActiveTab}
+				/>
 			</div>
 
 			{/* Profile tab */}
 			{activeTab === "profile" && (
 				<div className="mt-8 flex gap-10">
 					{/* Left — summary cards */}
-					<div className="w-[260px] shrink-0 space-y-3">
-						<SummaryCard
-							label="ID"
-							value={sponsor.id}
-						/>
-						<SummaryCard
-							label="Sponsoring children since"
-							value={sponsor.sponsoringSince}
-						/>
-						<SummaryCard
-							label="Sponsorship status"
-							value={sponsor.sponsorshipStatus}
-							valueClassName="text-green-600"
-						/>
+					<div className="w-[320px] shrink-0">
+						{sponsor.image_url ? (
+							<Image
+								src={sponsor.image_url}
+								alt={`${sponsor.first_name} ${sponsor.last_name}`}
+								className="object-cover object-[center_30%] h-[340px] w-full rounded-xl "
+								width={320}
+								height={340}
+								unoptimized
+								loading="eager"
+							/>
+						) : (
+							<Avatar
+								radius="none"
+								color="primary"
+								className="object-cover object-[center_30%] h-[340px] w-full rounded-xl "
+							/>
+						)}
 					</div>
 
 					{/* Right — details */}
-					<div className="min-w-0 flex-1">
-						<div className="flex items-start justify-between">
-							<h2 className="text-2xl font-semibold text-slate-800">
-								{sponsor.firstName} {sponsor.lastName}
+					<div className="min-w-0 flex-1 border p-6 rounded-md bg-white">
+						<div className="flex justify-between items-center">
+							<h2 className="text-xl font-semibold text-primary">
+								Sponsor Profile
 							</h2>
 							<button
 								onClick={() => setIsEditOpen(true)}
-								className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+								className="flex items-center justify-center"
 							>
-								Edit Profile
+								<SquarePen className="size-5 text-primary" />
 							</button>
 						</div>
 
-						<div className="mt-6 grid grid-cols-2 gap-x-12 gap-y-6">
-							<DetailItem
-								label="Sponsor type"
-								value={sponsor.sponsorType}
-							/>
-							<DetailItem
-								label="Address"
-								value={[
-									sponsor.address.line1,
-									sponsor.address.line2,
-									`${sponsor.address.city}, ${sponsor.address.state} ${sponsor.address.zip}`,
-									sponsor.address.country,
-								]
-									.filter(Boolean)
-									.join("\n")}
-								multiline
-							/>
-							<DetailItem
-								label="Phone number"
-								value={sponsor.phone}
-							/>
-							<DetailItem
-								label="Email"
-								value={sponsor.email}
-							/>
-						</div>
+						<section className="mt-6">
+							<div className="mt-6 grid grid-cols-3 gap-x-12 gap-y-8">
+								<DetailItem
+									label="Sponsor type"
+									value={SPONSOR_TYPE_LABELS[sponsor.sponsor_type]}
+								/>
+								<DetailItem
+									label="Phone Number"
+									value={sponsor.phone_number ?? ""}
+								/>
+								<DetailItem
+									label="Email"
+									value={sponsor.email ?? ""}
+								/>
+								<DetailItem
+									label="Country"
+									value={sponsor.country}
+								/>
+
+								<DetailItem
+									label="address"
+									value={[
+										sponsor.address_line2,
+										sponsor.address_line1,
+										sponsor.city,
+										sponsor.state,
+										sponsor.zip,
+									]
+										.filter(Boolean)
+										.join(" ")}
+								/>
+							</div>
+						</section>
 					</div>
 				</div>
 			)}
@@ -148,46 +149,6 @@ export default function SponsorProfilePage({ sponsor }: Props) {
 				isOpen={isEditOpen}
 				onClose={() => setIsEditOpen(false)}
 			/>
-		</div>
-	);
-}
-
-function SummaryCard({
-	label,
-	value,
-	valueClassName = "",
-}: {
-	label: string;
-	value: string;
-	valueClassName?: string;
-}) {
-	return (
-		<div className="flex items-center justify-between rounded-md border border-slate-300 px-4 py-3 text-sm">
-			<span className="font-semibold uppercase tracking-wide text-slate-700">
-				{label}
-			</span>
-			<span className={valueClassName || "text-slate-800"}>{value}</span>
-		</div>
-	);
-}
-
-function DetailItem({
-	label,
-	value,
-	multiline = false,
-}: {
-	label: string;
-	value: string;
-	multiline?: boolean;
-}) {
-	return (
-		<div>
-			<p className="text-xs uppercase tracking-wide text-slate-500">{label}</p>
-			<p
-				className={`mt-1 text-sm text-slate-800 ${multiline ? "whitespace-pre-line" : ""}`}
-			>
-				{value}
-			</p>
 		</div>
 	);
 }
