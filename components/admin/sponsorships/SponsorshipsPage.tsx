@@ -4,10 +4,7 @@ import { useEffect, useState } from "react";
 import CreateSponsorshipDrawer from "./CreateSponsorshipDrawer";
 import SponsorshipFilter from "./SponsorshipFilter";
 import { Sponsorship } from "./types";
-import { createClient } from "@/lib/supabase/client";
 import SponsorshipTable from "./SponsorshipTable";
-
-const supabase = createClient();
 
 export default function SponsorshipsPage() {
 	const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -27,41 +24,19 @@ export default function SponsorshipsPage() {
 	useEffect(() => {
 		async function fetchSponsorships() {
 			try {
-				const { data, error } = await supabase
-					.from("sponsorships")
-					.select(
-						"*, sponsors(first_name, last_name, group_name), children(first_name, last_name, location)",
-					)
-					.order("start_date_time");
+				const res = await fetch("/api/supabase/sponsorships");
 
-				if (error) {
+				if (!res.ok) {
 					setError("Failed to get sponsorships data");
-					console.error("Error fetching sponsorships:", error);
+					console.error("Error fetching sponsorships:", await res.text());
 					return;
 				}
 
-				if (!data || data.length === 0) {
-					setSponsorships([]);
-					return;
-				}
+				const { sponsorships: data } = await res.json();
 
-				setSponsorships(
-					data.map((s) => {
-						return {
-							...s,
-							sponsor_name: s.sponsors
-								? s.sponsors.group_name ||
-									`${s.sponsors.first_name} ${s.sponsors.last_name}`
-								: "",
-							child_name: s.children
-								? `${s.children.first_name} ${s.children.last_name}`
-								: "",
-							child_location: s.children?.location ?? "",
-						};
-					}),
-				);
+				setSponsorships(data as Sponsorship[]);
 			} catch (err) {
-				console.error("Failed to fetch sponsors:", err);
+				console.error("Failed to fetch sponsorships:", err);
 			}
 		}
 
@@ -140,7 +115,6 @@ export default function SponsorshipsPage() {
 			</div>
 
 			{/* Table */}
-
 			{error && (
 				<div className="mb-4 rounded-md bg-danger-50 px-4 py-3 text-sm text-danger">
 					{error}

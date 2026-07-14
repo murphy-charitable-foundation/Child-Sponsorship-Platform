@@ -1,12 +1,6 @@
 "use client";
 
-import {
-	SponsorGroupTableData,
-	SponsorProfile,
-	SponsorTableData,
-} from "./types";
-import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { SponsorGroupTableData, SponsorTableData } from "./types";
 import {
 	Table,
 	TableHeader,
@@ -17,178 +11,20 @@ import {
 	Link,
 	Chip,
 } from "@heroui/react";
-import EditSponsorDrawer from "./EditSponsorDrawer";
 
 interface SponsorsTableProps {
-	activeTab: "individuals" | "groups";
-	searchValue?: string;
-	locationValue?: string;
-	statusValue?: string;
-	typeValue?: string;
+	data: (SponsorGroupTableData | SponsorTableData)[];
+	isGroupsTab: boolean;
+	onEdit: (id: string) => void;
 }
 
-const supabase = createClient();
-
 export function SponsorsTable({
-	activeTab,
-	searchValue = "",
-	locationValue = "all",
-	statusValue = "all",
-	typeValue = "all",
+	data,
+	isGroupsTab,
+	onEdit,
 }: SponsorsTableProps) {
-	const isGroupsTab = activeTab === "groups";
-	const [sponsors, setSponsors] = useState<
-		(SponsorTableData | SponsorGroupTableData)[]
-	>([]);
-	const [error, setError] = useState<string | null>(null);
-	const [isEditOpen, setIsEditOpen] = useState(false);
-	const [editSponsor, setEditSponsor] = useState<SponsorProfile | null>(null);
-
-	useEffect(() => {
-		async function fetchSponsors() {
-			try {
-				const { data, error: sponsorsError } = await supabase
-					.from("sponsors")
-					.select(
-						"last_name, first_name, id, country, status, sponsor_type, sponsorships(count)",
-					)
-					.eq("sponsor_type", "individual")
-					.order("created_at");
-
-				if (sponsorsError) {
-					setError("Failed to get sponsors data");
-					console.error("Error fetching sponsors:", sponsorsError);
-					return;
-				}
-
-				if (!data || data.length === 0) {
-					setSponsors([]);
-					return;
-				}
-
-				const sponsorsWithCounts = data.map((s) => ({
-					...s,
-					children_count: s.sponsorships?.[0]?.count ?? 0,
-				}));
-
-				setSponsors(sponsorsWithCounts as SponsorTableData[]);
-			} catch (err) {
-				console.error("Failed to fetch sponsors:", err);
-			}
-		}
-
-		async function fetchGroupSponsors() {
-			try {
-				const { data, error: sponsorsError } = await supabase
-					.from("sponsors")
-					.select(
-						"id, country, status, sponsor_type, group_name, sponsorships(count)",
-					)
-					.neq("sponsor_type", "individual")
-					.order("created_at");
-
-				if (sponsorsError) {
-					setError("Failed to get sponsors data");
-					console.error("Error fetching sponsors:", sponsorsError);
-					return;
-				}
-
-				if (!data || data.length === 0) {
-					setSponsors([]);
-					return;
-				}
-
-				const sponsorsWithCounts = data.map((s) => ({
-					...s,
-					children_count: s.sponsorships?.[0]?.count ?? 0,
-				}));
-
-				setSponsors(sponsorsWithCounts as SponsorGroupTableData[]);
-			} catch (err) {
-				console.error("Failed to fetch sponsors:", err);
-			}
-		}
-
-		if (isGroupsTab) {
-			fetchGroupSponsors();
-		} else {
-			fetchSponsors();
-		}
-	}, [isGroupsTab]);
-
-	const filtered = sponsors.filter((item) => {
-		// Search filter
-		const searchMatches = isGroupsTab
-			? !searchValue ||
-				(item as SponsorGroupTableData).group_name
-					.toLowerCase()
-					.includes(searchValue.toLowerCase())
-			: !searchValue ||
-				(item as SponsorTableData).first_name
-					.toLowerCase()
-					.includes(searchValue.toLowerCase()) ||
-				(item as SponsorTableData).last_name
-					.toLowerCase()
-					.includes(searchValue.toLowerCase());
-
-		// Location filter
-		const locationMatches =
-			locationValue === "all" ||
-			item.country?.toLowerCase() === locationValue.toLowerCase();
-
-		// Status filter
-		const statusMatches = statusValue === "all" || item.status === statusValue;
-
-		// Type filter (for groups tab only)
-		const typeMatches =
-			!isGroupsTab ||
-			typeValue === "all" ||
-			(item as SponsorGroupTableData).sponsor_type.toLowerCase() ===
-				typeValue.toLowerCase();
-
-		return searchMatches && locationMatches && statusMatches && typeMatches;
-	});
-
-	async function openEdit(id: string) {
-		const res = await fetch(`/api/supabase/sponsors/${id}`, {
-			method: "GET",
-		});
-
-		if (!res.ok) {
-			return;
-		}
-
-		const { sponsor } = await res.json();
-		console.log("s", sponsor);
-
-		setEditSponsor(sponsor);
-		setIsEditOpen(true);
-	}
-
-	function handleSponsorSaved(updated: SponsorProfile) {
-		setSponsors((prev) =>
-			prev.map((c) =>
-				c.id === updated.id
-					? {
-							...c,
-							first_name: updated.first_name,
-							last_name: updated.last_name,
-							sponsor_type: updated.sponsor_type,
-							group_name: updated.group_name ?? c.group_name,
-							country: updated.country,
-						}
-					: c,
-			),
-		);
-	}
-
 	return (
 		<div className="w-full">
-			{error && (
-				<div className="mb-4 rounded-md bg-danger-50 px-4 py-3 text-sm text-danger">
-					{error}
-				</div>
-			)}
 			<Table
 				aria-label="Sponsor table"
 				classNames={{
@@ -223,7 +59,7 @@ export function SponsorsTable({
 				</TableHeader>
 				<TableBody
 					emptyContent={`No ${isGroupsTab ? "groups" : "sponsors"} found`}
-					items={filtered}
+					items={data}
 				>
 					{(item) =>
 						isGroupsTab
@@ -269,7 +105,7 @@ export function SponsorsTable({
 													</Link>
 													<span className="mx-1 text-slate-300">|</span>
 													<Link
-														onPress={() => openEdit(group.id)}
+														onPress={() => onEdit(group.id)}
 														className="cursor-pointer text-primary hover:underline"
 													>
 														Edit
@@ -321,7 +157,7 @@ export function SponsorsTable({
 													</Link>
 													<span className="mx-1 text-slate-300">|</span>
 													<Link
-														onPress={() => openEdit(sponsor.id)}
+														onPress={() => onEdit(sponsor.id)}
 														className="cursor-pointer text-primary hover:underline"
 													>
 														Edit
@@ -334,13 +170,6 @@ export function SponsorsTable({
 					}
 				</TableBody>
 			</Table>
-
-			<EditSponsorDrawer
-				sponsor={editSponsor}
-				isOpen={isEditOpen}
-				onClose={() => setIsEditOpen(false)}
-				onSaved={handleSponsorSaved}
-			/>
 		</div>
 	);
 }

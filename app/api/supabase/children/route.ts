@@ -15,6 +15,51 @@ function validate(data: CreateChild): string | null {
 	return null;
 }
 
+export async function GET() {
+	const supabase = await createClient();
+
+	const {
+		data: { user },
+		error: authError,
+	} = await supabase.auth.getUser();
+
+	if (authError || !user) {
+		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+	}
+
+	const { data: adminRow } = await supabase
+		.from("admins")
+		.select("id")
+		.eq("id", user.id)
+		.maybeSingle();
+
+	const { data: superAdminRow } = await supabase
+		.from("super_admins")
+		.select("id")
+		.eq("id", user.id)
+		.maybeSingle();
+
+	if (!adminRow && !superAdminRow) {
+		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+	}
+
+	const { data, error: childrenError } = await supabase
+		.from("children_with_ages")
+		.select(
+			"last_name, first_name, id, age, gender, location, created_at, status",
+		)
+		.order("created_at");
+
+	if (childrenError) {
+		return NextResponse.json(
+			{ error: "Failed to get sponsors data" },
+			{ status: 500 },
+		);
+	}
+
+	return NextResponse.json({ children: data });
+}
+
 export async function POST(req: NextRequest) {
 	const supabase = await createClient();
 
@@ -27,21 +72,19 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
 
-	const isAdmin = await supabase
+	const { data: adminRow } = await supabase
 		.from("admins")
 		.select("id")
 		.eq("id", user.id)
-		.single()
-		.then(({ data }) => !!data);
+		.maybeSingle();
 
-	const isSuperAdmin = await supabase
+	const { data: superAdminRow } = await supabase
 		.from("super_admins")
 		.select("id")
 		.eq("id", user.id)
-		.single()
-		.then(({ data }) => !!data);
+		.maybeSingle();
 
-	if (!isAdmin && !isSuperAdmin) {
+	if (!adminRow && !superAdminRow) {
 		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	}
 
@@ -133,21 +176,19 @@ export async function PATCH(req: NextRequest) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
 
-	const isAdmin = await supabase
+	const { data: adminRow } = await supabase
 		.from("admins")
 		.select("id")
 		.eq("id", user.id)
-		.single()
-		.then(({ data }) => !!data);
+		.maybeSingle();
 
-	const isSuperAdmin = await supabase
+	const { data: superAdminRow } = await supabase
 		.from("super_admins")
 		.select("id")
 		.eq("id", user.id)
-		.single()
-		.then(({ data }) => !!data);
+		.maybeSingle();
 
-	if (!isAdmin && !isSuperAdmin) {
+	if (!adminRow && !superAdminRow) {
 		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	}
 

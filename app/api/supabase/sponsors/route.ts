@@ -15,6 +15,70 @@ function validate(data: CreateSponsor): string | null {
 	return null;
 }
 
+export async function GET(req: NextRequest) {
+	const supabase = await createClient();
+
+	const {
+		data: { user },
+		error: authError,
+	} = await supabase.auth.getUser();
+
+	if (authError || !user) {
+		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+	}
+
+	const { data: adminRow } = await supabase
+		.from("admins")
+		.select("id")
+		.eq("id", user.id)
+		.maybeSingle();
+
+	const { data: superAdminRow } = await supabase
+		.from("super_admins")
+		.select("id")
+		.eq("id", user.id)
+		.maybeSingle();
+
+	if (!adminRow && !superAdminRow) {
+		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+	}
+
+	const isGroupsTab =
+		req.nextUrl.searchParams.get("tab") === "groups";
+
+	const adminClient = createAdminClient();
+
+	const { data, error: sponsorsError } = isGroupsTab
+		? await adminClient
+				.from("sponsors")
+				.select(
+					"id, country, status, sponsor_type, group_name, sponsorships(count)",
+				)
+				.neq("sponsor_type", "individual")
+				.order("created_at")
+		: await adminClient
+				.from("sponsors")
+				.select(
+					"last_name, first_name, id, country, status, sponsor_type, sponsorships(count)",
+				)
+				.eq("sponsor_type", "individual")
+				.order("created_at");
+
+	if (sponsorsError) {
+		return NextResponse.json(
+			{ error: "Failed to get sponsors data" },
+			{ status: 500 },
+		);
+	}
+
+	const sponsors = (data ?? []).map((s) => ({
+		...s,
+		children_count: s.sponsorships?.[0]?.count ?? 0,
+	}));
+
+	return NextResponse.json({ sponsors });
+}
+
 export async function POST(req: NextRequest) {
 	const supabase = await createClient();
 
@@ -27,21 +91,19 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
 
-	const isAdmin = await supabase
+	const { data: adminRow } = await supabase
 		.from("admins")
 		.select("id")
 		.eq("id", user.id)
-		.single()
-		.then(({ data }) => !!data);
+		.maybeSingle();
 
-	const isSuperAdmin = await supabase
+	const { data: superAdminRow } = await supabase
 		.from("super_admins")
 		.select("id")
 		.eq("id", user.id)
-		.single()
-		.then(({ data }) => !!data);
+		.maybeSingle();
 
-	if (!isAdmin && !isSuperAdmin) {
+	if (!adminRow && !superAdminRow) {
 		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	}
 
@@ -105,21 +167,19 @@ export async function PATCH(req: NextRequest) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
 
-	const isAdmin = await supabase
+	const { data: adminRow } = await supabase
 		.from("admins")
 		.select("id")
 		.eq("id", user.id)
-		.single()
-		.then(({ data }) => !!data);
+		.maybeSingle();
 
-	const isSuperAdmin = await supabase
+	const { data: superAdminRow } = await supabase
 		.from("super_admins")
 		.select("id")
 		.eq("id", user.id)
-		.single()
-		.then(({ data }) => !!data);
+		.maybeSingle();
 
-	if (!isAdmin && !isSuperAdmin) {
+	if (!adminRow && !superAdminRow) {
 		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	}
 

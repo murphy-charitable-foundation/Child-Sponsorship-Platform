@@ -10,12 +10,8 @@ import {
 	Link,
 	Chip,
 } from "@heroui/react";
-import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
-import { ChildTableData, ChildProfile, StatusType } from "./types";
-import EditChildDrawer from "./EditChildDrawer";
 
-const supabase = createClient();
+import { ChildTableData, StatusType } from "./types";
 
 export function statusChipColor(status: StatusType) {
 	if (status === "Active") return "success";
@@ -24,106 +20,15 @@ export function statusChipColor(status: StatusType) {
 }
 
 type ChildrenTableProps = {
-	selectedStatus: Set<string>;
-	selectedGender: Set<string>;
-	searchQuery: string;
+	data: ChildTableData[];
+	onEdit: (id: string) => void;
 };
 
-export default function ChildrenTable({
-	selectedStatus,
-	selectedGender,
-	searchQuery,
-}: ChildrenTableProps) {
+export default function ChildrenTable({ data, onEdit }: ChildrenTableProps) {
 	const router = useRouter();
-	const [children, setChildren] = useState<ChildTableData[]>([]);
-	const [error, setError] = useState<string | null>(null);
-	const [isEditOpen, setIsEditOpen] = useState(false);
-	const [editChild, setEditChild] = useState<ChildProfile | null>(null);
-
-	useEffect(() => {
-		setError(null);
-		async function fetchChildren() {
-			try {
-				const { data, error: childrenError } = await supabase
-					.from("children_with_ages")
-					.select(
-						"last_name, first_name, id, age, gender, location, created_at, status",
-					)
-					.order("created_at");
-
-				if (childrenError) {
-					setError("Failed to get children data");
-					console.log(childrenError);
-					return;
-				}
-				setChildren(data);
-			} catch (err) {
-				setError("Failed to get children data");
-				console.log("Failed to fetch children:", err);
-			}
-		}
-		fetchChildren();
-	}, []);
-
-	// Filter rows based on selection
-	const filtered = children.filter((c) => {
-		// Status filter
-		const statusMatches =
-			selectedStatus.has("all") || selectedStatus.has(c.status.toLowerCase());
-
-		// Gender filter
-		const genderMatches =
-			selectedGender.size === 0 || selectedGender.has(c.gender.toLowerCase());
-
-		// Search filter
-		const searchMatches =
-			!searchQuery ||
-			c.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-			c.last_name.toLowerCase().includes(searchQuery.toLowerCase());
-
-		return statusMatches && genderMatches && searchMatches;
-	});
-
-	async function openEdit(id: string) {
-		const res = await fetch(`/api/supabase/children/${id}`, {
-			method: "GET",
-		});
-
-		if (!res.ok) {
-			return;
-		}
-
-		const { child } = await res.json();
-
-		setEditChild(child);
-		setIsEditOpen(true);
-	}
-
-	function handleChildSaved(updated: ChildProfile) {
-		setChildren((prev) =>
-			prev.map((c) =>
-				c.id === updated.id
-					? {
-							...c,
-							first_name: updated.first_name,
-							last_name: updated.last_name,
-							age: updated.age,
-							gender: updated.gender,
-							location: updated.location,
-							status: updated.status,
-						}
-					: c,
-			),
-		);
-	}
 
 	return (
 		<div className="w-full">
-			{error && (
-				<div className="mb-4 rounded-md bg-danger-50 px-4 py-3 text-sm text-danger">
-					{error}
-				</div>
-			)}
 			<Table
 				aria-label="Children table"
 				onRowAction={(key) => router.push(`/admin/children/${key}`)}
@@ -153,7 +58,7 @@ export default function ChildrenTable({
 
 				<TableBody
 					emptyContent={"No children found"}
-					items={filtered}
+					items={data}
 				>
 					{(r) => (
 						<TableRow key={r.id}>
@@ -187,7 +92,7 @@ export default function ChildrenTable({
 									</Link>
 									<span className="mx-1 text-slate-300">|</span>
 									<Link
-										onPress={() => openEdit(r.id)}
+										onPress={() => onEdit(r.id)}
 										className="cursor-pointer text-primary hover:underline"
 									>
 										Edit
@@ -198,13 +103,6 @@ export default function ChildrenTable({
 					)}
 				</TableBody>
 			</Table>
-
-			<EditChildDrawer
-				child={editChild}
-				isOpen={isEditOpen}
-				onClose={() => setIsEditOpen(false)}
-				onSaved={handleChildSaved}
-			/>
 		</div>
 	);
 }
