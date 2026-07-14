@@ -1,6 +1,4 @@
 "use client";
-
-import { useEffect, useState } from "react";
 import {
 	Chip,
 	Table,
@@ -13,46 +11,19 @@ import {
 import { DonationTableData } from "../donations/types";
 import { formatDate } from "../sponsorships/SponsorshipTable";
 
-export default function RecentDonationsTable() {
-	const [donations, setDonations] = useState<DonationTableData[]>([]);
-	const [error, setError] = useState<string | null>(null);
+type Props = {
+	donations: DonationTableData[];
+};
 
-	useEffect(() => {
-		setError(null);
-		async function fetchDonations() {
-			try {
-				const res = await fetch(`/api/supabase/donations`);
-
-				if (!res.ok) {
-					setError("Failed to get donations data");
-					console.error("Error fetching donations:", await res.text());
-					return;
-				}
-
-				const { data } = await res.json();
-
-				setDonations(data);
-			} catch (err) {
-				setError("Failed to get donations data");
-				console.log("Failed to fetch donations:", err);
-			}
-		}
-		fetchDonations();
-	}, []);
+export default function RecentDonationsTable({ donations }: Props) {
 	return (
 		<div className="p-2">
-			{error && (
-				<div className="mb-4 rounded-md bg-danger-50 px-4 py-3 text-sm text-danger">
-					{error}
-				</div>
-			)}
-
 			<Table
 				aria-label="Recent donations table"
 				classNames={{
 					wrapper: "rounded-md border border-divider p-0 shadow-none",
 					th: "!rounded-none bg-default-100 px-2 py-1 text-xs shadow-none",
-					td: "px-2 py-1 text-xs",
+					td: "px-2 py-1 text-sm",
 				}}
 			>
 				<TableHeader>
@@ -63,14 +34,16 @@ export default function RecentDonationsTable() {
 					<TableColumn>Status</TableColumn>
 				</TableHeader>
 				<TableBody>
-					{donations.slice(0, 6).map((r) => (
+					{donations.map((r) => (
 						<TableRow key={r.id}>
 							<TableCell>{r.id}</TableCell>
-							<TableCell>
+							<TableCell className="whitespace-nowrap">
 								{r.first_name} {r.last_name}
 							</TableCell>
 							<TableCell>{r.amount}</TableCell>
-							<TableCell>{formatDate(r.date_time)}</TableCell>
+							<TableCell className="whitespace-nowrap">
+								{formatDate(r.date_time)}
+							</TableCell>
 							<TableCell>
 								<Chip
 									size="sm"

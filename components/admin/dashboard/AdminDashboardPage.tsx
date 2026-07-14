@@ -4,11 +4,14 @@ import { ChartPlaceholder } from "../../../components/admin/dashboard/ChartPlace
 import { ActivityPlaceholder } from "../../../components/admin/dashboard/ActivityPlaceholder";
 import RecentDonationsTable from "../../../components/admin/dashboard/RecentDonationsTable";
 import { useEffect, useState } from "react";
+import { DonationTableData } from "../donations/types";
+import MonthlyDonationChart from "./MonthlyDonationChart";
 
 export default function AdminDashboardPage() {
 	const [activeSponsorships, setActiveSponsorships] = useState<number>(0);
 	const [childrenAwaitingSponsorship, setChildrenAwaitingSponsorship] =
 		useState<number>(0);
+	const [donations, setDonations] = useState<DonationTableData[]>([]);
 	useEffect(() => {
 		async function fetchActiveSponsorships() {
 			try {
@@ -56,6 +59,26 @@ export default function AdminDashboardPage() {
 
 		fetchChildrenAwaitingSponsorship();
 	}, []);
+
+	useEffect(() => {
+		async function fetchDonations() {
+			try {
+				const res = await fetch(`/api/supabase/donations`);
+
+				if (!res.ok) {
+					console.error("Error fetching donations:", await res.text());
+					return;
+				}
+
+				const { data } = await res.json();
+
+				setDonations(data);
+			} catch (err) {
+				console.log("Failed to fetch donations:", err);
+			}
+		}
+		fetchDonations();
+	}, []);
 	return (
 		<div className="space-y-10">
 			<div>
@@ -91,7 +114,7 @@ export default function AdminDashboardPage() {
 
 				<div className="lg:col-span-2">
 					<PanelCard title="Monthly Donations">
-						<ChartPlaceholder label="Column Chart" />
+						<MonthlyDonationChart donations={donations} />
 					</PanelCard>
 				</div>
 			</div>
@@ -108,7 +131,7 @@ export default function AdminDashboardPage() {
 					title="Recent Donations"
 					className="lg:col-span-3"
 				>
-					<RecentDonationsTable />
+					<RecentDonationsTable donations={donations.slice(0, 6)} />
 				</PanelCard>
 			</div>
 		</div>
