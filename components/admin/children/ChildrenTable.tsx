@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
 	Table,
@@ -8,7 +7,7 @@ import {
 	TableBody,
 	TableRow,
 	TableCell,
-	Button,
+	Link,
 	Chip,
 } from "@heroui/react";
 import { useEffect, useState } from "react";
@@ -127,9 +126,18 @@ export default function ChildrenTable({
 			)}
 			<Table
 				aria-label="Children table"
-				removeWrapper
 				onRowAction={(key) => router.push(`/admin/children/${key}`)}
-				classNames={{ tr: "cursor-pointer" }}
+				classNames={{
+					wrapper:
+						"mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white p-0 shadow-none",
+					table: "w-full text-sm",
+					thead: "[&>tr]:bg-slate-50",
+					th: "!rounded-none border-b border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500",
+					tbody: "divide-y divide-slate-100",
+					tr: "cursor-pointer hover:bg-slate-50",
+					td: "px-4 py-3",
+					emptyWrapper: "px-4 py-8 text-center text-slate-400",
+				}}
 			>
 				<TableHeader>
 					<TableColumn>LAST NAME</TableColumn>
@@ -149,12 +157,12 @@ export default function ChildrenTable({
 				>
 					{(r) => (
 						<TableRow key={r.id}>
-							<TableCell>{r.last_name}</TableCell>
-							<TableCell>{r.first_name}</TableCell>
-							<TableCell>{r.id}</TableCell>
-							<TableCell>{r.age}</TableCell>
-							<TableCell>{r.gender}</TableCell>
-							<TableCell>{r.location}</TableCell>
+							<TableCell className="text-slate-800">{r.last_name}</TableCell>
+							<TableCell className="text-slate-800">{r.first_name}</TableCell>
+							<TableCell className="text-slate-600">{r.id}</TableCell>
+							<TableCell className="text-slate-600">{r.age}</TableCell>
+							<TableCell className="text-slate-600">{r.gender}</TableCell>
+							<TableCell className="text-slate-600">{r.location}</TableCell>
 							<TableCell>
 								<Chip
 									size="md"
@@ -166,26 +174,24 @@ export default function ChildrenTable({
 									{r.status}
 								</Chip>
 							</TableCell>
-							<TableCell>{r.created_at.split("T")[0]}</TableCell>
+							<TableCell className="text-slate-600">
+								{r.created_at.split("T")[0]}
+							</TableCell>
 							<TableCell>
-								<div className="flex gap-2">
-									<Button
-										as={Link}
+								<div className="flex items-center whitespace-nowrap">
+									<Link
 										href={`/admin/children/${r.id}`}
-										size="sm"
-										radius="md"
-										color="primary"
+										className="cursor-pointer text-primary hover:underline"
 									>
 										View
-									</Button>
-									<Button
+									</Link>
+									<span className="mx-1 text-slate-300">|</span>
+									<Link
 										onPress={() => openEdit(r.id)}
-										size="sm"
-										radius="md"
-										color="primary"
+										className="cursor-pointer text-primary hover:underline"
 									>
 										Edit
-									</Button>
+									</Link>
 								</div>
 							</TableCell>
 						</TableRow>

@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { KpiCard } from "@/components/admin/dashboard/KpiCard";
-import { PanelCard } from "@/components/admin/dashboard/PanelCard";
 import ChildrenFilters from "@/components/admin/children/ChildrenFilters";
 import ChildrenTable from "@/components/admin/children/ChildrenTable";
 
@@ -15,7 +14,7 @@ export default function ChildrenPage() {
 	const [searchQuery, setSearchQuery] = useState("");
 
 	return (
-		<div className="space-y-10">
+		<div>
 			{/* header */}
 			<div className="flex items-center justify-between">
 				<h1 className="text-2xl font-semibold text-primary">Children</h1>
@@ -28,7 +27,7 @@ export default function ChildrenPage() {
 			</div>
 
 			{/* KPI */}
-			<div className="grid w-full grid-cols-1 gap-10 md:grid-cols-3">
+			<div className="mt-6 grid grid-cols-3 gap-10">
 				<KpiCard
 					title="Children in Program"
 					subtitle="Need KPI visualization"
@@ -43,27 +42,24 @@ export default function ChildrenPage() {
 				/>
 			</div>
 
-			{/* BOX containing Filters + Table */}
-			<PanelCard
-				title=""
-				className="w-full"
-			>
-				<div className="space-y-8">
-					<ChildrenFilters
-						selectedStatus={selectedStatus}
-						setSelectedStatus={setSelectedStatus}
-						selectedGender={selectedGender}
-						setSelectedGender={setSelectedGender}
-						searchQuery={searchQuery}
-						setSearchQuery={setSearchQuery}
-					/>
-					<ChildrenTable
-						selectedStatus={selectedStatus}
-						selectedGender={selectedGender}
-						searchQuery={searchQuery}
-					/>
-				</div>
-			</PanelCard>
+			{/* Filters */}
+			<div className="mt-6">
+				<ChildrenFilters
+					selectedStatus={selectedStatus}
+					setSelectedStatus={setSelectedStatus}
+					selectedGender={selectedGender}
+					setSelectedGender={setSelectedGender}
+					searchQuery={searchQuery}
+					setSearchQuery={setSearchQuery}
+				/>
+			</div>
+
+			{/* Table */}
+			<ChildrenTable
+				selectedStatus={selectedStatus}
+				selectedGender={selectedGender}
+				searchQuery={searchQuery}
+			/>
 		</div>
 	);
 }

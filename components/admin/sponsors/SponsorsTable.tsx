@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import {
 	SponsorGroupTableData,
 	SponsorProfile,
@@ -15,7 +14,7 @@ import {
 	TableBody,
 	TableRow,
 	TableCell,
-	Button,
+	Link,
 	Chip,
 } from "@heroui/react";
 import EditSponsorDrawer from "./EditSponsorDrawer";
@@ -37,7 +36,6 @@ export function SponsorsTable({
 	statusValue = "all",
 	typeValue = "all",
 }: SponsorsTableProps) {
-	const router = useRouter();
 	const isGroupsTab = activeTab === "groups";
 	const [sponsors, setSponsors] = useState<
 		(SponsorTableData | SponsorGroupTableData)[]
@@ -193,7 +191,17 @@ export function SponsorsTable({
 			)}
 			<Table
 				aria-label="Sponsor table"
-				removeWrapper
+				classNames={{
+					wrapper:
+						"mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white p-0 shadow-none",
+					table: "w-full text-sm",
+					thead: "[&>tr]:bg-slate-50",
+					th: "!rounded-none border-b border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500",
+					tbody: "divide-y divide-slate-100",
+					tr: "hover:bg-slate-50",
+					td: "px-4 py-3",
+					emptyWrapper: "px-4 py-8 text-center text-slate-400",
+				}}
 			>
 				<TableHeader>
 					{isGroupsTab ? (
@@ -223,10 +231,18 @@ export function SponsorsTable({
 									const group = item as SponsorGroupTableData;
 									return (
 										<TableRow key={group.id}>
-											<TableCell>{group.group_name}</TableCell>
-											<TableCell>{group.sponsor_type}</TableCell>
-											<TableCell>{group.id}</TableCell>
-											<TableCell>{group.country}</TableCell>
+											<TableCell className="text-slate-800">
+												{group.group_name}
+											</TableCell>
+											<TableCell className="text-slate-800">
+												{group.sponsor_type}
+											</TableCell>
+											<TableCell className="text-slate-600">
+												{group.id}
+											</TableCell>
+											<TableCell className="text-slate-600">
+												{group.country}
+											</TableCell>
 											<TableCell>
 												<Chip
 													size="md"
@@ -240,27 +256,24 @@ export function SponsorsTable({
 													{group.status}
 												</Chip>
 											</TableCell>
-											<TableCell>{group.children_count}</TableCell>
+											<TableCell className="text-slate-600">
+												{group.children_count}
+											</TableCell>
 											<TableCell>
-												<div className="flex gap-2">
-													<Button
-														onPress={() =>
-															router.push(`/admin/sponsors/${group.id}`)
-														}
-														size="sm"
-														radius="md"
-														color="primary"
+												<div className="flex items-center whitespace-nowrap">
+													<Link
+														href={`/admin/sponsors/${group.id}`}
+														className="cursor-pointer text-primary hover:underline"
 													>
 														View
-													</Button>
-													<Button
+													</Link>
+													<span className="mx-1 text-slate-300">|</span>
+													<Link
 														onPress={() => openEdit(group.id)}
-														size="sm"
-														radius="md"
-														color="primary"
+														className="cursor-pointer text-primary hover:underline"
 													>
 														Edit
-													</Button>
+													</Link>
 												</div>
 											</TableCell>
 										</TableRow>
@@ -270,10 +283,18 @@ export function SponsorsTable({
 									const sponsor = item as SponsorTableData;
 									return (
 										<TableRow key={sponsor.id}>
-											<TableCell>{sponsor.last_name}</TableCell>
-											<TableCell>{sponsor.first_name}</TableCell>
-											<TableCell>{sponsor.id}</TableCell>
-											<TableCell>{sponsor.country}</TableCell>
+											<TableCell className="text-slate-800">
+												{sponsor.last_name}
+											</TableCell>
+											<TableCell className="text-slate-800">
+												{sponsor.first_name}
+											</TableCell>
+											<TableCell className="text-slate-600">
+												{sponsor.id}
+											</TableCell>
+											<TableCell className="text-slate-600">
+												{sponsor.country}
+											</TableCell>
 											<TableCell>
 												<Chip
 													size="md"
@@ -287,27 +308,24 @@ export function SponsorsTable({
 													{sponsor.status}
 												</Chip>
 											</TableCell>
-											<TableCell>{sponsor.children_count}</TableCell>
+											<TableCell className="text-slate-600">
+												{sponsor.children_count}
+											</TableCell>
 											<TableCell>
-												<div className="flex gap-2">
-													<Button
-														onPress={() =>
-															router.push(`/admin/sponsors/${sponsor.id}`)
-														}
-														size="sm"
-														radius="md"
-														color="primary"
+												<div className="flex items-center whitespace-nowrap">
+													<Link
+														href={`/admin/sponsors/${sponsor.id}`}
+														className="cursor-pointer text-primary hover:underline"
 													>
 														View
-													</Button>
-													<Button
+													</Link>
+													<span className="mx-1 text-slate-300">|</span>
+													<Link
 														onPress={() => openEdit(sponsor.id)}
-														size="sm"
-														radius="md"
-														color="primary"
+														className="cursor-pointer text-primary hover:underline"
 													>
 														Edit
-													</Button>
+													</Link>
 												</div>
 											</TableCell>
 										</TableRow>
