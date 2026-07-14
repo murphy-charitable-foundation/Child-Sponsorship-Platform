@@ -165,8 +165,8 @@ export default function SponsorshipFilter({
 						>
 							<SelectItem key="all">All frequencies</SelectItem>
 							<SelectItem key="monthly">Monthly</SelectItem>
-							<SelectItem key="one-time">One-time</SelectItem>
 							<SelectItem key="annual">Annual</SelectItem>
+							<SelectItem key="one-time">One-time</SelectItem>
 						</Select>
 					</div>
 
