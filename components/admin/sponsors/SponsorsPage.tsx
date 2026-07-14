@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { KpiCard } from "@/components/admin/dashboard/KpiCard";
+import { KpiCard } from "@/components/admin/shared/KpiCard";
 import { SponsorsFilter } from "./SponsorsFilter";
 
 import { TabSelection } from "./TabSelection";
@@ -29,6 +29,9 @@ export default function SponsorPage() {
 	const [sponsors, setSponsors] = useState<
 		(SponsorTableData | SponsorGroupTableData)[]
 	>([]);
+	const [activeSponsorships, setActiveSponsorships] = useState(0);
+	const [childrenAwaitingSponsorship, setChildrenAwaitingSponsorship] =
+		useState(0);
 
 	const isGroupsTab = activeTab === "groups";
 
@@ -55,6 +58,56 @@ export default function SponsorPage() {
 
 		fetchSponsors();
 	}, [isGroupsTab]);
+
+	useEffect(() => {
+		async function fetchActiveSponsorships() {
+			try {
+				const res = await fetch("/api/supabase/sponsorships/active-count");
+
+				if (!res.ok) {
+					console.error(
+						"Error fetching active sponsorships:",
+						await res.text(),
+					);
+					return;
+				}
+
+				const { activeSponsorships } = await res.json();
+
+				setActiveSponsorships(activeSponsorships ?? 0);
+			} catch (err) {
+				console.error("Failed to fetch active sponsorships:", err);
+			}
+		}
+
+		fetchActiveSponsorships();
+	}, []);
+
+	useEffect(() => {
+		async function fetchChildrenAwaitingSponsorship() {
+			try {
+				const res = await fetch("/api/supabase/children/awaiting-count");
+
+				if (!res.ok) {
+					console.error(
+						"Error fetching children awaiting sponsorship:",
+						await res.text(),
+					);
+					return;
+				}
+
+				const { childrenAwaitingSponsorship } = await res.json();
+
+				setChildrenAwaitingSponsorship(childrenAwaitingSponsorship ?? 0);
+			} catch (err) {
+				console.error("Failed to fetch children awaiting sponsorship:", err);
+			}
+		}
+
+		fetchChildrenAwaitingSponsorship();
+	}, []);
+
+	const uniqueSponsors = sponsors.length ?? 0;
 
 	const filtered = sponsors.filter((item) => {
 		// Search filter
@@ -135,15 +188,15 @@ export default function SponsorPage() {
 			<div className="mt-6 grid w-full grid-cols-3 gap-10">
 				<KpiCard
 					title="Active Sponsorships"
-					subtitle="Need KPI visualization"
+					value={activeSponsorships}
 				/>
 				<KpiCard
 					title="Unique Sponsors"
-					subtitle="Need KPI visualization"
+					value={uniqueSponsors}
 				/>
 				<KpiCard
 					title="Children Awaiting Sponsorship"
-					subtitle="Need KPI visualization"
+					value={childrenAwaitingSponsorship}
 				/>
 			</div>
 

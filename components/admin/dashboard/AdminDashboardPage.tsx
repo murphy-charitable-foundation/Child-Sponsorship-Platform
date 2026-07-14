@@ -1,5 +1,5 @@
 import { PanelCard } from "../../../components/admin/dashboard/PanelCard";
-import { KpiCard } from "../../../components/admin/dashboard/KpiCard";
+import { KpiCard } from "../shared/KpiCard";
 import { ChartPlaceholder } from "../../../components/admin/dashboard/ChartPlaceholder";
 import { ActivityPlaceholder } from "../../../components/admin/dashboard/ActivityPlaceholder";
 import RecentDonationsTable from "../../../components/admin/dashboard/RecentDonationsTable";
@@ -14,9 +14,18 @@ export default function AdminDashboardPage() {
 			<div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
 				<div className="lg:col-span-2">
 					<div className="grid grid-cols-1 gap-10 md:grid-cols-3">
-						<KpiCard title="Children in Program" />
-						<KpiCard title="Active Sponsorships" />
-						<KpiCard title="Children Awaiting Sponsorship" />
+						<KpiCard
+							title="Children in Program"
+							value="Need KPI visualization"
+						/>
+						<KpiCard
+							title="Active Sponsorships"
+							value="Need KPI visualization"
+						/>
+						<KpiCard
+							title="Children Awaiting Sponsorship"
+							value="Need KPI visualization"
+						/>
 					</div>
 				</div>
 

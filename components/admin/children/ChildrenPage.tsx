@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { KpiCard } from "@/components/admin/dashboard/KpiCard";
+import { KpiCard } from "@/components/admin/shared/KpiCard";
 import ChildrenFilters from "@/components/admin/children/ChildrenFilters";
 import ChildrenTable from "@/components/admin/children/ChildrenTable";
 import { ChildProfile, ChildTableData } from "./types";
@@ -18,6 +18,9 @@ export default function ChildrenPage() {
 	const [children, setChildren] = useState<ChildTableData[]>([]);
 	const [isEditOpen, setIsEditOpen] = useState(false);
 	const [editChild, setEditChild] = useState<ChildProfile | null>(null);
+	const [activeSponsorships, setActiveSponsorships] = useState(0);
+	const [childrenAwaitingSponsorship, setChildrenAwaitingSponsorship] =
+		useState(0);
 
 	useEffect(() => {
 		setError(null);
@@ -40,6 +43,54 @@ export default function ChildrenPage() {
 			}
 		}
 		fetchChildren();
+	}, []);
+
+	useEffect(() => {
+		async function fetchActiveSponsorships() {
+			try {
+				const res = await fetch("/api/supabase/sponsorships/active-count");
+
+				if (!res.ok) {
+					console.error(
+						"Error fetching active sponsorships:",
+						await res.text(),
+					);
+					return;
+				}
+
+				const { activeSponsorships } = await res.json();
+
+				setActiveSponsorships(activeSponsorships ?? 0);
+			} catch (err) {
+				console.error("Failed to fetch active sponsorships:", err);
+			}
+		}
+
+		fetchActiveSponsorships();
+	}, []);
+
+	useEffect(() => {
+		async function fetchChildrenAwaitingSponsorship() {
+			try {
+				const res = await fetch("/api/supabase/children/awaiting-count");
+
+				if (!res.ok) {
+					console.error(
+						"Error fetching children awaiting sponsorship:",
+						await res.text(),
+					);
+					return;
+				}
+
+				const { childrenAwaitingSponsorship } = await res.json();
+
+				setChildrenAwaitingSponsorship(childrenAwaitingSponsorship ?? 0);
+			} catch (err) {
+				console.error("Failed to fetch children awaiting sponsorship:", err);
+			}
+		}
+
+		fetchChildrenAwaitingSponsorship();
 	}, []);
 
 	// Filter rows based on selection
@@ -111,15 +162,15 @@ export default function ChildrenPage() {
 			<div className="mt-6 grid grid-cols-3 gap-10">
 				<KpiCard
 					title="Children in Program"
-					subtitle="Need KPI visualization"
+					value="Need KPI visualization"
 				/>
 				<KpiCard
 					title="Active Sponsorships"
-					subtitle="Need KPI visualization"
+					value={activeSponsorships}
 				/>
 				<KpiCard
 					title="Children Awaiting Sponsorship"
-					subtitle="Need KPI visualization"
+					value={childrenAwaitingSponsorship}
 				/>
 			</div>
 

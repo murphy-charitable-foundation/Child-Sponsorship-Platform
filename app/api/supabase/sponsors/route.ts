@@ -43,8 +43,7 @@ export async function GET(req: NextRequest) {
 		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	}
 
-	const isGroupsTab =
-		req.nextUrl.searchParams.get("tab") === "groups";
+	const isGroupsTab = req.nextUrl.searchParams.get("tab") === "groups";
 
 	const adminClient = createAdminClient();
 

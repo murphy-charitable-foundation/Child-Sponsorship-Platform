@@ -5,6 +5,7 @@ import CreateSponsorshipDrawer from "./CreateSponsorshipDrawer";
 import SponsorshipFilter from "./SponsorshipFilter";
 import { Sponsorship } from "./types";
 import SponsorshipTable from "./SponsorshipTable";
+import { KpiCard } from "../shared/KpiCard";
 
 export default function SponsorshipsPage() {
 	const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -20,6 +21,7 @@ export default function SponsorshipsPage() {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [error, setError] = useState("");
 	const [sponsorships, setSponsorships] = useState<Sponsorship[]>([]);
+	const [awaitingCount, setAwaitingCount] = useState(0);
 
 	useEffect(() => {
 		async function fetchSponsorships() {
@@ -43,9 +45,32 @@ export default function SponsorshipsPage() {
 		fetchSponsorships();
 	}, []);
 
+	useEffect(() => {
+		async function fetchAwaitingCount() {
+			try {
+				const res = await fetch("/api/supabase/children/awaiting-count");
+
+				if (!res.ok) {
+					console.error(
+						"Error fetching children awaiting sponsorship:",
+						await res.text(),
+					);
+					return;
+				}
+
+				const { childrenAwaitingSponsorship } = await res.json();
+
+				setAwaitingCount(childrenAwaitingSponsorship ?? 0);
+			} catch (err) {
+				console.error("Failed to fetch children awaiting sponsorship:", err);
+			}
+		}
+
+		fetchAwaitingCount();
+	}, []);
+
 	const activeCount = sponsorships.filter((s) => s.sponsorship_active).length;
 	const uniqueSponsors = new Set(sponsorships.map((s) => s.sponsor_name)).size;
-	const awaitingCount = 3; // placeholder
 
 	const filtered = sponsorships.filter((s) => {
 		const statusMatches =
@@ -87,15 +112,15 @@ export default function SponsorshipsPage() {
 			{/* KPI cards */}
 			<div className="mt-6 grid grid-cols-3 gap-10">
 				<KpiCard
-					label="Active Sponsorships"
+					title="Active Sponsorships"
 					value={activeCount}
 				/>
 				<KpiCard
-					label="Unique Sponsors"
+					title="Unique Sponsors"
 					value={uniqueSponsors}
 				/>
 				<KpiCard
-					label="Children Awaiting Sponsorship"
+					title="Children Awaiting Sponsorship"
 					value={awaitingCount}
 				/>
 			</div>
@@ -126,15 +151,6 @@ export default function SponsorshipsPage() {
 				isOpen={isCreateOpen}
 				onClose={() => setIsCreateOpen(false)}
 			/>
-		</div>
-	);
-}
-
-function KpiCard({ label, value }: { label: string; value: number }) {
-	return (
-		<div className="rounded-xl border border-slate-200 bg-white px-6 py-5">
-			<p className="text-sm text-slate-500">{label}</p>
-			<p className="mt-2 text-3xl font-semibold text-slate-800">{value}</p>
 		</div>
 	);
 }

@@ -23,6 +23,7 @@ export type SponsorTableData = {
 	sponsor_type: SponsorType;
 	group_name?: string;
 	children_count?: number;
+	active_sponsorships?: number;
 };
 
 export type SponsorGroupTableData = {
@@ -32,6 +33,7 @@ export type SponsorGroupTableData = {
 	country: string;
 	status: SponsorStatus;
 	children_count?: number;
+	active_sponsorships?: number;
 };
 
 export type SponsorProfile = {
