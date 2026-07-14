@@ -1,3 +1,6 @@
+import { GenderType, StatusType } from "../children/types";
+import { Frequencies } from "../sponsorships/types";
+
 export type SponsorType =
 	| "individual"
 	| "family"
@@ -99,4 +102,31 @@ export type EditSponsor = {
 	phone_number: string | null;
 	email: string | null;
 	job_title: string | null;
+};
+
+export type SponsorSponsorship = {
+	id: string;
+	sponsorship_active: boolean;
+	frequency: Frequencies;
+	amount: number;
+	start_date_time: string;
+	child: {
+		id: string;
+		first_name: string;
+		last_name: string;
+		full_name: string;
+		age: number;
+		date_of_birth: string;
+		gender: GenderType;
+		location: string;
+		status: StatusType;
+		created_at: string;
+		favorite_activity: string;
+		dream_job: string;
+		biography: string | null;
+		family_biography: string | null;
+		language: string | null;
+		image_url?: string | null;
+		homepage_visibility: boolean;
+	};
 };

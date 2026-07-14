@@ -32,7 +32,6 @@ export function ProfileHeader({ data, type, href }: ProfileHeaderProps) {
 				<span>•</span>
 				{type === "child" && (
 					<>
-						{" "}
 						<p>{data.age} years old</p>
 						<span>•</span>
 					</>

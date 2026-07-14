@@ -1,149 +1,177 @@
 import Image from "next/image";
-import Link from "next/link";
+import { ChildTabHeader } from "../children/ChildTabHeader";
+import { useEffect, useState } from "react";
+import { SponsorSponsorship } from "./types";
+import { Avatar } from "@heroui/react";
+import CreateSponsorshipDrawer from "../sponsorships/CreateSponsorshipDrawer";
 
-type Props = { sponsor: SponsorProfile };
+type Props = { sponsorId: string };
 
-export default function SponsorSponsorshipsTab({ sponsor }: Props) {
+export default function SponsorSponsorshipsTab({ sponsorId }: Props) {
+	const [isCreateOpen, setIsCreateOpen] = useState(false);
+	const [sponsorships, setSponsorships] = useState<SponsorSponsorship[]>([]);
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		async function fetchChildren() {
+			setLoading(true);
+
+			try {
+				const res = await fetch(
+					`/api/supabase/sponsorships/sponsor/${sponsorId}`,
+				);
+
+				if (!res.ok) {
+					setSponsorships([]);
+					return;
+				}
+
+				const { sponsorships } = await res.json();
+				setSponsorships(sponsorships ?? []);
+			} catch {
+				setSponsorships([]);
+			} finally {
+				setLoading(false);
+			}
+		}
+
+		fetchChildren();
+	}, [sponsorId]);
+
 	return (
-		<div>
-			{/* Header */}
-			<div className="mb-6 flex items-center justify-between">
-				<div>
-					<p className="text-xl font-semibold text-slate-800">
-						{sponsor.firstName} {sponsor.lastName}
-					</p>
-					<p className="text-sm text-slate-500">
-						Active sponsorships: {sponsor.sponsoredChildren.length}
-					</p>
-				</div>
-				<button className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90">
-					Create sponsorship
-				</button>
-			</div>
+		<div className="space-y-6">
+			<ChildTabHeader
+				subtitle={`Active sponsorships: ${sponsorships.filter((c) => c.sponsorship_active).length}`}
+				actionLabel="Create sponsorship"
+				onActionClick={() => setIsCreateOpen(true)}
+			/>
 
-			{/* Child cards */}
-			<div className="space-y-4">
-				{sponsor.sponsoredChildren.map((child) => (
-					<ChildCard
-						key={child.id}
-						child={child}
-					/>
-				))}
-			</div>
-		</div>
-	);
-}
+			{loading && <p className="text-sm text-gray-500">Loading sponsors...</p>}
 
-function ChildCard({ child }: { child: SponsoredChild }) {
-	return (
-		<div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-			<div className="flex gap-6 p-6">
-				{/* Photo */}
-				<div className="shrink-0">
-					<Image
-						src={child.imageUrl}
-						alt={child.name}
-						width={160}
-						height={160}
-						className="h-40 w-40 rounded-xl object-cover"
-					/>
-				</div>
+			{!loading && sponsorships.length === 0 && (
+				<p className="text-sm text-gray-500">No sponsorship yet.</p>
+			)}
 
-				{/* Details */}
-				<div className="min-w-0 flex-1">
-					<h3 className="text-lg font-semibold text-slate-800">{child.name}</h3>
+			{sponsorships.map((s) => {
+				const freq =
+					s.frequency == "annual"
+						? "year"
+						: s.frequency === "monthly"
+							? "month"
+							: "one-time";
 
-					<div className="mt-3 grid grid-cols-3 gap-x-8 gap-y-3">
-						<Detail
-							label="Gender"
-							value={child.gender}
-						/>
-						<Detail
-							label="Date of birth"
-							value={child.dob}
-						/>
-						<Detail
-							label="School level"
-							value={child.schoolLevel}
-						/>
-						<Detail
-							label="Country"
-							value={child.country}
-						/>
-						<Detail
-							label="Language"
-							value={child.language}
-						/>
-					</div>
-
-					<div className="mt-3">
-						<p className="text-xs uppercase tracking-wide text-slate-400">
-							Biography
-						</p>
-						<p className="mt-1 line-clamp-3 text-sm text-slate-700 whitespace-pre-line">
-							{child.biography}
-						</p>
-					</div>
-
-					{/* Summary row */}
-					<div className="mt-4 flex flex-wrap gap-3">
-						<SummaryChip
-							label="Age"
-							value={String(child.age)}
-						/>
-						<SummaryChip
-							label="ID"
-							value={child.id}
-						/>
-						<SummaryChip
-							label="Sponsorship start date"
-							value={child.sponsorshipStartDate}
-						/>
-						<SummaryChip
-							label="Sponsorship status"
-							value={child.sponsorshipStatus}
-							green={child.sponsorshipStatus === "Active"}
-						/>
-					</div>
-
-					<Link
-						href={`/admin/children/${child.id}`}
-						className="mt-4 inline-block rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200"
+				return (
+					<div
+						key={s.id}
+						className="overflow-hidden rounded-2xl border border-gray-200 bg-white p-6"
 					>
-						Go to full profile
-					</Link>
-				</div>
-			</div>
-		</div>
-	);
-}
+						<div className="flex">
+							{/* Left section */}
+							<div className="pr-6">
+								{s.child.image_url ? (
+									<Image
+										src={s.child.image_url}
+										alt={`${s.child.first_name} ${s.child.last_name}`}
+										className="object-cover object-[center_30%] h-[120px] w-[120px] rounded-xl "
+										width={120}
+										height={120}
+										unoptimized
+										loading="eager"
+									/>
+								) : (
+									<Avatar
+										radius="none"
+										color="primary"
+										className="object-cover object-[center_30%] h-[120px] w-[120px] rounded-xl "
+									/>
+								)}
+							</div>
 
-function Detail({ label, value }: { label: string; value: string }) {
-	return (
-		<div>
-			<p className="text-xs uppercase tracking-wide text-slate-400">{label}</p>
-			<p className="mt-0.5 text-sm text-slate-800">{value}</p>
-		</div>
-	);
-}
+							<div className="flex-1">
+								<div className="flex items-start justify-between">
+									<div>
+										<h3 className="text-2xl font-semibold text-gray-800">
+											{s.child.last_name} {s.child.first_name}
+										</h3>
+										<div className="text-sm text-slate-600 flex gap-2 pt-1">
+											<p>{s.child.id}</p>
+											<span>•</span>
+											<p>{s.child.age} years old</p>
+											<span>•</span>
+											<p>enrolled {s.child.created_at.split("T")[0]}</p>
+											<span>•</span>
+											<p className="text-green-600 uppercase">
+												{s.child.status}
+											</p>
+										</div>
+									</div>
 
-function SummaryChip({
-	label,
-	value,
-	green,
-}: {
-	label: string;
-	value: string;
-	green?: boolean;
-}) {
-	return (
-		<div className="flex items-center justify-between rounded-md border border-slate-200 px-3 py-2 text-xs">
-			<span className="font-semibold uppercase tracking-wide text-slate-500">
-				{label}
-			</span>
-			<span className={`ml-3 ${green ? "text-green-600" : "text-slate-700"}`}>
-				{value}
-			</span>
+									{/* Right section */}
+									<div>
+										<p className="text-lg font-semibold">
+											$ {s.amount} / {freq}
+										</p>
+										<p className="text-sm text-gray-400">
+											Since {new Date(s.start_date_time).toLocaleDateString()}
+										</p>
+									</div>
+								</div>
+
+								<h3 className="mb-4  font-semibold text-slate-800 mt-6">
+									Child Details
+								</h3>
+								<div className="mt-8 grid grid-cols-1 gap-10 text-sm text-gray-700 md:grid-cols-3">
+									<div>
+										<p className="mb-1 text-xs tracking-wide text-gray-400">
+											Gender
+										</p>
+										<p>{s.child.gender}</p>
+									</div>
+
+									<div>
+										<p className="mb-1 text-xs tracking-wide text-gray-400">
+											Date of birth
+										</p>
+										<p>{s.child.date_of_birth || "-"}</p>
+									</div>
+									<div>
+										<p className="mb-1 text-xs tracking-wide text-gray-400">
+											Country
+										</p>
+										<p>{s.child.location || "-"}</p>
+									</div>
+								</div>
+
+								<div className="mt-6 grid grid-cols-1 gap-10 text-sm text-gray-700 md:grid-cols-3">
+									<div>
+										<p className="mb-1 text-xs tracking-wide text-gray-400">
+											Language
+										</p>
+										<p>{s.child.language || "-"}</p>
+									</div>
+									<div>
+										<p className="mb-1 text-xs tracking-wide text-gray-400">
+											Favorite activity
+										</p>
+										<p>{s.child.favorite_activity || "-"}</p>
+									</div>
+									<div>
+										<p className="mb-1 text-xs tracking-wide text-gray-400">
+											Dream job
+										</p>
+										<p>{s.child.dream_job || "-"}</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				);
+			})}
+
+			<CreateSponsorshipDrawer
+				isOpen={isCreateOpen}
+				onClose={() => setIsCreateOpen(false)}
+			/>
 		</div>
 	);
 }

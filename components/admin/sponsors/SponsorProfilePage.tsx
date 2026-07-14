@@ -176,7 +176,7 @@ export default function SponsorProfilePage({ sponsor: initialSponsor }: Props) {
 			{/* Sponsorships tab */}
 			{activeTab === "sponsorships" && (
 				<div className="mt-8">
-					<SponsorSponsorshipsTab sponsor={sponsor} />
+					<SponsorSponsorshipsTab sponsorId={sponsor.id} />
 				</div>
 			)}
 

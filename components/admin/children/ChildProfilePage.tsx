@@ -198,13 +198,7 @@ export default function ChildProfilePage({
 
 			{activeTab === "sponsors" && (
 				<div className="mt-8">
-					<ChildSponsorsTab
-						child={{
-							id: child.id,
-							full_name: child.full_name,
-							image_url: child.image_url,
-						}}
-					/>
+					<ChildSponsorsTab childId={child.id} />
 				</div>
 			)}
 

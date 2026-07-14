@@ -9,11 +9,7 @@ import { SPONSOR_TYPE_LABELS } from "@/components/admin/sponsors/types";
 import { ChildSponsor } from "./types";
 
 type ChildSponsorsTabProps = {
-	child: {
-		id: string;
-		full_name: string;
-		image_url?: string | null;
-	};
+	childId: string;
 };
 
 function formatSinceDate(date: string) {
@@ -24,7 +20,7 @@ function formatSinceDate(date: string) {
 	});
 }
 
-export default function ChildSponsorsTab({ child }: ChildSponsorsTabProps) {
+export default function ChildSponsorsTab({ childId }: ChildSponsorsTabProps) {
 	const [isCreateOpen, setIsCreateOpen] = useState(false);
 	const [sponsors, setSponsors] = useState<ChildSponsor[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -34,7 +30,7 @@ export default function ChildSponsorsTab({ child }: ChildSponsorsTabProps) {
 			setLoading(true);
 
 			try {
-				const res = await fetch(`/api/supabase/sponsorships/child/${child.id}`);
+				const res = await fetch(`/api/supabase/sponsorships/child/${childId}`);
 
 				if (!res.ok) {
 					setSponsors([]);
@@ -51,9 +47,7 @@ export default function ChildSponsorsTab({ child }: ChildSponsorsTabProps) {
 		}
 
 		fetchSponsors();
-	}, [child.id]);
-
-	console.log(sponsors);
+	}, [childId]);
 
 	return (
 		<div className="space-y-6">
