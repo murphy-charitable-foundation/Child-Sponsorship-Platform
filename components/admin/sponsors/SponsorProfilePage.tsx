@@ -122,7 +122,7 @@ export default function SponsorProfilePage({ sponsor: initialSponsor }: Props) {
 								/>
 
 								<DetailItem
-									label="address"
+									label="Address"
 									value={[
 										sponsor.address_line2,
 										sponsor.address_line1,
