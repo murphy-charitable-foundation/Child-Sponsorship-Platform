@@ -1,29 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
+import { Avatar } from "@heroui/react";
 import { ChildTabHeader } from "./ChildTabHeader";
 import CreateSponsorshipDrawer from "@/components/admin/sponsorships/CreateSponsorshipDrawer";
-import { createClient } from "@/lib/supabase/client";
-
-type Sponsor = {
-	id: string;
-	first_name: string;
-	last_name: string;
-	sponsor_type: string;
-	photo_path?: string;
-	image_url?: string;
-	status: string;
-	phone_number: string | null;
-	email: string | null;
-	address_line1: string | null;
-	address_line2: string | null;
-	city: string | null;
-	state: string | null;
-	zip: string | null;
-	country: string | null;
-	sponsorship_active: boolean;
-	start_date_time: string;
-};
+import { SPONSOR_TYPE_LABELS } from "@/components/admin/sponsors/types";
+import { ChildSponsor } from "./types";
 
 type ChildSponsorsTabProps = {
 	child: {
@@ -33,46 +16,44 @@ type ChildSponsorsTabProps = {
 	};
 };
 
-const supabase = createClient();
+function formatSinceDate(date: string) {
+	return new Date(date).toLocaleDateString("en-US", {
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+	});
+}
 
 export default function ChildSponsorsTab({ child }: ChildSponsorsTabProps) {
 	const [isCreateOpen, setIsCreateOpen] = useState(false);
-	const [sponsors, setSponsors] = useState<Sponsor[]>([]);
+	const [sponsors, setSponsors] = useState<ChildSponsor[]>([]);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		async function fetchSponsors() {
 			setLoading(true);
 
-			// embed the related sponsor row via the sponsor_id foreign key
-			const { data: sponsorships, error } = await supabase
-				.from("sponsorships")
-				.select("sponsorship_active, start_date_time, sponsors(*)")
-				.eq("child_id", child.id);
+			try {
+				const res = await fetch(`/api/supabase/sponsorships/child/${child.id}`);
 
-			if (error || !sponsorships) {
+				if (!res.ok) {
+					setSponsors([]);
+					return;
+				}
+
+				const { sponsors } = await res.json();
+				setSponsors(sponsors ?? []);
+			} catch {
 				setSponsors([]);
+			} finally {
 				setLoading(false);
-				return;
 			}
-
-			setSponsors(
-				sponsorships
-					.filter((s) => s.sponsors)
-					.map((s) => ({
-						...(s.sponsors as unknown as Omit<
-							Sponsor,
-							"sponsorship_active" | "start_date_time"
-						>),
-						sponsorship_active: s.sponsorship_active,
-						start_date_time: s.start_date_time,
-					})),
-			);
-			setLoading(false);
 		}
 
 		fetchSponsors();
 	}, [child.id]);
+
+	console.log(sponsors);
 
 	return (
 		<div className="space-y-6">
@@ -93,45 +74,111 @@ export default function ChildSponsorsTab({ child }: ChildSponsorsTabProps) {
 					sponsor.address_line1,
 					sponsor.address_line2,
 					[sponsor.city, sponsor.state, sponsor.zip].filter(Boolean).join(", "),
-					sponsor.country,
 				].filter(Boolean) as string[];
+
+				const isGroupSponsor = sponsor.sponsor_type !== "individual";
+
+				const freq =
+					sponsor.frequency == "annual"
+						? "year"
+						: sponsor.frequency === "monthly"
+							? "month"
+							: "one-time";
 
 				return (
 					<div
 						key={sponsor.id}
-						className="overflow-hidden rounded-2xl border border-gray-200 bg-white"
+						className="overflow-hidden rounded-2xl border border-gray-200 bg-white p-6"
 					>
-						<div className="grid grid-cols-1 md:grid-cols-3">
+						<div className="flex">
 							{/* Left section */}
-							<div className="md:col-span-2 border-b md:border-b-0 md:border-r border-gray-200 p-6">
-								<h3 className="text-2xl font-semibold text-gray-800">
-									{sponsor.first_name} {sponsor.last_name}
-								</h3>
+							<div className="pr-6">
+								{sponsor.image_url ? (
+									<Image
+										src={sponsor.image_url}
+										alt={`${sponsor.first_name} ${sponsor.last_name}`}
+										className="object-cover object-[center_30%] h-[120px] w-[120px] rounded-xl "
+										width={120}
+										height={120}
+										unoptimized
+										loading="eager"
+									/>
+								) : (
+									<Avatar
+										radius="none"
+										color="primary"
+										className="object-cover object-[center_30%] h-[120px] w-[120px] rounded-xl "
+									/>
+								)}
+							</div>
 
-								<div className="mt-8 grid grid-cols-1 gap-6 text-sm text-gray-700 md:grid-cols-3">
+							<div className="flex-1">
+								<div className="flex items-start justify-between">
 									<div>
-										<p className="mb-1 text-xs uppercase tracking-wide text-gray-400">
-											Sponsor type
-										</p>
-										<p>{sponsor.sponsor_type}</p>
+										<h3 className="text-2xl font-semibold text-gray-800">
+											{!isGroupSponsor
+												? `${sponsor.first_name} ${sponsor.last_name}`
+												: sponsor.group_name}
+										</h3>
+										<div className="text-sm text-slate-600 flex gap-2 pt-1">
+											<p>{SPONSOR_TYPE_LABELS[sponsor.sponsor_type]}</p>
+											<span>•</span>
+											<p>{sponsor.id}</p>
+											<span>•</span>
+											<p className="text-green-600 uppercase">
+												{sponsor.sponsorship_active ? "active" : "inactive"}
+											</p>
+										</div>
 									</div>
 
+									{/* Right section */}
 									<div>
-										<p className="mb-1 text-xs uppercase tracking-wide text-gray-400">
+										<p className="text-lg font-semibold">
+											$ {sponsor.amount} / {freq}
+										</p>
+										<p className="text-sm text-gray-400">
+											Since {formatSinceDate(sponsor.start_date_time)}
+										</p>
+									</div>
+								</div>
+
+								<div className="mt-8 grid grid-cols-1 gap-10 text-sm text-gray-700 md:grid-cols-3">
+									{isGroupSponsor && (
+										<div>
+											<p className="mb-1 text-xs tracking-wide text-gray-400">
+												Primary contact
+											</p>
+											<p>
+												{sponsor.first_name} {sponsor.last_name}
+											</p>
+										</div>
+									)}
+
+									<div>
+										<p className="mb-1 text-xs tracking-wide text-gray-400">
 											Phone number
 										</p>
 										<p>{sponsor.phone_number || "-"}</p>
 									</div>
 
 									<div>
-										<p className="mb-1 text-xs uppercase tracking-wide text-gray-400">
+										<p className="mb-1 text-xs tracking-wide text-gray-400">
 											Email
 										</p>
 										<p>{sponsor.email || "-"}</p>
 									</div>
+								</div>
+
+								<div className="mt-6 grid grid-cols-1 gap-10 text-sm text-gray-700 md:grid-cols-3">
+									<div>
+										<p className="mb-1 text-xs tracking-wide text-gray-400">
+											Country
+										</p>
+										<p>{sponsor.country || "-"}</p>
+									</div>
 
 									<div>
-										<p className="mb-1 text-xs uppercase tracking-wide text-gray-400">
+										<p className="mb-1 text-xs tracking-wide text-gray-400">
 											Address
 										</p>
 										<div className="space-y-1">
@@ -143,29 +190,6 @@ export default function ChildSponsorsTab({ child }: ChildSponsorsTabProps) {
 										</div>
 									</div>
 								</div>
-
-								<button className="mt-8 rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200">
-									Go to full profile
-								</button>
-							</div>
-
-							{/* Right section */}
-							<div className="p-6">
-								<div className="space-y-3">
-									<InfoRow
-										label="ID"
-										value={sponsor.id}
-									/>
-									<InfoRow
-										label="Sponsorship start date"
-										value={sponsor.start_date_time?.split("T")[0] ?? "-"}
-									/>
-									<InfoRow
-										label="Sponsorship status"
-										value={sponsor.sponsorship_active ? "Active" : "Inactive"}
-										valueClassName="text-green-600"
-									/>
-								</div>
 							</div>
 						</div>
 					</div>
@@ -176,23 +200,6 @@ export default function ChildSponsorsTab({ child }: ChildSponsorsTabProps) {
 				isOpen={isCreateOpen}
 				onClose={() => setIsCreateOpen(false)}
 			/>
-		</div>
-	);
-}
-
-function InfoRow({
-	label,
-	value,
-	valueClassName = "text-gray-700",
-}: {
-	label: string;
-	value: string;
-	valueClassName?: string;
-}) {
-	return (
-		<div className="flex items-center justify-between rounded-md border border-gray-200 px-4 py-3 text-sm">
-			<span className="font-semibold uppercase text-gray-500">{label}</span>
-			<span className={valueClassName}>{value}</span>
 		</div>
 	);
 }

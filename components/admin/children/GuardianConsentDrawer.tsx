@@ -71,7 +71,7 @@ export default function GuardianConsentDrawer({
 		setError(null);
 
 		try {
-			// TODO: We need to upsert consent data
+			// TODO: We need to upsert consent data. we need to determine consent DB table
 
 			onClose();
 		} finally {

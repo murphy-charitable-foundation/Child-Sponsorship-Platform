@@ -1,3 +1,6 @@
+import { SponsorType } from "../sponsors/types";
+import { Frequencies } from "../sponsorships/types";
+
 export type GenderType = "Male" | "Female" | "Other";
 export type StatusType = "Active" | "Waiting" | "Exited";
 export type SponsorshipStatus = "Active" | "Inactive";
@@ -95,4 +98,27 @@ export type EditChild = {
 	guardian_phone?: string;
 	guardian_email?: string | null;
 	guardian_address?: string | null;
+};
+
+export type ChildSponsor = {
+	id: string;
+	first_name: string;
+	last_name: string;
+	sponsor_type: SponsorType;
+	group_name?: string | null;
+	address_line1: string | null;
+	address_line2?: string | null;
+	city: string;
+	state: string;
+	zip: string;
+	country: string;
+	phone_number: string | null;
+	email: string | null;
+	job_title: string | null;
+	image_url?: string | null;
+	created_at: string;
+	sponsorship_active: boolean;
+	start_date_time: string;
+	frequency: Frequencies;
+	amount: number;
 };
