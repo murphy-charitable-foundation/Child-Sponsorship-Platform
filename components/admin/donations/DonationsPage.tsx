@@ -80,14 +80,19 @@ export default function DonationsPage() {
 			const dt = new Date(d.date_time);
 			return (
 				dt.getFullYear() === now.getFullYear() &&
-				dt.getMonth() === now.getMonth()
+				dt.getMonth() === now.getMonth() &&
+				d.status.toUpperCase() === "COMPLETED"
 			);
 		})
 		.reduce((sum, d) => sum + d.amount, 0);
 	const formattedMonthlyTotal = `$${monthlyTotal.toLocaleString("en-US")}`;
 
 	const yearlyTotal = donations
-		.filter((d) => new Date(d.date_time).getFullYear() === now.getFullYear())
+		.filter(
+			(d) =>
+				new Date(d.date_time).getFullYear() === now.getFullYear() &&
+				d.status.toUpperCase() === "COMPLETED",
+		)
 		.reduce((sum, d) => sum + d.amount, 0);
 	const formattedYearlyTotal = `$${yearlyTotal.toLocaleString("en-US")}`;
 

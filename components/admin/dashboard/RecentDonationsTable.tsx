@@ -1,95 +1,93 @@
 "use client";
 
-import React from "react";
+import { useEffect, useState } from "react";
 import {
-  Card,
-
-  CardBody,
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
+	Chip,
+	Table,
+	TableHeader,
+	TableColumn,
+	TableBody,
+	TableRow,
+	TableCell,
 } from "@heroui/react";
-
-type DonationRow = {
-  id: string;
-  donor: string;
-  amount: string;
-  date: string;
-  status: "Completed" | "Pending";
-};
-
-const rows: DonationRow[] = [
-  {
-    id: "D-1001",
-    donor: "John Smith",
-    amount: "$120",
-    date: "Jan 12, 2026",
-    status: "Completed",
-  },
-  {
-    id: "D-1002",
-    donor: "Carry Johnes",
-    amount: "$60",
-    date: "Jan 11, 2026",
-    status: "Pending",
-  },
-  {
-    id: "D-1003",
-    donor: "Meera Patel",
-    amount: "$250",
-    date: "Jan 10, 2026",
-    status: "Completed",
-  },
-  {
-    id: "D-1004",
-    donor: "David Chen",
-    amount: "$40",
-    date: "Jan 09, 2026",
-    status: "Completed",
-  },
-];
+import { DonationTableData } from "../donations/types";
+import { formatDate } from "../sponsorships/SponsorshipTable";
 
 export default function RecentDonationsTable() {
-  return (
-    <Card radius="md" className="bg-content1">
-     
+	const [donations, setDonations] = useState<DonationTableData[]>([]);
+	const [error, setError] = useState<string | null>(null);
 
-      <CardBody>
-        <Table aria-label="Recent donations table">
-          <TableHeader>
-            <TableColumn>ID</TableColumn>
-            <TableColumn>Donor</TableColumn>
-            <TableColumn>Amount</TableColumn>
-            <TableColumn>Date</TableColumn>
-            <TableColumn>Status</TableColumn>
-          </TableHeader>
+	useEffect(() => {
+		setError(null);
+		async function fetchDonations() {
+			try {
+				const res = await fetch(`/api/supabase/donations`);
 
-          <TableBody>
-            {rows.map((r) => (
-              <TableRow key={r.id}>
-                <TableCell>{r.id}</TableCell>
-                <TableCell>{r.donor}</TableCell>
-                <TableCell>{r.amount}</TableCell>
-                <TableCell>{r.date}</TableCell>
-                <TableCell>
-                  <span
-                    className={
-                      r.status === "Completed"
-                        ? "text-success font-medium"
-                        : "text-warning font-medium"
-                    }
-                  >
-                    {r.status}
-                  </span>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardBody>
-    </Card>
-  );
+				if (!res.ok) {
+					setError("Failed to get donations data");
+					console.error("Error fetching donations:", await res.text());
+					return;
+				}
+
+				const { data } = await res.json();
+
+				setDonations(data);
+			} catch (err) {
+				setError("Failed to get donations data");
+				console.log("Failed to fetch donations:", err);
+			}
+		}
+		fetchDonations();
+	}, []);
+	return (
+		<div className="p-2">
+			{error && (
+				<div className="mb-4 rounded-md bg-danger-50 px-4 py-3 text-sm text-danger">
+					{error}
+				</div>
+			)}
+
+			<Table
+				aria-label="Recent donations table"
+				classNames={{
+					wrapper: "rounded-md border border-divider p-0 shadow-none",
+					th: "!rounded-none bg-default-100 px-2 py-1 text-xs shadow-none",
+					td: "px-2 py-1 text-xs",
+				}}
+			>
+				<TableHeader>
+					<TableColumn>ID</TableColumn>
+					<TableColumn>Donor</TableColumn>
+					<TableColumn>Amount</TableColumn>
+					<TableColumn>Date</TableColumn>
+					<TableColumn>Status</TableColumn>
+				</TableHeader>
+				<TableBody>
+					{donations.slice(0, 6).map((r) => (
+						<TableRow key={r.id}>
+							<TableCell>{r.id}</TableCell>
+							<TableCell>
+								{r.first_name} {r.last_name}
+							</TableCell>
+							<TableCell>{r.amount}</TableCell>
+							<TableCell>{formatDate(r.date_time)}</TableCell>
+							<TableCell>
+								<Chip
+									size="sm"
+									variant="flat"
+									color={r.status === "Completed" ? "success" : "warning"}
+									classNames={{
+										base: "h-5 px-1.5",
+										content: "px-0 text-[10px]",
+									}}
+								>
+									{r.status}
+								</Chip>
+							</TableCell>
+						</TableRow>
+					))}
+				</TableBody>
+			</Table>
+		</div>
+	);
 }

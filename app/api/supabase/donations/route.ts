@@ -68,10 +68,9 @@ export async function GET() {
 	const { data: payments, error } = await adminClient
 		.from("payments")
 		.select(
-			"payment_id, user_id, amount_value, created_at, raw, sponsorships(sponsors(first_name, last_name, country, phone_number, email))",
+			"payment_id, user_id, amount_value, created_at, raw, status, sponsorships(sponsors(first_name, last_name, country, phone_number, email))",
 		)
-		.eq("status", "COMPLETED")
-		.order("created_at");
+		.order("created_at", { ascending: false });
 
 	if (error) {
 		console.log(error);
@@ -93,6 +92,7 @@ export async function GET() {
 			last_name: raw?.payer?.name?.surname ?? sponsor?.last_name ?? "",
 			amount: Number(d.amount_value),
 			date_time: d.created_at,
+			status: d.status,
 			purpose: "", // we need to add this either donation or payment table
 			country:
 				(raw?.payer?.address?.country_code

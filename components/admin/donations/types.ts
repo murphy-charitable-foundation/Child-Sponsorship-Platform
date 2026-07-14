@@ -9,6 +9,7 @@ export type DonationTableData = {
 	date_time: Date;
 	purpose: string | null;
 	country: string | null;
+	status: string;
 };
 
 export type Donation = {

@@ -9,7 +9,7 @@ import { SponsorGroupTableData, SponsorTableData } from "../sponsors/types";
 const FREQUENCIES: { value: Frequencies; label: string }[] = [
 	{ value: "monthly", label: "Monthly" },
 	{ value: "annual", label: "Annual" },
-		{ value: "onetime", label: "One-time" },
+	{ value: "onetime", label: "One-time" },
 ];
 
 type Option = { id: string; name: string };
