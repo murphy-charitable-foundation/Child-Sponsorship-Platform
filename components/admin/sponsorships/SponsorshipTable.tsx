@@ -9,12 +9,13 @@ import {
 	TableCell,
 } from "@heroui/react";
 import { Sponsorship } from "./types";
+import { frequencies } from "../donations/types";
 
 type Props = {
 	data: Sponsorship[];
 };
 
-function formatDate(date: Date | string) {
+export function formatDate(date: Date | string) {
 	return new Date(date).toISOString().slice(0, 10);
 }
 
@@ -55,7 +56,9 @@ export default function SponsorshipTable({ data }: Props) {
 						<TableCell className="text-slate-800">{s.child_name}</TableCell>
 						<TableCell className="text-slate-600">{s.child_location}</TableCell>
 						<TableCell className="text-slate-800">{s.amount}</TableCell>
-						<TableCell className="text-slate-600">{s.frequency}</TableCell>
+						<TableCell className="text-slate-600">
+							{frequencies[s.frequency]}
+						</TableCell>
 						<TableCell>
 							<Chip
 								size="sm"

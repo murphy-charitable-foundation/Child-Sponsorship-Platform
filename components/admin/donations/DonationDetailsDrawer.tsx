@@ -1,28 +1,9 @@
 "use client";
 
-import {
-	Drawer,
-	DrawerContent,
-	DrawerHeader,
-	DrawerBody,
-	DrawerFooter,
-	Button,
-} from "@heroui/react";
-
-export type Donation = {
-	id: string;
-	lastName: string;
-	firstName: string;
-	amount: string;
-	date: string;
-	country: string;
-	purpose: string;
-	phone: string;
-	email: string;
-	frequency: string;
-	paymentMethod: string;
-	dateTime: string;
-};
+import { Donation, frequencies } from "./types";
+import { formatDate } from "../sponsorships/SponsorshipTable";
+import FormDrawer from "../shared/FormDrawer";
+import { Frequencies } from "../sponsorships/types";
 
 type Props = {
 	donation: Donation | null;
@@ -38,122 +19,97 @@ export default function DonationDetailsDrawer({
 	if (!donation) return null;
 
 	return (
-		<Drawer
+		<FormDrawer
 			isOpen={isOpen}
-			onOpenChange={onClose}
-			size="lg"
-			placement="right"
+			onClose={onClose}
+			title="Donation Details"
+			formId="donation_details"
+			saveLabel="Add sponsor"
+			bodyClassName="space-y-6 py-5 overflow-y-auto"
 		>
-			<DrawerContent>
-				{(closeDrawer) => (
-					<>
-						<DrawerHeader className="border-b border-slate-200 text-lg font-semibold text-slate-900">
-							Donation Details
-						</DrawerHeader>
+			{/* Donor */}
+			<section>
+				<h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-500">
+					Donor
+				</h3>
+				<div className="grid grid-cols-2 gap-x-8 gap-y-4">
+					<Detail
+						label="Name"
+						value={`${donation.first_name} ${donation.last_name}`}
+					/>
+					<Detail
+						label="Country"
+						value={donation.country ?? ""}
+					/>
+					<Detail
+						label="Phone number"
+						value={donation.phone_number ?? ""}
+					/>
+					<Detail
+						label="Email"
+						value={donation.email ?? ""}
+					/>
+				</div>
+			</section>
 
-						<DrawerBody className="space-y-6 py-6">
-							{/* Donor */}
-							<section>
-								<h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-500">
-									Donor
-								</h3>
-								<div className="grid grid-cols-2 gap-x-8 gap-y-4">
-									<Detail
-										label="Name"
-										value={`${donation.firstName} ${donation.lastName}`}
-									/>
-									<Detail
-										label="Country"
-										value={donation.country}
-									/>
-									<Detail
-										label="Phone number"
-										value={donation.phone}
-									/>
-									<Detail
-										label="Email"
-										value={donation.email}
-									/>
-								</div>
-							</section>
+			{/* Donation */}
+			<section>
+				<h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-500">
+					Donation
+				</h3>
+				<div className="grid grid-cols-2 gap-x-8 gap-y-4">
+					<Detail
+						label="Amount"
+						value={donation.amount.toString()}
+					/>
+					<Detail
+						label="Frequency"
+						value={
+							donation.frequency
+								? frequencies[donation.frequency as Frequencies]
+								: ""
+						}
+					/>
+					<Detail
+						label="Payment method"
+						value={donation.payment_method}
+					/>
+					<Detail
+						label="Date and time of donation"
+						value={formatDate(donation.date_time)}
+					/>
+				</div>
+			</section>
 
-							<hr className="border-slate-100" />
+			<hr className="border-slate-100" />
 
-							{/* Donation */}
-							<section>
-								<h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-500">
-									Donation
-								</h3>
-								<div className="grid grid-cols-2 gap-x-8 gap-y-4">
-									<Detail
-										label="Amount"
-										value={donation.amount}
-									/>
-									<Detail
-										label="Frequency"
-										value={donation.frequency}
-									/>
-									<Detail
-										label="Payment method"
-										value={donation.paymentMethod}
-									/>
-									<Detail
-										label="Date and time of donation"
-										value={donation.dateTime}
-									/>
-								</div>
-							</section>
+			{/* Donation History */}
+			<section>
+				<h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
+					Donation History
+				</h3>
+				<p className="text-sm text-slate-400">
+					No previous donations on record.
+				</p>
+			</section>
 
-							<hr className="border-slate-100" />
+			<hr className="border-slate-100" />
 
-							{/* Donation History */}
-							<section>
-								<h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
-									Donation History
-								</h3>
-								<p className="text-sm text-slate-400">
-									No previous donations on record.
-								</p>
-							</section>
-
-							<hr className="border-slate-100" />
-
-							{/* Dedication */}
-							<section>
-								<p className="text-xs font-medium text-slate-500">
-									Optional (but valuable)
-								</p>
-								<p className="mt-1 text-sm text-slate-600">
-									Option to dedicate the donation (in honor or memory of
-									someone)
-								</p>
-								<input
-									type="text"
-									placeholder="e.g. In memory of Jane Doe"
-									className="mt-3 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-								/>
-							</section>
-						</DrawerBody>
-
-						<DrawerFooter className="border-t border-slate-200">
-							<Button
-								variant="light"
-								onPress={closeDrawer}
-								className="text-slate-700"
-							>
-								Cancel
-							</Button>
-							<Button
-								className="bg-primary text-white"
-								onPress={closeDrawer}
-							>
-								Close
-							</Button>
-						</DrawerFooter>
-					</>
-				)}
-			</DrawerContent>
-		</Drawer>
+			{/* Dedication */}
+			<section>
+				<p className="text-xs font-medium text-slate-500">
+					Optional (but valuable)
+				</p>
+				<p className="mt-1 text-sm text-slate-600">
+					Option to dedicate the donation (in honor or memory of someone)
+				</p>
+				<input
+					type="text"
+					placeholder="e.g. In memory of Jane Doe"
+					className="mt-3 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+				/>
+			</section>
+		</FormDrawer>
 	);
 }
 

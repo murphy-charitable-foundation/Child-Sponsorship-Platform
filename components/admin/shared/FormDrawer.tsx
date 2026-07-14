@@ -14,8 +14,8 @@ type FormDrawerProps = {
 	onClose: () => void;
 	title: string;
 	formId: string;
-	onSubmit: (e: React.FormEvent) => void;
-	isSaving: boolean;
+	onSubmit?: (e: React.FormEvent) => void;
+	isSaving?: boolean;
 	error?: string | null;
 	saveLabel: string;
 	saveDisabled?: boolean;
