@@ -33,9 +33,13 @@ export async function GET() {
 
 	const adminClient = createAdminClient();
 
-	const { count, error: sponsorshipsError } = await adminClient
+	const {
+		data: sponsorships,
+		count,
+		error: sponsorshipsError,
+	} = await adminClient
 		.from("sponsorships")
-		.select("*", { count: "exact", head: true })
+		.select("sponsors(country)", { count: "exact" })
 		.eq("sponsorship_active", true);
 
 	if (sponsorshipsError) {
@@ -45,5 +49,20 @@ export async function GET() {
 		);
 	}
 
-	return NextResponse.json({ activeSponsorships: count ?? 0 });
+	const countryCounts: Record<string, number> = {};
+
+	for (const row of sponsorships ?? []) {
+		const sponsor = Array.isArray(row.sponsors)
+			? row.sponsors[0]
+			: row.sponsors;
+		const country = sponsor?.country ?? "Unknown";
+		countryCounts[country] = (countryCounts[country] ?? 0) + 1;
+	}
+
+	const byCountry = Object.entries(countryCounts).map(([name, value]) => ({
+		name,
+		value,
+	}));
+
+	return NextResponse.json({ activeSponsorships: count ?? 0, byCountry });
 }

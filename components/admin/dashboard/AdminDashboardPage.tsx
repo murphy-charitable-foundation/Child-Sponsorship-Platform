@@ -1,11 +1,11 @@
 import { PanelCard } from "../../../components/admin/dashboard/PanelCard";
 import { KpiCard } from "../shared/KpiCard";
-import { ChartPlaceholder } from "../../../components/admin/dashboard/ChartPlaceholder";
-import { ActivityPlaceholder } from "../../../components/admin/dashboard/ActivityPlaceholder";
 import RecentDonationsTable from "../../../components/admin/dashboard/RecentDonationsTable";
 import { useEffect, useState } from "react";
 import { DonationTableData } from "../donations/types";
 import MonthlyDonationChart from "./MonthlyDonationChart";
+import SponsorshipChart from "./SponsorshipChart";
+import { ActivityPlaceholder } from "./ActivityPlaceholder";
 
 export default function AdminDashboardPage() {
 	const [activeSponsorships, setActiveSponsorships] = useState<number>(0);
@@ -79,6 +79,7 @@ export default function AdminDashboardPage() {
 		}
 		fetchDonations();
 	}, []);
+
 	return (
 		<div className="space-y-10">
 			<div>
@@ -121,10 +122,10 @@ export default function AdminDashboardPage() {
 
 			<div className="grid grid-cols-1 gap-10 lg:grid-cols-5">
 				<PanelCard
-					title="Sponsorships by Region"
+					title="Sponsorships by Country"
 					className="lg:col-span-2"
 				>
-					<ChartPlaceholder label="Donut / Bars" />
+					<SponsorshipChart />
 				</PanelCard>
 
 				<PanelCard

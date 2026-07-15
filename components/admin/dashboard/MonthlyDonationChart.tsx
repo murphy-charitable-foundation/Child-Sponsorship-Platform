@@ -44,7 +44,7 @@ export default function MonthlyDonationChart({ donations }: Props) {
 				width: "100%",
 				maxWidth: "700px",
 				maxHeight: "70vh",
-				aspectRatio: 1.618,
+				aspectRatio: 2.2,
 			}}
 			responsive
 			data={data}
