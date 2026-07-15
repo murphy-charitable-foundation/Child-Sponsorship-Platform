@@ -12,6 +12,7 @@ import {
 } from "@heroui/react";
 
 import { ChildTableData, StatusType } from "./types";
+import { tableCls } from "../shared/styleConstants";
 
 export function statusChipColor(status: StatusType) {
 	if (status === "Active") return "success";
@@ -32,17 +33,7 @@ export default function ChildrenTable({ data, onEdit }: ChildrenTableProps) {
 			<Table
 				aria-label="Children table"
 				onRowAction={(key) => router.push(`/admin/children/${key}`)}
-				classNames={{
-					wrapper:
-						"mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white p-0 shadow-none",
-					table: "w-full text-sm",
-					thead: "[&>tr]:bg-slate-50",
-					th: "!rounded-none border-b border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500",
-					tbody: "divide-y divide-slate-100",
-					tr: "cursor-pointer hover:bg-slate-50",
-					td: "px-4 py-3",
-					emptyWrapper: "px-4 py-8 text-center text-slate-400",
-				}}
+				classNames={tableCls}
 			>
 				<TableHeader>
 					<TableColumn>LAST NAME</TableColumn>

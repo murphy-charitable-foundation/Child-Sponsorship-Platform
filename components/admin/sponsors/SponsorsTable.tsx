@@ -1,5 +1,6 @@
 "use client";
 
+import { tableCls } from "../shared/styleConstants";
 import { SponsorGroupTableData, SponsorTableData } from "./types";
 import {
 	Table,
@@ -27,17 +28,7 @@ export function SponsorsTable({
 		<div className="w-full">
 			<Table
 				aria-label="Sponsor table"
-				classNames={{
-					wrapper:
-						"mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white p-0 shadow-none",
-					table: "w-full text-sm",
-					thead: "[&>tr]:bg-slate-50",
-					th: "!rounded-none border-b border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500",
-					tbody: "divide-y divide-slate-100",
-					tr: "hover:bg-slate-50",
-					td: "px-4 py-3",
-					emptyWrapper: "px-4 py-8 text-center text-slate-400",
-				}}
+				classNames={tableCls}
 			>
 				<TableHeader>
 					{isGroupsTab ? (

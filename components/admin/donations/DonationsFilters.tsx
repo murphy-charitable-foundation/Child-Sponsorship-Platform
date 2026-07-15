@@ -1,4 +1,5 @@
 import { Input, Select, SelectItem } from "@heroui/react";
+import { filterInputCls, filterSelectCls } from "../shared/styleConstants";
 
 type DonationsFilterProps = {
 	selectedCountry: Set<string>;
@@ -19,22 +20,22 @@ export default function DonationsFilters({
 	};
 
 	return (
-		<div className="bg-gray-100 p-6 rounded-md">
+		<div className="bg-gray-100 p-6">
 			<div className="space-y-3">
 				<div className="flex gap-4">
 					<div className="flex-1">
-						<label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+						<label className="text-xs font-semibold text-gray-600 tracking-wider">
 							Search
 						</label>
 					</div>
 					<div className="w-1/5">
-						<label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+						<label className="text-xs font-semibold text-gray-600 tracking-wider">
 							Country
 						</label>
 					</div>
 				</div>
 
-				<div className="flex gap-4 items-end">
+				<div className="flex gap-6 items-end">
 					<div className="flex-1">
 						<Input
 							aria-label="Search"
@@ -44,12 +45,8 @@ export default function DonationsFilters({
 							onChange={(e) => setSearchQuery(e.target.value)}
 							onClear={() => setSearchQuery("")}
 							className="w-full"
-							classNames={{
-								input: "bg-white text-gray-900 placeholder-gray-500",
-								mainWrapper: "w-full",
-								inputWrapper:
-									"h-10 bg-white border-gray-200 hover:border-gray-300",
-							}}
+							radius="none"
+							classNames={filterInputCls}
 						/>
 					</div>
 
@@ -74,9 +71,8 @@ export default function DonationsFilters({
 								}
 							}}
 							className="w-full"
-							classNames={{
-								trigger: "h-10 bg-white border-gray-200 hover:border-gray-300",
-							}}
+							radius="none"
+							classNames={filterSelectCls}
 							renderValue={(items) => (
 								<span className="flex gap-2">
 									{items.length === 0 ? (

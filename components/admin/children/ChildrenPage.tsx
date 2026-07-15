@@ -12,7 +12,9 @@ export default function ChildrenPage() {
 	const [selectedStatus, setSelectedStatus] = useState<Set<string>>(
 		new Set(["all"]),
 	);
-	const [selectedGender, setSelectedGender] = useState<Set<string>>(new Set());
+	const [selectedGender, setSelectedGender] = useState<Set<string>>(
+		new Set(["all"]),
+	);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const [children, setChildren] = useState<ChildTableData[]>([]);
@@ -101,7 +103,7 @@ export default function ChildrenPage() {
 
 		// Gender filter
 		const genderMatches =
-			selectedGender.size === 0 || selectedGender.has(c.gender.toLowerCase());
+			selectedGender.has("all") || selectedGender.has(c.gender.toLowerCase());
 
 		// Search filter
 		const searchMatches =
@@ -175,7 +177,7 @@ export default function ChildrenPage() {
 			</div>
 
 			{/* Filters */}
-			<div className="mt-6">
+			<div className="mt-10">
 				<ChildrenFilters
 					selectedStatus={selectedStatus}
 					setSelectedStatus={setSelectedStatus}
@@ -187,7 +189,7 @@ export default function ChildrenPage() {
 
 				{/* Table */}
 				{error && (
-					<div className="mb-4 rounded-md bg-danger-50 px-4 py-3 text-sm text-danger">
+					<div className="my-4 rounded-md bg-danger-50 px-4 py-3 text-sm text-danger">
 						{error}
 					</div>
 				)}

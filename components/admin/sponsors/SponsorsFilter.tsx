@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Select, SelectItem, Input } from "@heroui/react";
+import { filterInputCls, filterSelectCls } from "../shared/styleConstants";
 
 interface SponsorsFilterProps {
 	activeTab: "individuals" | "groups";
@@ -51,34 +52,34 @@ export function SponsorsFilter({
 	const isGroupsTab = activeTab === "groups";
 
 	return (
-		<div className="bg-gray-100 p-6 rounded-md">
+		<div className="bg-gray-100 p-6">
 			<div className="space-y-3">
-				<div className="flex gap-4">
+				<div className="flex gap-5">
 					<div className={isGroupsTab ? "flex-1" : "flex-1"}>
-						<label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+						<label className="text-xs font-semibold text-gray-600 tracking-wider">
 							Search
 						</label>
 					</div>
 					{isGroupsTab && (
 						<div className="w-1/5">
-							<label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+							<label className="text-xs font-semibold text-gray-600 tracking-wider">
 								Type
 							</label>
 						</div>
 					)}
 					<div className={isGroupsTab ? "w-1/5" : "w-1/4"}>
-						<label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+						<label className="text-xs font-semibold text-gray-600 tracking-wider">
 							Location
 						</label>
 					</div>
 					<div className={isGroupsTab ? "w-1/5" : "w-1/4"}>
-						<label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+						<label className="text-xs font-semibold text-gray-600 tracking-wider">
 							Status
 						</label>
 					</div>
 				</div>
 
-				<div className="flex gap-4 items-end">
+				<div className="flex gap-6 mt-2 items-end">
 					<div className="flex-1">
 						<Input
 							aria-label="Search"
@@ -90,12 +91,8 @@ export function SponsorsFilter({
 							value={searchValue}
 							onChange={handleSearchChange}
 							className="w-full"
-							classNames={{
-								input: "bg-white text-gray-900 placeholder-gray-500",
-								mainWrapper: "w-full",
-								inputWrapper:
-									"h-10 bg-white border-gray-200 hover:border-gray-300",
-							}}
+							radius="none"
+							classNames={filterInputCls}
 						/>
 					</div>
 
@@ -105,11 +102,9 @@ export function SponsorsFilter({
 								aria-label="Type"
 								selectedKeys={[typeValue]}
 								onChange={handleTypeChange}
+								radius="none"
 								className="w-full"
-								classNames={{
-									trigger:
-										"h-10 bg-white border-gray-200 hover:border-gray-300",
-								}}
+								classNames={filterSelectCls}
 							>
 								<SelectItem key="all">All types</SelectItem>
 								<SelectItem key="family">Family</SelectItem>
@@ -126,9 +121,8 @@ export function SponsorsFilter({
 							selectedKeys={[locationValue]}
 							onChange={handleLocationChange}
 							className="w-full"
-							classNames={{
-								trigger: "h-10 bg-white border-gray-200 hover:border-gray-300",
-							}}
+							radius="none"
+							classNames={filterSelectCls}
 						>
 							<SelectItem key="all">All locations</SelectItem>
 							<SelectItem key="usa">USA</SelectItem>
@@ -145,9 +139,8 @@ export function SponsorsFilter({
 							selectedKeys={[statusValue]}
 							onChange={handleStatusChange}
 							className="w-full"
-							classNames={{
-								trigger: "h-10 bg-white border-gray-200 hover:border-gray-300",
-							}}
+							radius="none"
+							classNames={filterSelectCls}
 						>
 							<SelectItem key="all">All statuses</SelectItem>
 							<SelectItem key="active">Active</SelectItem>
