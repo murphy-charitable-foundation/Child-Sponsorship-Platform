@@ -15,7 +15,7 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(`${process.env.NEXT_PUBLIC_API_URL}`),
+  metadataBase: new URL("http://localhost:3000"),
   title: {
     default: "Murphy Charity Foundation Uganda | Child Sponsorship",
     template: "%s | Murphy Charity Foundation Uganda",
