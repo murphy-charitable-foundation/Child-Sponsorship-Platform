@@ -28,11 +28,7 @@ import { ChildProfile } from "./admin/children/types";
 
 const pageCapacities = ["20", "60", "100"];
 
-export default function MeetTheChildrenUI({
-	groupSponsorship,
-}: {
-	groupSponsorship: boolean;
-}) {
+export default function MeetTheChildrenUI() {
 	const router = useRouter();
 
 	const supabase = createClient();
@@ -64,7 +60,7 @@ export default function MeetTheChildrenUI({
 			.from("children_with_ages")
 			.select("location")
 			.neq("location", null)
-			.eq("active", true);
+			.eq("status", "Active");
 
 		if (countriesError) {
 			console.log(countriesError);
@@ -88,17 +84,20 @@ export default function MeetTheChildrenUI({
 		const { from, to } = calculateRange();
 
 		if (selectedCountries.size === 0) {
-			console.log("no countries selected, skipping fetch");
 			setChildren([]);
 			setCount(0);
 			setIsLoaded(true);
 			return; // to resolve race condition between fetchData and fetchUniqueCountries, resulting in list being inaccurately filtered
 		}
 
-		const { data: newChildren, error: childrenError } = await supabase
+		const {
+			data: newChildren,
+			count: newCount,
+			error: childrenError,
+		} = await supabase
 			.from("children_with_ages")
-			.select("*")
-			.eq("active", true)
+			.select("*", { count: "exact" })
+			.eq("status", "Active")
 			.in("location", Array.from(selectedCountries))
 			.gte("age", ageRange[0])
 			.lte("age", ageRange[1])
@@ -133,24 +132,7 @@ export default function MeetTheChildrenUI({
 			image_url: child.photo_path ? signedUrls[child.photo_path] : undefined,
 		}));
 		setChildren(childrenWithUrls as ChildProfile[]);
-
-		const { count, error: countError } = await supabase
-			.from("children_with_ages")
-			.select("id", { count: "exact", head: true })
-			.eq("active", true)
-			.in("location", Array.from(selectedCountries))
-			.gte("age", ageRange[0])
-			.lte("age", ageRange[1])
-			.in("gender", genders)
-			.ilike("full_name", `%${searchTerm}%`);
-
-		if (requestId !== requestIdRef.current) return;
-
-		if (countError) {
-			console.log(countError);
-			throw countError;
-		}
-		setCount(count || 0);
+		setCount(newCount || 0);
 
 		setIsLoaded(true);
 	};
@@ -176,10 +158,8 @@ export default function MeetTheChildrenUI({
 	]);
 
 	useEffect(() => {
-		console.log("fetching unique countries");
 		fetchUniqueCountries();
-		console.log("fetched unique countries");
-	}, []); // Fetch unique countries on component mount
+	}, []);
 
 	return (
 		<main className="min-h-screen bg-background text-foreground">
@@ -334,7 +314,7 @@ export default function MeetTheChildrenUI({
 					id="children-grid"
 					className="gap-2 grid grid-cols-2 sm:grid-cols-4"
 				>
-					{children.map((item, index) => (
+					{children.map((item) => (
 						/* eslint-disable no-console */
 						<Card
 							key={item.id}

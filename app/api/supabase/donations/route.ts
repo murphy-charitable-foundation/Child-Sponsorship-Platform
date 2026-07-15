@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/supabase/require-admin";
 import { NextResponse } from "next/server";
 
 type PayPalCaptureRaw = {
@@ -38,30 +39,9 @@ export function countryCodeToName(code: string): string | null {
 export async function GET() {
 	const supabase = await createClient();
 
-	const {
-		data: { user },
-		error: authError,
-	} = await supabase.auth.getUser();
+	const { error: authError } = await requireAdmin(supabase);
 
-	if (authError || !user) {
-		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-	}
-
-	const { data: adminRow } = await supabase
-		.from("admins")
-		.select("id")
-		.eq("id", user.id)
-		.maybeSingle();
-
-	const { data: superAdminRow } = await supabase
-		.from("super_admins")
-		.select("id")
-		.eq("id", user.id)
-		.maybeSingle();
-
-	if (!adminRow && !superAdminRow) {
-		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-	}
+	if (authError) return authError;
 
 	const adminClient = createAdminClient();
 

@@ -1,6 +1,7 @@
 import { CreateSponsor } from "@/components/admin/sponsors/types";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/supabase/require-admin";
 
 import { NextRequest, NextResponse } from "next/server";
 
@@ -18,30 +19,9 @@ function validate(data: CreateSponsor): string | null {
 export async function GET(req: NextRequest) {
 	const supabase = await createClient();
 
-	const {
-		data: { user },
-		error: authError,
-	} = await supabase.auth.getUser();
+	const { error: authError } = await requireAdmin(supabase);
 
-	if (authError || !user) {
-		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-	}
-
-	const { data: adminRow } = await supabase
-		.from("admins")
-		.select("id")
-		.eq("id", user.id)
-		.maybeSingle();
-
-	const { data: superAdminRow } = await supabase
-		.from("super_admins")
-		.select("id")
-		.eq("id", user.id)
-		.maybeSingle();
-
-	if (!adminRow && !superAdminRow) {
-		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-	}
+	if (authError) return authError;
 
 	const isGroupsTab = req.nextUrl.searchParams.get("tab") === "groups";
 
@@ -81,30 +61,9 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
 	const supabase = await createClient();
 
-	const {
-		data: { user },
-		error: authError,
-	} = await supabase.auth.getUser();
+	const { error: authError } = await requireAdmin(supabase);
 
-	if (authError || !user) {
-		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-	}
-
-	const { data: adminRow } = await supabase
-		.from("admins")
-		.select("id")
-		.eq("id", user.id)
-		.maybeSingle();
-
-	const { data: superAdminRow } = await supabase
-		.from("super_admins")
-		.select("id")
-		.eq("id", user.id)
-		.maybeSingle();
-
-	if (!adminRow && !superAdminRow) {
-		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-	}
+	if (authError) return authError;
 
 	const data = await req.json();
 
@@ -157,30 +116,9 @@ export async function POST(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
 	const supabase = await createClient();
 
-	const {
-		data: { user },
-		error: authError,
-	} = await supabase.auth.getUser();
+	const { error: authError } = await requireAdmin(supabase);
 
-	if (authError || !user) {
-		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-	}
-
-	const { data: adminRow } = await supabase
-		.from("admins")
-		.select("id")
-		.eq("id", user.id)
-		.maybeSingle();
-
-	const { data: superAdminRow } = await supabase
-		.from("super_admins")
-		.select("id")
-		.eq("id", user.id)
-		.maybeSingle();
-
-	if (!adminRow && !superAdminRow) {
-		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-	}
+	if (authError) return authError;
 
 	const data = await req.json();
 

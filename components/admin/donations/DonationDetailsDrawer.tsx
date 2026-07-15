@@ -1,9 +1,10 @@
 "use client";
 
-import { Donation, frequencies } from "./types";
+import { Donation } from "./types";
 import { formatDate } from "../sponsorships/SponsorshipTable";
 import FormDrawer from "../shared/FormDrawer";
 import { Frequencies } from "../sponsorships/types";
+import { FREQUENCIES } from "@/lib/constants";
 
 type Props = {
 	donation: Donation | null;
@@ -66,7 +67,7 @@ export default function DonationDetailsDrawer({
 						label="Frequency"
 						value={
 							donation.frequency
-								? frequencies[donation.frequency as Frequencies]
+								? FREQUENCIES[donation.frequency as Frequencies]
 								: ""
 						}
 					/>

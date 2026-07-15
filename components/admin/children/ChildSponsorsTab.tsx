@@ -5,14 +5,15 @@ import Image from "next/image";
 import { Avatar } from "@heroui/react";
 import { ChildTabHeader } from "./ChildTabHeader";
 import CreateSponsorshipDrawer from "@/components/admin/sponsorships/CreateSponsorshipDrawer";
-import { SPONSOR_TYPE_LABELS } from "@/components/admin/sponsors/types";
+
 import { ChildSponsor } from "./types";
+import { SPONSOR_TYPE_LABELS } from "@/lib/constants";
 
 type ChildSponsorsTabProps = {
 	childId: string;
 };
 
-function formatSinceDate(date: string) {
+export function formatSinceDate(date: string) {
 	return new Date(date).toLocaleDateString("en-US", {
 		year: "numeric",
 		month: "short",

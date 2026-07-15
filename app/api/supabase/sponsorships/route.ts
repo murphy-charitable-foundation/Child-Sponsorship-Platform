@@ -1,20 +1,17 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
-import {
-	CreateSponsorship,
-	Frequencies,
-} from "@/components/admin/sponsorships/types";
+import { requireAdmin } from "@/lib/supabase/require-admin";
+import { CreateSponsorship } from "@/components/admin/sponsorships/types";
+import { FREQUENCIES } from "@/lib/constants";
 
 import { NextRequest, NextResponse } from "next/server";
-
-const FREQUENCIES: Frequencies[] = ["monthly", "onetime", "annual"];
 
 function validate(data: CreateSponsorship): string | null {
 	if (!data.sponsorId) return "Sponsor is required.";
 	if (!data.childId) return "Child is required.";
 	if (!data.amount || Number(data.amount) <= 0)
 		return "A valid amount is required.";
-	if (!data.frequency || !FREQUENCIES.includes(data.frequency))
+	if (!data.frequency || !Object.keys(FREQUENCIES).includes(data.frequency))
 		return "A valid frequency is required.";
 	if (!data.startDate) return "Start date is required.";
 	if (data.frequency !== "onetime" && !data.endDate)
@@ -25,30 +22,9 @@ function validate(data: CreateSponsorship): string | null {
 export async function GET() {
 	const supabase = await createClient();
 
-	const {
-		data: { user },
-		error: authError,
-	} = await supabase.auth.getUser();
+	const { error: authError } = await requireAdmin(supabase);
 
-	if (authError || !user) {
-		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-	}
-
-	const { data: adminRow } = await supabase
-		.from("admins")
-		.select("id")
-		.eq("id", user.id)
-		.maybeSingle();
-
-	const { data: superAdminRow } = await supabase
-		.from("super_admins")
-		.select("id")
-		.eq("id", user.id)
-		.maybeSingle();
-
-	if (!adminRow && !superAdminRow) {
-		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-	}
+	if (authError) return authError;
 
 	const adminClient = createAdminClient();
 
@@ -84,30 +60,9 @@ export async function GET() {
 export async function POST(req: NextRequest) {
 	const supabase = await createClient();
 
-	const {
-		data: { user },
-		error: authError,
-	} = await supabase.auth.getUser();
+	const { error: authError } = await requireAdmin(supabase);
 
-	if (authError || !user) {
-		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-	}
-
-	const { data: adminRow } = await supabase
-		.from("admins")
-		.select("id")
-		.eq("id", user.id)
-		.maybeSingle();
-
-	const { data: superAdminRow } = await supabase
-		.from("super_admins")
-		.select("id")
-		.eq("id", user.id)
-		.maybeSingle();
-
-	if (!adminRow && !superAdminRow) {
-		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-	}
+	if (authError) return authError;
 
 	const data = await req.json();
 

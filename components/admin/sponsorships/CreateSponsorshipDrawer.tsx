@@ -5,12 +5,7 @@ import { Frequencies } from "./types";
 import FormDrawer, { Field, inputCls } from "../shared/FormDrawer";
 import { ChildTableData } from "../children/types";
 import { SponsorGroupTableData, SponsorTableData } from "../sponsors/types";
-
-const FREQUENCIES: { value: Frequencies; label: string }[] = [
-	{ value: "monthly", label: "Monthly" },
-	{ value: "annual", label: "Annual" },
-	{ value: "onetime", label: "One-time" },
-];
+import { FREQUENCIES } from "@/lib/constants";
 
 type Option = { id: string; name: string };
 
@@ -217,12 +212,12 @@ export default function CreateSponsorshipDrawer({
 								}}
 								className={inputCls}
 							>
-								{FREQUENCIES.map((f) => (
+								{Object.entries(FREQUENCIES).map(([key, value]) => (
 									<option
-										key={f.value}
-										value={f.value}
+										key={key}
+										value={key}
 									>
-										{f.label}
+										{value}
 									</option>
 								))}
 							</select>

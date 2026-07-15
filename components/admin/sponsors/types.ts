@@ -7,15 +7,8 @@ export type SponsorType =
 	| "company"
 	| "ngo"
 	| "religious";
-export type SponsorStatus = "Active" | "Inactive";
 
-export const SPONSOR_TYPE_LABELS: Record<SponsorType, string> = {
-	individual: "Individual",
-	family: "Family",
-	company: "Company / Business",
-	ngo: "Organization / NGO",
-	religious: "Religious Institution",
-};
+export type SponsorStatus = "Active" | "Inactive";
 
 export type SponsorTableData = {
 	id: string;

@@ -55,6 +55,7 @@ export type ChildProfile = {
 	image_url?: string | null;
 	guardian?: Guardian;
 	sponsorship_status: SponsorshipStatus;
+	school_grade: number | null;
 	homepage_visibility: boolean;
 };
 

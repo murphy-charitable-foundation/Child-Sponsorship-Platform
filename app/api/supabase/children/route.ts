@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAdmin } from "@/lib/supabase/require-admin";
 import type {
 	CreateChild,
 	StatusType,
@@ -18,30 +19,9 @@ function validate(data: CreateChild): string | null {
 export async function GET() {
 	const supabase = await createClient();
 
-	const {
-		data: { user },
-		error: authError,
-	} = await supabase.auth.getUser();
+	const { error: authError } = await requireAdmin(supabase);
 
-	if (authError || !user) {
-		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-	}
-
-	const { data: adminRow } = await supabase
-		.from("admins")
-		.select("id")
-		.eq("id", user.id)
-		.maybeSingle();
-
-	const { data: superAdminRow } = await supabase
-		.from("super_admins")
-		.select("id")
-		.eq("id", user.id)
-		.maybeSingle();
-
-	if (!adminRow && !superAdminRow) {
-		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-	}
+	if (authError) return authError;
 
 	const { data, error: childrenError } = await supabase
 		.from("children_with_ages")
@@ -63,30 +43,9 @@ export async function GET() {
 export async function POST(req: NextRequest) {
 	const supabase = await createClient();
 
-	const {
-		data: { user },
-		error: authError,
-	} = await supabase.auth.getUser();
+	const { error: authError } = await requireAdmin(supabase);
 
-	if (authError || !user) {
-		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-	}
-
-	const { data: adminRow } = await supabase
-		.from("admins")
-		.select("id")
-		.eq("id", user.id)
-		.maybeSingle();
-
-	const { data: superAdminRow } = await supabase
-		.from("super_admins")
-		.select("id")
-		.eq("id", user.id)
-		.maybeSingle();
-
-	if (!adminRow && !superAdminRow) {
-		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-	}
+	if (authError) return authError;
 
 	const data = await req.json();
 
@@ -167,30 +126,9 @@ export async function POST(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
 	const supabase = await createClient();
 
-	const {
-		data: { user },
-		error: authError,
-	} = await supabase.auth.getUser();
+	const { error: authError } = await requireAdmin(supabase);
 
-	if (authError || !user) {
-		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-	}
-
-	const { data: adminRow } = await supabase
-		.from("admins")
-		.select("id")
-		.eq("id", user.id)
-		.maybeSingle();
-
-	const { data: superAdminRow } = await supabase
-		.from("super_admins")
-		.select("id")
-		.eq("id", user.id)
-		.maybeSingle();
-
-	if (!adminRow && !superAdminRow) {
-		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-	}
+	if (authError) return authError;
 
 	const data = await req.json();
 

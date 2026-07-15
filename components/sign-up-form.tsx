@@ -2,35 +2,20 @@
 
 import { createClient } from "@/lib/supabase/client";
 import {
-	Tabs,
-	Tab,
-	Card,
-	CardBody,
-	CardHeader,
 	Checkbox,
 	Input,
 	Select,
 	SelectItem,
-	Textarea,
 	Button,
 	Link,
 	Divider,
 } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { SponsorType } from "./admin/sponsors/types";
+import { SPONSOR_TYPE_LABELS } from "@/lib/constants";
 
-const sponsorOptions = [
-	{ key: "individual", label: "Individual" },
-	{ key: "family", label: "Family" },
-	{ key: "company", label: "Company / Business" },
-	{ key: "ngo", label: "Organization / NGO" },
-	{ key: "religious", label: "Religious Institution" },
-];
-
-export function SignUpForm({
-	className,
-	...props
-}: React.ComponentPropsWithoutRef<"div">) {
+export function SignUpForm({}: React.ComponentPropsWithoutRef<"div">) {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [phone, setPhone] = useState("");
@@ -40,7 +25,7 @@ export function SignUpForm({
 	const [agreedToTerms, setAgreedToTerms] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
-	const [sponsorType, setSponsorType] = useState<string>("individual");
+	const [sponsorType, setSponsorType] = useState<SponsorType>("individual");
 	const router = useRouter();
 
 	const handleSignUp = async (e: React.FormEvent) => {
@@ -73,6 +58,7 @@ export function SignUpForm({
 						first_name: firstName,
 						last_name: lastName,
 						active: true,
+						phone_number: phone,
 					},
 				},
 			});
@@ -97,23 +83,21 @@ export function SignUpForm({
 					selectedKeys={[sponsorType]}
 					onSelectionChange={(keys) => {
 						if (keys === "all") return; // satisfy TS
-
-						const value = Array.from(keys)[0] as string;
-						setSponsorType(value);
+						setSponsorType(keys as unknown as SponsorType);
 					}}
 					classNames={{
 						trigger: "rounded-[12px]",
 					}}
 					defaultSelectedKeys={["individual"]}
 				>
-					{sponsorOptions.map((opt) => (
+					{Object.entries(SPONSOR_TYPE_LABELS).map(([key, label]) => (
 						<SelectItem
-							key={opt.key}
+							key={key}
 							classNames={{
 								selectedIcon: "hidden",
 							}}
 						>
-							{opt.label}
+							{label}
 						</SelectItem>
 					))}
 				</Select>

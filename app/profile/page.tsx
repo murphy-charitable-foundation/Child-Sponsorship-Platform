@@ -7,20 +7,9 @@ import { Mail, User, Calendar } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import ProfileImageUpload from "@/components/profile-image-upload";
 import { useUserProfile } from "@/components/UserProfileContext";
-
-const SPONSOR_TYPE_LABELS: Record<string, string> = {
-	individual: "Individual",
-	family: "Family",
-	company: "Company / Business",
-	ngo: "Organization / NGO",
-	religious: "Religious Institution",
-};
-const ROLE_LABELS: Record<string, string> = {
-	admin: "Admin",
-	super_admin: "Super Admin",
-	pending_admin: "Pending Admin",
-	sponsor: "Sponsor",
-};
+import { SponsorType } from "@/components/admin/sponsors/types";
+import { formatSinceDate } from "@/components/admin/children/ChildSponsorsTab";
+import { ROLE_LABELS, SPONSOR_TYPE_LABELS } from "@/lib/constants";
 
 export default function ProfilePage() {
 	const { user, loading } = useAuth();
@@ -41,8 +30,6 @@ export default function ProfilePage() {
 	useEffect(() => {
 		if (!user) return;
 		const role = user.app_metadata.role;
-
-		console.log(role);
 
 		let convertedRole = "";
 		if (role === "sponsor") {
@@ -103,11 +90,6 @@ export default function ProfilePage() {
 	const sponsorType = user.user_metadata.sponsor_type;
 	const isActive = user.user_metadata.active ?? true;
 	const role = user.app_metadata.role;
-	const memberSince = new Date(user.created_at).toLocaleDateString("en-US", {
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-	});
 
 	return (
 		<div className="min-h-screen bg-blue-50">
@@ -121,7 +103,7 @@ export default function ProfilePage() {
 							currentUrl={avatarUrl}
 							name={fullName || user.email}
 							onChange={(file) => handleUploadImage(file)}
-							size={96}
+							size={120}
 						/>
 
 						<div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -187,8 +169,8 @@ export default function ProfilePage() {
 									{sponsorType ? "Sponsor Type" : "Role"}
 								</p>
 								<p className="text-sm font-medium">
-									{SPONSOR_TYPE_LABELS[sponsorType]
-										? SPONSOR_TYPE_LABELS[sponsorType]
+									{SPONSOR_TYPE_LABELS[sponsorType as SponsorType]
+										? SPONSOR_TYPE_LABELS[sponsorType as SponsorType]
 										: ROLE_LABELS[role]}
 								</p>
 							</div>
@@ -200,7 +182,9 @@ export default function ProfilePage() {
 							</div>
 							<div>
 								<p className="text-xs text-zinc-400">Member Since</p>
-								<p className="text-sm font-medium">{memberSince}</p>
+								<p className="text-sm font-medium">
+									{formatSinceDate(user.created_at)}
+								</p>
 							</div>
 						</div>
 					</div>
