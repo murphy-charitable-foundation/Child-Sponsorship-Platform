@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { StatusType } from "../children/types";
+import { ChildStatus } from "../children/types";
 import { SponsorStatus } from "../sponsors/types";
 
 type ProfileHeaderProps = {
@@ -10,7 +10,7 @@ type ProfileHeaderProps = {
 		full_name: string;
 		enrolled: string;
 		age?: number;
-		status: StatusType | SponsorStatus;
+		status: ChildStatus | SponsorStatus;
 	};
 };
 

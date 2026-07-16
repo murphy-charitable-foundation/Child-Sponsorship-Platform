@@ -2,12 +2,13 @@
 
 import { Input, Select, SelectItem } from "@heroui/react";
 import { filterInputCls, filterSelectCls } from "../shared/styleConstants";
+import { CHILD_STATUS, GENDERS } from "@/lib/constants";
 
 type ChildrenFiltersProps = {
-	selectedStatus: Set<string>;
-	setSelectedStatus: (status: Set<string>) => void;
-	selectedGender: Set<string>;
-	setSelectedGender: (gender: Set<string>) => void;
+	selectedStatus: string;
+	setSelectedStatus: (value: string) => void;
+	selectedGender: string;
+	setSelectedGender: (value: string) => void;
 	searchQuery: string;
 	setSearchQuery: (query: string) => void;
 };
@@ -21,8 +22,8 @@ export default function ChildrenFilters({
 	setSearchQuery,
 }: ChildrenFiltersProps) {
 	const handleReset = () => {
-		setSelectedStatus(new Set(["all"]));
-		setSelectedGender(new Set());
+		setSelectedStatus("all");
+		setSelectedGender("all");
 		setSearchQuery("");
 	};
 
@@ -65,41 +66,27 @@ export default function ChildrenFilters({
 					<div className="w-1/5">
 						<Select
 							aria-label="Gender"
-							selectedKeys={selectedGender}
-							onSelectionChange={(keys) =>
-								setSelectedGender(new Set(Array.from(keys as Set<string>)))
-							}
+							disallowEmptySelection
+							selectedKeys={[selectedGender]}
+							onChange={(e) => setSelectedGender(e.target.value)}
 							className="w-full"
 							radius="none"
 							classNames={filterSelectCls}
 						>
-							<SelectItem key="all">All genders</SelectItem>
-							<SelectItem key="male">Male</SelectItem>
-							<SelectItem key="female">Female</SelectItem>
-							<SelectItem key="other">Other</SelectItem>
+							{["all", ...GENDERS].map((g) => (
+								<SelectItem key={g === "all" ? "all" : g.toLowerCase()}>
+									{g === "all" ? "All genders" : g}
+								</SelectItem>
+							))}
 						</Select>
 					</div>
 
 					<div className="w-1/5">
 						<Select
 							aria-label="Status"
-							selectedKeys={selectedStatus}
-							onSelectionChange={(keys) => {
-								const newKeys = new Set(Array.from(keys as Set<string>));
-
-								// If "all" is selected, keep only "all"
-								if (newKeys.has("all")) {
-									setSelectedStatus(new Set(["all"]));
-								}
-								// If an individual status is clicked when "all" was selected, switch to just that status
-								else if (newKeys.size > 0) {
-									setSelectedStatus(newKeys);
-								}
-								// Allow empty selection
-								else {
-									setSelectedStatus(new Set());
-								}
-							}}
+							disallowEmptySelection
+							selectedKeys={[selectedStatus]}
+							onChange={(e) => setSelectedStatus(e.target.value)}
 							className="w-full"
 							radius="none"
 							classNames={filterSelectCls}
@@ -128,10 +115,11 @@ export default function ChildrenFilters({
 								</span>
 							)}
 						>
-							<SelectItem key="all">All statuses</SelectItem>
-							<SelectItem key="active">Active</SelectItem>
-							<SelectItem key="waiting">Waiting</SelectItem>
-							<SelectItem key="exited">Exited</SelectItem>
+							{["all", ...CHILD_STATUS].map((s) => (
+								<SelectItem key={s === "all" ? "all" : s.toLowerCase()}>
+									{s === "all" ? "All statuses" : s}
+								</SelectItem>
+							))}
 						</Select>
 					</div>
 				</div>

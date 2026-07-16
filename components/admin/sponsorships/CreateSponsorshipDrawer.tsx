@@ -1,17 +1,30 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Frequencies } from "./types";
-import FormDrawer, { Field, inputCls } from "../shared/FormDrawer";
+import { Input, Select, SelectItem } from "@heroui/react";
+import { CreateSponsorship, EditSponsorship, Frequencies } from "./types";
+import FormDrawer, { Field } from "../shared/FormDrawer";
+import { filterInputCls, filterSelectCls } from "../shared/styleConstants";
 import { ChildTableData } from "../children/types";
 import { SponsorGroupTableData, SponsorTableData } from "../sponsors/types";
 import { FREQUENCIES } from "@/lib/constants";
 
+//TODO: This is not finalized version. we need design team create UI for this.
 type Option = { id: string; name: string };
 
 type CreateSponsorshipDrawerProps = {
 	isOpen: boolean;
 	onClose: () => void;
+};
+
+export const SPS_EMPTY_FORM: CreateSponsorship | EditSponsorship = {
+	sponsorship_id: "",
+	sponsor_id: "",
+	child_id: "",
+	amount: null,
+	frequency: "monthly",
+	start_date: "",
+	end_date: "",
 };
 
 export default function CreateSponsorshipDrawer({
@@ -20,16 +33,14 @@ export default function CreateSponsorshipDrawer({
 }: CreateSponsorshipDrawerProps) {
 	const [sponsors, setSponsors] = useState<Option[]>([]);
 	const [children, setChildren] = useState<Option[]>([]);
-	const [sponsorId, setSponsorId] = useState("");
-	const [childId, setChildId] = useState("");
-	const [amount, setAmount] = useState("");
-	const [frequency, setFrequency] = useState<Frequencies>("monthly");
-	const [startDate, setStartDate] = useState("");
-	const [endDate, setEndDate] = useState("");
+	const [form, setForm] = useState<CreateSponsorship>(
+		SPS_EMPTY_FORM as CreateSponsorship,
+	);
 	const [isSaving, setIsSaving] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const requiresEndDate = frequency === "monthly" || frequency === "annual";
+	const requiresEndDate =
+		form.frequency === "monthly" || form.frequency === "annual";
 
 	useEffect(() => {
 		if (!isOpen) return;
@@ -91,13 +102,15 @@ export default function CreateSponsorshipDrawer({
 		fetchChildren();
 	}, [isOpen]);
 
+	function update<K extends keyof CreateSponsorship>(
+		key: K,
+		value: CreateSponsorship[K],
+	) {
+		setForm((prev) => ({ ...prev, [key]: value }));
+	}
+
 	function handleClose() {
-		setSponsorId("");
-		setChildId("");
-		setAmount("");
-		setFrequency("monthly");
-		setStartDate("");
-		setEndDate("");
+		setForm(SPS_EMPTY_FORM as CreateSponsorship);
 		setError(null);
 		onClose();
 	}
@@ -112,12 +125,8 @@ export default function CreateSponsorshipDrawer({
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
-					sponsorId,
-					childId,
-					amount,
-					frequency,
-					startDate,
-					endDate: requiresEndDate ? endDate : null,
+					...form,
+					end_date: requiresEndDate ? form.end_date : null,
 				}),
 			});
 
@@ -151,98 +160,84 @@ export default function CreateSponsorshipDrawer({
 				</h3>
 				<div className="space-y-4">
 					<Field label="Sponsor">
-						<select
-							required
-							value={sponsorId}
-							onChange={(e) => setSponsorId(e.target.value)}
-							className={inputCls}
+						<Select
+							isRequired
+							placeholder="Select sponsor"
+							selectedKeys={form.sponsor_id ? [form.sponsor_id] : []}
+							onChange={(e) => update("sponsor_id", e.target.value)}
+							classNames={filterSelectCls}
 						>
-							<option value="">Select sponsor</option>
 							{sponsors.map((s) => (
-								<option
-									key={s.id}
-									value={s.id}
-								>
-									{s.name}
-								</option>
+								<SelectItem key={s.id}>{s.name}</SelectItem>
 							))}
-						</select>
+						</Select>
 					</Field>
 
 					<Field label="Child">
-						<select
-							required
-							value={childId}
-							onChange={(e) => setChildId(e.target.value)}
-							className={inputCls}
+						<Select
+							isRequired
+							placeholder="Select child"
+							selectedKeys={form.child_id ? [form.child_id] : []}
+							onChange={(e) => update("child_id", e.target.value)}
+							classNames={filterSelectCls}
 						>
-							<option value="">Select child</option>
 							{children.map((c) => (
-								<option
-									key={c.id}
-									value={c.id}
-								>
-									{c.name}
-								</option>
+								<SelectItem key={c.id}>{c.name}</SelectItem>
 							))}
-						</select>
+						</Select>
 					</Field>
 
 					<div className="grid grid-cols-2 gap-4">
 						<Field label="Amount ($)">
-							<input
+							<Input
 								type="number"
 								required
-								value={amount}
-								onChange={(e) => setAmount(e.target.value)}
-								className={inputCls}
+								value={form.amount != null ? String(form.amount) : ""}
+								onChange={(e) => update("amount", e.target.value)}
+								classNames={filterInputCls}
 								placeholder="0"
 							/>
 						</Field>
 
 						<Field label="Frequency">
-							<select
-								required
-								value={frequency}
-								onChange={(e) => {
-									const value = e.target.value as Frequencies;
+							<Select
+								isRequired
+								selectedKeys={[form.frequency]}
+								onSelectionChange={(keys) => {
+									const [value] = Array.from(keys as Set<string>);
+									const nextFrequency = value as Frequencies;
 
-									setFrequency(value);
-									if (value === "onetime") setEndDate("");
+									update("frequency", nextFrequency);
+									if (nextFrequency === "onetime") update("end_date", "");
 								}}
-								className={inputCls}
+								classNames={filterSelectCls}
 							>
 								{Object.entries(FREQUENCIES).map(([key, value]) => (
-									<option
-										key={key}
-										value={key}
-									>
-										{value}
-									</option>
+									<SelectItem key={key}>{value}</SelectItem>
 								))}
-							</select>
+							</Select>
 						</Field>
 					</div>
 
 					<div className="grid grid-cols-2 gap-4">
 						<Field label="Start date">
-							<input
+							<Input
 								type="date"
 								required
-								value={startDate}
-								onChange={(e) => setStartDate(e.target.value)}
-								className={inputCls}
+								value={form.start_date}
+								onChange={(e) => update("start_date", e.target.value)}
+								classNames={filterInputCls}
 							/>
 						</Field>
 
 						{requiresEndDate && (
 							<Field label="End date">
-								<input
+								<Input
 									type="date"
 									required
-									value={endDate}
-									onChange={(e) => setEndDate(e.target.value)}
-									className={inputCls}
+									value={form.end_date ?? ""}
+									onChange={(e) => update("end_date", e.target.value)}
+									classNames={filterInputCls}
 								/>
 							</Field>
 						)}

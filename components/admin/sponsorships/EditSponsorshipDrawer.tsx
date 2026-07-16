@@ -1,11 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X } from "lucide-react";
-import { SponsorshipProfile } from "./SponsorshipProfilePage";
+import FormDrawer, { Field } from "../shared/FormDrawer";
+import { EditSponsorship, Frequencies, Sponsorship } from "./types";
+import { Input, Select, SelectItem } from "@heroui/react";
+import { filterInputCls, filterSelectCls } from "../shared/styleConstants";
+import { FREQUENCIES } from "@/lib/constants";
+import { SPS_EMPTY_FORM } from "./CreateSponsorshipDrawer";
+import { formatDate } from "./SponsorshipTable";
 
 type EditSponsorshipDrawerProps = {
-	sponsorship: SponsorshipProfile;
+	sponsorship: Sponsorship;
 	isOpen: boolean;
 	onClose: () => void;
 };
@@ -15,209 +20,164 @@ export default function EditSponsorshipDrawer({
 	isOpen,
 	onClose,
 }: EditSponsorshipDrawerProps) {
-	const [sponsorName, setSponsorName] = useState("");
-	const [childName, setChildName] = useState("");
-	const [address, setAddress] = useState("");
-	const [city, setCity] = useState("");
-	const [state, setState] = useState("");
-	const [zipCode, setZipCode] = useState("");
-	const [phoneNumber, setPhoneNumber] = useState("");
-	const [email, setEmail] = useState("");
-	const [status, setStatus] = useState("Active");
+	const [form, setForm] = useState<EditSponsorship>(
+		SPS_EMPTY_FORM as EditSponsorship,
+	);
+	const [isSaving, setIsSaving] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+
+	const requiresEndDate =
+		form.frequency === "monthly" || form.frequency === "annual";
 
 	useEffect(() => {
-		if (sponsorship) {
-			setSponsorName(sponsorship.sponsorName);
-			setChildName(sponsorship.childName);
-			setAddress(sponsorship.address);
-			setCity(sponsorship.city);
-			setState(sponsorship.state);
-			setZipCode(sponsorship.zipCode);
-			setPhoneNumber(sponsorship.phoneNumber);
-			setEmail(sponsorship.email);
-			setStatus(sponsorship.status);
+		if (!sponsorship) return;
+		if (isOpen && sponsorship) {
+			setForm({
+				sponsorship_id: sponsorship.sponsorship_id,
+				amount: sponsorship.amount,
+				frequency: sponsorship.frequency,
+				start_date: formatDate(sponsorship.start_date_time),
+				end_date: sponsorship.end_date_time
+					? formatDate(sponsorship.end_date_time)
+					: "",
+			});
 		}
-	}, [sponsorship]);
+	}, [isOpen, sponsorship]);
 
-	const handleSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
+	function update<K extends keyof EditSponsorship>(
+		key: K,
+		value: EditSponsorship[K],
+	) {
+		setForm((prev) => ({ ...prev, [key]: value }));
+	}
+
+	function handleClose() {
+		setError(null);
 		onClose();
-	};
+		setForm(SPS_EMPTY_FORM as EditSponsorship);
+	}
 
-	if (!isOpen) return null;
+	async function handleSubmit(e: React.FormEvent) {
+		e.preventDefault();
+		setIsSaving(true);
+		setError(null);
+
+		try {
+			const res = await fetch("/api/supabase/sponsorships", {
+				method: "PATCH",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					...form,
+					end_date: requiresEndDate ? form.end_date : null,
+				}),
+			});
+
+			const data = await res.json().catch(() => ({}));
+
+			if (!res.ok) {
+				setError(data.error ?? "Failed to update sponsorship.");
+				return;
+			}
+
+			handleClose();
+		} finally {
+			setIsSaving(false);
+		}
+	}
+
+	if (!isOpen || !sponsorship) return null;
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-			<div className="w-full max-w-2xl rounded-2xl bg-white p-8 shadow-xl max-h-[90vh] overflow-y-auto">
-				{/* Header */}
-				<div className="flex items-center justify-between mb-6">
-					<h2 className="text-2xl font-bold text-slate-900">
-						Edit Sponsorship
-					</h2>
-					<button
-						onClick={onClose}
-						className="text-slate-400 hover:text-slate-600"
-					>
-						<X size={24} />
-					</button>
-				</div>
+		<FormDrawer
+			isOpen={isOpen}
+			onClose={handleClose}
+			title="Create Sponsorship"
+			formId="create-sponsorship-form"
+			onSubmit={handleSubmit}
+			isSaving={isSaving}
+			error={error}
+			saveLabel="Create sponsorship"
+		>
+			<section>
+				<h3 className="mb-4 text-sm font-semibold text-slate-800">
+					Sponsorship Details
+				</h3>
+				<div className="space-y-4">
+					<Field label="Sponsor">
+						<Input
+							type="text"
+							isDisabled
+							value={sponsorship.sponsor_name}
+							classNames={filterInputCls}
+						/>
+					</Field>
 
-				<form
-					onSubmit={handleSubmit}
-					className="space-y-6"
-				>
-					{/* Sponsorship Information */}
-					<div>
-						<h3 className="text-sm font-semibold text-slate-800 mb-4">
-							Sponsorship Information
-						</h3>
+					<Field label="Child">
+						<Input
+							type="text"
+							isDisabled
+							value={sponsorship.child_name}
+							classNames={filterInputCls}
+						/>
+					</Field>
 
-						<div className="grid grid-cols-2 gap-4 mb-4">
-							<div>
-								<label className="mb-1 block text-xs text-slate-500">
-									Sponsor name
-								</label>
-								<input
-									type="text"
-									value={sponsorName}
-									onChange={(e) => setSponsorName(e.target.value)}
-									className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-								/>
-							</div>
-							<div>
-								<label className="mb-1 block text-xs text-slate-500">
-									Child name
-								</label>
-								<input
-									type="text"
-									value={childName}
-									onChange={(e) => setChildName(e.target.value)}
-									className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-								/>
-							</div>
-						</div>
-
-						<div>
-							<label className="mb-1 block text-xs text-slate-500">
-								Status
-							</label>
-							<select
-								value={status}
-								onChange={(e) => setStatus(e.target.value)}
-								className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-							>
-								<option>Active</option>
-								<option>Inactive</option>
-								<option>Pending</option>
-							</select>
-						</div>
-					</div>
-
-					{/* Contact Information */}
-					<div>
-						<h3 className="text-sm font-semibold text-slate-800 mb-4">
-							Contact Information
-						</h3>
-
-						<div className="grid grid-cols-2 gap-4 mb-4">
-							<div>
-								<label className="mb-1 block text-xs text-slate-500">
-									Phone number
-								</label>
-								<input
-									type="text"
-									value={phoneNumber}
-									onChange={(e) => setPhoneNumber(e.target.value)}
-									className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-								/>
-							</div>
-							<div>
-								<label className="mb-1 block text-xs text-slate-500">
-									Email
-								</label>
-								<input
-									type="email"
-									value={email}
-									onChange={(e) => setEmail(e.target.value)}
-									className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-								/>
-							</div>
-						</div>
-					</div>
-
-					{/* Address Information */}
-					<div>
-						<h3 className="text-sm font-semibold text-slate-800 mb-4">
-							Address
-						</h3>
-
-						<div className="mb-4">
-							<label className="mb-1 block text-xs text-slate-500">
-								Street address
-							</label>
-							<input
-								type="text"
-								value={address}
-								onChange={(e) => setAddress(e.target.value)}
-								className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
+					<div className="grid grid-cols-2 gap-4">
+						<Field label="Amount ($)">
+							<Input
+								type="number"
+								required
+								value={form.amount != null ? String(form.amount) : ""}
+								onChange={(e) => update("amount", e.target.value)}
+								classNames={filterInputCls}
+								placeholder="0"
 							/>
-						</div>
+						</Field>
 
-						<div className="grid grid-cols-3 gap-4">
-							<div>
-								<label className="mb-1 block text-xs text-slate-500">
-									City
-								</label>
-								<input
-									type="text"
-									value={city}
-									onChange={(e) => setCity(e.target.value)}
-									className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-								/>
-							</div>
-							<div>
-								<label className="mb-1 block text-xs text-slate-500">
-									State
-								</label>
-								<input
-									type="text"
-									value={state}
-									onChange={(e) => setState(e.target.value)}
-									className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-								/>
-							</div>
-							<div>
-								<label className="mb-1 block text-xs text-slate-500">
-									ZIP Code
-								</label>
-								<input
-									type="text"
-									value={zipCode}
-									onChange={(e) => setZipCode(e.target.value)}
-									className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-								/>
-							</div>
-						</div>
+						<Field label="Frequency">
+							<Select
+								isRequired
+								selectedKeys={[form!.frequency]}
+								onSelectionChange={(keys) => {
+									const [value] = Array.from(keys as Set<string>);
+									const nextFrequency = value as Frequencies;
+
+									update("frequency", nextFrequency);
+									if (nextFrequency === "onetime") update("end_date", "");
+								}}
+								classNames={filterSelectCls}
+							>
+								{Object.entries(FREQUENCIES).map(([key, value]) => (
+									<SelectItem key={key}>{value}</SelectItem>
+								))}
+							</Select>
+						</Field>
 					</div>
 
-					{/* Actions */}
-					<div className="flex gap-3 justify-end pt-6 border-t border-slate-200">
-						<button
-							type="button"
-							onClick={onClose}
-							className="px-6 py-2 rounded-lg border border-slate-300 text-slate-700 font-medium hover:bg-slate-50 transition-colors"
-						>
-							Cancel
-						</button>
-						<button
-							type="submit"
-							className="px-6 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 transition-colors"
-						>
-							Save changes
-						</button>
+					<div className="grid grid-cols-2 gap-4">
+						<Field label="Start date">
+							<Input
+								type="date"
+								required
+								value={form.start_date}
+								onChange={(e) => update("start_date", e.target.value)}
+								classNames={filterInputCls}
+							/>
+						</Field>
+
+						{requiresEndDate && (
+							<Field label="End date">
+								<Input
+									type="date"
+									required
+									value={form.end_date ?? ""}
+									onChange={(e) => update("end_date", e.target.value)}
+									classNames={filterInputCls}
+								/>
+							</Field>
+						)}
 					</div>
-				</form>
-			</div>
-		</div>
+				</div>
+			</section>
+		</FormDrawer>
 	);
 }

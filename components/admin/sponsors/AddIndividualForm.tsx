@@ -1,17 +1,9 @@
 import ProfileImageUpload from "@/components/profile-image-upload";
 import { CreateSponsor } from "./types";
-import { Field, inputCls } from "../shared/FormDrawer";
-
-export const SP_COUNTRIES = [
-	"USA",
-	"UK",
-	"Canada",
-	"Australia",
-	"Spain",
-	"Uganda",
-	"Kenya",
-	"Other",
-];
+import { Field } from "../shared/FormDrawer";
+import { SP_COUNTRIES } from "@/lib/constants";
+import { Input, Select, SelectItem } from "@heroui/react";
+import { filterInputCls, filterSelectCls } from "../shared/styleConstants";
 
 type AddIndividualFormProps = {
 	form: CreateSponsor;
@@ -43,8 +35,8 @@ export default function AddIndividualForm({
 				<div className="space-y-3">
 					<div className="grid grid-cols-2 gap-3">
 						<Field label="First name">
-							<input
-								className={inputCls}
+							<Input
+								classNames={filterInputCls}
 								type="text"
 								required
 								value={form.first_name}
@@ -52,8 +44,8 @@ export default function AddIndividualForm({
 							/>
 						</Field>
 						<Field label="Last name">
-							<input
-								className={inputCls}
+							<Input
+								classNames={filterInputCls}
 								type="text"
 								required
 								value={form.last_name}
@@ -62,30 +54,30 @@ export default function AddIndividualForm({
 						</Field>
 					</div>
 					<Field label="Address line 1">
-						<input
-							className={inputCls}
+						<Input
+							classNames={filterInputCls}
 							value={form.address_line1 ?? ""}
 							onChange={(e) => update("address_line1", e.target.value)}
 						/>
 					</Field>
 					<Field label="Address line 2">
-						<input
-							className={inputCls}
+						<Input
+							classNames={filterInputCls}
 							value={form.address_line2 ?? ""}
 							onChange={(e) => update("address_line2", e.target.value)}
 						/>
 					</Field>
 					<div className="grid grid-cols-2 gap-3">
 						<Field label="City">
-							<input
-								className={inputCls}
+							<Input
+								classNames={filterInputCls}
 								value={form.city}
 								onChange={(e) => update("city", e.target.value)}
 							/>
 						</Field>
 						<Field label="State/Province">
-							<input
-								className={inputCls}
+							<Input
+								classNames={filterInputCls}
 								value={form.state}
 								onChange={(e) => update("state", e.target.value)}
 							/>
@@ -93,23 +85,22 @@ export default function AddIndividualForm({
 					</div>
 					<div className="grid grid-cols-2 gap-3">
 						<Field label="Zip/postal code">
-							<input
-								className={inputCls}
+							<Input
+								classNames={filterInputCls}
 								value={form.zip}
 								onChange={(e) => update("zip", e.target.value)}
 							/>
 						</Field>
 						<Field label="Country">
-							<select
-								className={inputCls}
+							<Select
+								classNames={filterSelectCls}
 								value={form.country}
 								onChange={(e) => update("country", e.target.value)}
 							>
-								<option value="">Select country</option>
 								{SP_COUNTRIES.map((c) => (
-									<option key={c}>{c}</option>
+									<SelectItem key={c}>{c}</SelectItem>
 								))}
-							</select>
+							</Select>
 						</Field>
 					</div>
 				</div>
@@ -121,17 +112,17 @@ export default function AddIndividualForm({
 				</h3>
 				<div className="grid grid-cols-2 gap-3">
 					<Field label="Phone number">
-						<input
+						<Input
 							type="tel"
-							className={inputCls}
+							classNames={filterInputCls}
 							value={form.phone_number ?? ""}
 							onChange={(e) => update("phone_number", e.target.value)}
 						/>
 					</Field>
 					<Field label="Email">
-						<input
+						<Input
 							type="email"
-							className={inputCls}
+							classNames={filterInputCls}
 							value={form.email ?? ""}
 							onChange={(e) => update("email", e.target.value)}
 						/>

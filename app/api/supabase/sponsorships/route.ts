@@ -6,15 +6,20 @@ import { FREQUENCIES } from "@/lib/constants";
 
 import { NextRequest, NextResponse } from "next/server";
 
-function validate(data: CreateSponsorship): string | null {
-	if (!data.sponsorId) return "Sponsor is required.";
-	if (!data.childId) return "Child is required.";
+function validate(
+	data: CreateSponsorship,
+	type: "create" | "update",
+): string | null {
+	if (type == "create") {
+		if (!data.sponsor_id) return "Sponsor is required.";
+		if (!data.child_id) return "Child is required.";
+	}
 	if (!data.amount || Number(data.amount) <= 0)
 		return "A valid amount is required.";
 	if (!data.frequency || !Object.keys(FREQUENCIES).includes(data.frequency))
 		return "A valid frequency is required.";
-	if (!data.startDate) return "Start date is required.";
-	if (data.frequency !== "onetime" && !data.endDate)
+	if (!data.start_date) return "Start date is required.";
+	if (data.frequency !== "onetime" && !data.end_date)
 		return "End date is required for monthly and annual sponsorships.";
 	return null;
 }
@@ -73,7 +78,7 @@ export async function POST(req: NextRequest) {
 		);
 	}
 
-	const validationError = validate(data);
+	const validationError = validate(data, "create");
 
 	if (validationError) {
 		return NextResponse.json({ error: validationError }, { status: 400 });
@@ -84,14 +89,63 @@ export async function POST(req: NextRequest) {
 	const { data: sponsorship, error: sponsorshipError } = await adminClient
 		.from("sponsorships")
 		.insert({
-			sponsor_id: data.sponsorId,
-			child_id: data.childId,
+			sponsor_id: data.sponsor_id,
+			child_id: data.child_id,
 			amount: Number(data.amount),
 			frequency: data.frequency,
-			start_date_time: data.startDate,
-			end_date_time: data.endDate ?? null,
-			sponsorship_active: true,
+			start_date_time: data.start_date,
+			end_date_time: data.end_date ?? null,
+			status: "Active",
+			is_recurring: data.frequency === "onetime" ? false : true,
 		})
+		.select("sponsorship_id")
+		.single();
+
+	if (sponsorshipError || !sponsorship) {
+		return NextResponse.json(
+			{ error: sponsorshipError?.message ?? "Failed to create sponsorship" },
+			{ status: 500 },
+		);
+	}
+
+	return NextResponse.json({ id: sponsorship.sponsorship_id }, { status: 201 });
+}
+
+export async function PATCH(req: NextRequest) {
+	const supabase = await createClient();
+
+	const { error: authError } = await requireAdmin(supabase);
+
+	if (authError) return authError;
+
+	const data = await req.json();
+
+	if (!data) {
+		return NextResponse.json(
+			{ error: "Invalid request data" },
+			{ status: 400 },
+		);
+	}
+
+	const validationError = validate(data, "update");
+
+	if (validationError) {
+		return NextResponse.json({ error: validationError }, { status: 400 });
+	}
+
+	const adminClient = createAdminClient();
+
+	const { data: sponsorship, error: sponsorshipError } = await adminClient
+		.from("sponsorships")
+		.update({
+			amount: Number(data.amount),
+			frequency: data.frequency,
+			start_date_time: data.start_date,
+			end_date_time: data.end_date ?? null,
+			status: "Active",
+			is_recurring: data.frequency === "onetime" ? false : true,
+		})
+		.eq("sponsorship_id", data.sponsorship_id)
 		.select("sponsorship_id")
 		.single();
 

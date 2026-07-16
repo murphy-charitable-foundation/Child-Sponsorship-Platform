@@ -2,13 +2,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
 import { CreateChild, GenderType } from "./types";
 import ProfileImageUpload from "@/components/profile-image-upload";
-import FormDrawer, { Field, inputCls, textareaCls } from "../shared/FormDrawer";
-
-export const COUNTRIES = ["Uganda", "Kenya", "Tanzania", "Rwanda"];
-export const GENDERS: GenderType[] = ["Male", "Female", "Other"];
+import { CHILD_COUNTRIES, GENDERS } from "@/lib/constants";
+import { Input, Select, SelectItem, Textarea } from "@heroui/react";
+import FormDrawer, { Field } from "../shared/FormDrawer";
+import {
+	filterInputCls,
+	filterSelectCls,
+	filterTextareaCls,
+} from "../shared/styleConstants";
 
 export const EMPTY_FORM: CreateChild = {
 	photo_file: null,
@@ -127,23 +130,23 @@ export default function AddChildDrawer({
 				<div className="space-y-4">
 					<div className="grid grid-cols-2 gap-4">
 						<Field label="First/given name">
-							<input
+							<Input
 								type="text"
 								required
 								value={form.first_name}
 								onChange={(e) => update("first_name", e.target.value)}
-								className={inputCls}
+								classNames={filterInputCls}
 								placeholder="First name"
 							/>
 						</Field>
 
 						<Field label="Last/family name">
-							<input
+							<Input
 								type="text"
 								required
 								value={form.last_name}
 								onChange={(e) => update("last_name", e.target.value)}
-								className={inputCls}
+								classNames={filterInputCls}
 								placeholder="Last name"
 							/>
 						</Field>
@@ -151,88 +154,86 @@ export default function AddChildDrawer({
 
 					<div className="grid grid-cols-2 gap-4">
 						<Field label="Gender">
-							<select
-								required
-								value={form?.gender}
-								onChange={(e) => update("gender", e.target.value as GenderType)}
-								className={inputCls}
+							<Select
+								isRequired
+								placeholder="Select gender"
+								selectedKeys={form?.gender ? [form.gender] : []}
+								onSelectionChange={(keys) => {
+									const [value] = Array.from(keys as Set<string>);
+
+									update("gender", (value as GenderType) ?? "");
+								}}
+								classNames={filterSelectCls}
 							>
-								<option value="">Select gender</option>
 								{GENDERS.map((g) => (
-									<option
-										key={g}
-										value={g}
-									>
-										{g}
-									</option>
+									<SelectItem key={g}>{g}</SelectItem>
 								))}
-							</select>
+							</Select>
 						</Field>
 
 						<Field label="Date of birth">
-							<input
+							<Input
 								type="date"
 								required
 								value={form?.date_of_birth}
 								onChange={(e) => update("date_of_birth", e.target.value)}
-								className={inputCls}
+								classNames={filterInputCls}
 							/>
 						</Field>
 					</div>
 
 					<div className="grid grid-cols-2 gap-4">
 						<Field label="Country">
-							<select
-								required
-								value={form?.location}
-								onChange={(e) => update("location", e.target.value)}
-								className={inputCls}
+							<Select
+								isRequired
+								placeholder="Select country"
+								selectedKeys={form?.location ? form.location : ""}
+								onSelectionChange={(keys) => {
+									const [value] = Array.from(keys as Set<string>);
+
+									update("location", value ?? "");
+								}}
+								classNames={filterSelectCls}
 							>
-								<option value="">Select country</option>
-								{COUNTRIES.map((c) => (
-									<option
-										key={c}
-										value={c}
-									>
-										{c}
-									</option>
+								{CHILD_COUNTRIES.map((c) => (
+									<SelectItem key={c}>{c}</SelectItem>
 								))}
-							</select>
+							</Select>
 						</Field>
 
 						<Field label="Language">
-							<input
+							<Input
 								type="text"
 								value={form?.language}
 								onChange={(e) => update("language", e.target.value)}
-								className={inputCls}
+								classNames={filterInputCls}
 								placeholder="e.g. Luganda"
 							/>
 						</Field>
 					</div>
 
 					<Field label="Dream job">
-						<input
+						<Input
 							type="text"
 							value={form?.dream_job ?? ""}
 							onChange={(e) => update("dream_job", e.target.value)}
-							className={inputCls}
+							classNames={filterInputCls}
 						/>
 					</Field>
 					<Field label="Favorite activities">
-						<input
+						<Input
 							type="text"
 							value={form?.favorite_activity ?? ""}
 							onChange={(e) => update("favorite_activity", e.target.value)}
-							className={inputCls}
+							classNames={filterInputCls}
 						/>
 					</Field>
 
 					<Field label="Biography">
-						<textarea
+						<Textarea
 							value={form?.biography ?? ""}
 							onChange={(e) => update("biography", e.target.value)}
-							className={textareaCls}
+							classNames={filterTextareaCls}
 							placeholder="Child's biography"
 							rows={4}
 						/>
@@ -246,10 +247,10 @@ export default function AddChildDrawer({
 					Family Details
 				</h3>
 				<Field label="Family description">
-					<textarea
+					<Textarea
 						value={form?.family_biography ?? ""}
 						onChange={(e) => update("family_biography", e.target.value)}
-						className={textareaCls}
+						classNames={filterTextareaCls}
 						placeholder="Describe the family background"
 						rows={4}
 					/>
@@ -261,32 +262,32 @@ export default function AddChildDrawer({
 				<h3 className="mb-4 text-sm font-semibold text-slate-800">Guardian</h3>
 				<div className="space-y-4">
 					<Field label="Guardian name">
-						<input
+						<Input
 							value={form?.guardian_name ?? ""}
 							onChange={(e) => update("guardian_name", e.target.value)}
-							className={inputCls}
+							classNames={filterInputCls}
 							placeholder="Full name"
 						/>
 					</Field>
 
 					<div className="grid grid-cols-2 gap-4">
 						<Field label="Relationship">
-							<input
+							<Input
 								type="text"
 								value={form?.guardian_relationship ?? ""}
 								onChange={(e) =>
 									update("guardian_relationship", e.target.value)
 								}
-								className={inputCls}
+								classNames={filterInputCls}
 								placeholder="e.g. Mother"
 							/>
 						</Field>
 						<Field label="NIN/ID">
-							<input
+							<Input
 								type="text"
 								value={form?.guardian_nin ?? ""}
 								onChange={(e) => update("guardian_nin", e.target.value)}
-								className={inputCls}
+								classNames={filterInputCls}
 								placeholder="National ID"
 							/>
 						</Field>
@@ -294,31 +295,31 @@ export default function AddChildDrawer({
 
 					<div className="grid grid-cols-2 gap-4">
 						<Field label="Phone">
-							<input
+							<Input
 								type="tel"
 								value={form?.guardian_phone ?? ""}
 								onChange={(e) => update("guardian_phone", e.target.value)}
-								className={inputCls}
+								classNames={filterInputCls}
 								placeholder="Phone number"
 							/>
 						</Field>
 						<Field label="Email">
-							<input
+							<Input
 								type="email"
 								value={form?.guardian_email ?? ""}
 								onChange={(e) => update("guardian_email", e.target.value)}
-								className={inputCls}
+								classNames={filterInputCls}
 								placeholder="Email address"
 							/>
 						</Field>
 					</div>
 
 					<Field label="Address">
-						<input
+						<Input
 							type="text"
 							value={form?.guardian_address ?? ""}
 							onChange={(e) => update("guardian_address", e.target.value)}
-							className={textareaCls}
+							classNames={filterInputCls}
 							placeholder="Full address"
 						/>
 					</Field>

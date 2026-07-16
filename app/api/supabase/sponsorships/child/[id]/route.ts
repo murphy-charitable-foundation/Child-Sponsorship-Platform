@@ -23,9 +23,7 @@ export async function GET(
 
 	const { data, error: sponsorshipsError } = await adminClient
 		.from("sponsorships")
-		.select(
-			"sponsorship_active, amount, frequency, start_date_time, sponsors(*)",
-		)
+		.select("status, amount, frequency, start_date_time, sponsors(*)")
 		.eq("child_id", id);
 
 	if (sponsorshipsError) {
@@ -56,7 +54,7 @@ export async function GET(
 				return {
 					...sponsor,
 					image_url: signedUrl,
-					sponsorship_active: s.sponsorship_active,
+					status: s.status,
 					start_date_time: s.start_date_time,
 					amount: s.amount,
 					frequency: s.frequency,

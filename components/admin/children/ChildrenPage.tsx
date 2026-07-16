@@ -9,12 +9,8 @@ import { ChildProfile, ChildTableData } from "./types";
 import EditChildDrawer from "./EditChildDrawer";
 
 export default function ChildrenPage() {
-	const [selectedStatus, setSelectedStatus] = useState<Set<string>>(
-		new Set(["all"]),
-	);
-	const [selectedGender, setSelectedGender] = useState<Set<string>>(
-		new Set(["all"]),
-	);
+	const [selectedStatus, setSelectedStatus] = useState("all");
+	const [selectedGender, setSelectedGender] = useState("all");
 	const [searchQuery, setSearchQuery] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const [children, setChildren] = useState<ChildTableData[]>([]);
@@ -99,11 +95,13 @@ export default function ChildrenPage() {
 	const filtered = children.filter((c) => {
 		// Status filter
 		const statusMatches =
-			selectedStatus.has("all") || selectedStatus.has(c.status.toLowerCase());
+			selectedStatus === "all" ||
+			selectedStatus.toLowerCase() === c.status.toLowerCase();
 
 		// Gender filter
 		const genderMatches =
-			selectedGender.has("all") || selectedGender.has(c.gender.toLowerCase());
+			selectedGender === "all" ||
+			selectedGender.toLowerCase() === c.gender.toLowerCase();
 
 		// Search filter
 		const searchMatches =

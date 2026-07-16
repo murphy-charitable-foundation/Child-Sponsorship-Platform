@@ -9,18 +9,13 @@ import { KpiCard } from "../shared/KpiCard";
 
 export default function SponsorshipsPage() {
 	const [isCreateOpen, setIsCreateOpen] = useState(false);
-	const [selectedStatus, setSelectedStatus] = useState<Set<string>>(
-		new Set(["all"]),
-	);
-	const [selectedLocation, setSelectedLocation] = useState<Set<string>>(
-		new Set(["all"]),
-	);
-	const [selectedFrequency, setSelectedFrequency] = useState<Set<string>>(
-		new Set(["all"]),
-	);
+	const [selectedStatus, setSelectedStatus] = useState("all");
+	const [selectedLocation, setSelectedLocation] = useState("all");
+	const [selectedFrequency, setSelectedFrequency] = useState("all");
 	const [searchQuery, setSearchQuery] = useState("");
 	const [error, setError] = useState("");
 	const [sponsorships, setSponsorships] = useState<Sponsorship[]>([]);
+
 	const [awaitingCount, setAwaitingCount] = useState(0);
 
 	useEffect(() => {
@@ -69,21 +64,21 @@ export default function SponsorshipsPage() {
 		fetchAwaitingCount();
 	}, []);
 
-	const activeCount = sponsorships.filter((s) => s.sponsorship_active).length;
+	const activeCount = sponsorships.filter((s) => s.status === "Active").length;
 	const uniqueSponsors = new Set(sponsorships.map((s) => s.sponsor_name)).size;
 
 	const filtered = sponsorships.filter((s) => {
 		const statusMatches =
-			selectedStatus.has("all") ||
-			selectedStatus.has(s.sponsorship_active ? "active" : "inactive");
+			selectedStatus === "all" ||
+			s.status.toLowerCase() === selectedStatus.toLowerCase();
 
 		const locationMatches =
-			selectedLocation.has("all") ||
-			selectedLocation.has(s.child_location.toLowerCase());
+			selectedLocation === "all" ||
+			selectedLocation.toLowerCase() === s.child_location.toLowerCase();
 
 		const frequencyMatches =
-			selectedFrequency.has("all") ||
-			selectedFrequency.has(s.frequency.toLowerCase());
+			selectedFrequency === "all" ||
+			selectedFrequency.toLowerCase() === s.frequency.toLowerCase();
 
 		const q = searchQuery.toLowerCase();
 		const searchMatches =

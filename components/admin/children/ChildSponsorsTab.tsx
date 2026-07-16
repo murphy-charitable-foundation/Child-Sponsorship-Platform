@@ -53,7 +53,7 @@ export default function ChildSponsorsTab({ childId }: ChildSponsorsTabProps) {
 	return (
 		<div className="space-y-6">
 			<ChildTabHeader
-				subtitle={`Active sponsors: ${sponsors.filter((s) => s.sponsorship_active).length}`}
+				subtitle={`Active sponsors: ${sponsors.filter((s) => s.status === "Active").length}`}
 				actionLabel="Create sponsorship"
 				onActionClick={() => setIsCreateOpen(true)}
 			/>
@@ -121,7 +121,7 @@ export default function ChildSponsorsTab({ childId }: ChildSponsorsTabProps) {
 											<p>{sponsor.id}</p>
 											<span>•</span>
 											<p className="text-green-600 uppercase">
-												{sponsor.sponsorship_active ? "active" : "inactive"}
+												{sponsor.status}
 											</p>
 										</div>
 									</div>

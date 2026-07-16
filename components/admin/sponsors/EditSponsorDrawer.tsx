@@ -4,10 +4,9 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 
 import { EditSponsor, SponsorProfile, SponsorType } from "./types";
-import { SP_COUNTRIES } from "./AddIndividualForm";
 import ProfileImageUpload from "@/components/profile-image-upload";
-import { GROUP_TYPES } from "./AddGroupForm";
 import FormDrawer, { Field, inputCls } from "../shared/FormDrawer";
+import { SP_COUNTRIES, SPONSOR_GROUP_TYPES } from "@/lib/constants";
 
 type EditSponsorDrawerProps = {
 	sponsor: SponsorProfile | null;
@@ -217,7 +216,7 @@ export default function EditSponsorDrawer({
 								}
 							>
 								<option value="">Select group description</option>
-								{GROUP_TYPES.map((t) => (
+								{SPONSOR_GROUP_TYPES.map((t) => (
 									<option
 										key={t.key}
 										value={t.key}

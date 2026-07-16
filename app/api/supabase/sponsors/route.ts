@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
 			phone_number: data.phone_number,
 			email: data.email,
 			job_title: data.job_title,
-			status: "Active",
+			status: "Inactive",
 		})
 		.select("id")
 		.single();

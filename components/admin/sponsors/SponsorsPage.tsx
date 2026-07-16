@@ -130,7 +130,9 @@ export default function SponsorPage() {
 			item.country?.toLowerCase() === locationValue.toLowerCase();
 
 		// Status filter
-		const statusMatches = statusValue === "all" || item.status === statusValue;
+		const statusMatches =
+			statusValue === "all" ||
+			item.status?.toLowerCase() === statusValue.toLowerCase();
 
 		// Type filter (for groups tab only)
 		const typeMatches =

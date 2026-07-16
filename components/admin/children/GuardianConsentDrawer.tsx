@@ -2,27 +2,24 @@
 
 import { useEffect, useState } from "react";
 import {
-	Drawer,
-	DrawerContent,
-	DrawerHeader,
-	DrawerBody,
-	DrawerFooter,
-	Button,
 	Radio,
 	RadioGroup,
 	Switch,
+	Input,
+	Select,
+	SelectItem,
 } from "@heroui/react";
 
 import {
 	ChildProfile,
 	ConsentMethod,
 	GuardianConsent,
-	StatusType,
+	ChildStatus,
 } from "./types";
 
-import { Field, inputCls } from "../shared/FormDrawer";
-
-export const CONSENT_METHOD: ConsentMethod[] = ["InPerson", "Phone"];
+import FormDrawer, { Field } from "../shared/FormDrawer";
+import { filterInputCls, filterSelectCls } from "../shared/styleConstants";
+import { CONSENT_METHOD } from "@/lib/constants";
 
 type GuardianConsentDrawerProps = {
 	data: GuardianConsent;
@@ -80,161 +77,125 @@ export default function GuardianConsentDrawer({
 	}
 
 	return (
-		<Drawer
+		<FormDrawer
 			isOpen={isOpen}
-			onOpenChange={onClose}
-			size="lg"
-			placement="right"
+			onClose={onClose}
+			title="Website Visibility"
+			formId="website-visibility"
+			isSaving={isSaving}
+			error={error}
+			onSubmit={handleSave}
+			saveLabel="Save changes"
+			bodyClassName="space-y-6 py-5 overflow-y-auto"
 		>
-			<DrawerContent>
-				{(closeDrawer) => (
-					<>
-						<DrawerHeader className="border-b border-slate-200 text-2xl font-semibold text-primary">
-							Website Visibility
-						</DrawerHeader>
+			{/* Consent details */}
+			<section>
+				<h3 className="mb-4 text-lg font-semibold text-slate-800">
+					Guardian Consent
+				</h3>
+				<p className="text-sm">
+					A guardian must consent to the publication of this child’s profile and
+					photographs on the Murphy Charitable Foundation website.
+				</p>
 
-						<DrawerBody className="space-y-6 py-5 overflow-y-auto">
-							{error && (
-								<div className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
-									{error}
-								</div>
-							)}
-
-							{/* Consent details */}
-							<section>
-								<h3 className="mb-4 text-lg font-semibold text-slate-800">
-									Guardian Consent
-								</h3>
-								<p className="text-sm">
-									A guardian must consent to the publication of this child’s
-									profile and photographs on the Murphy Charitable Foundation
-									website.
-								</p>
-
-								<div className="space-y-4 pt-5">
-									<RadioGroup
-										value={form?.status ?? ""}
-										onValueChange={(value) =>
-											update("status", value as StatusType)
-										}
-										name="status"
-									>
-										<Radio
-											className="gap-3 mb-4"
-											value="Active"
-											description="The guardian named below consents to displaying the
+				<div className="space-y-4 pt-5">
+					<RadioGroup
+						value={form?.status ?? ""}
+						onValueChange={(value) => update("status", value as ChildStatus)}
+						name="status"
+					>
+						<Radio
+							className="gap-3 mb-4"
+							value="Active"
+							description="The guardian named below consents to displaying the
 													child’s profile and photographs on the website."
-										>
-											Consent granted
-										</Radio>
-										<Radio
-											className="gap-3 mb-4"
-											value="Exited"
-											description="The guardian named below does not consent to
+						>
+							Consent granted
+						</Radio>
+						<Radio
+							className="gap-3 mb-4"
+							value="Exited"
+							description="The guardian named below does not consent to
 													displaying the child’s profile and photographs on the
 													website."
-										>
-											Consent denied
-										</Radio>
-										<Radio
-											className="gap-3 mb-4"
-											value="Waiting"
-											description="Guardian has not yet granted or denied consent."
-										>
-											Awaiting consent decision
-										</Radio>
-									</RadioGroup>
+						>
+							Consent denied
+						</Radio>
+						<Radio
+							className="gap-3 mb-4"
+							value="Waiting"
+							description="Guardian has not yet granted or denied consent."
+						>
+							Awaiting consent decision
+						</Radio>
+					</RadioGroup>
 
-									<Field label="Guardian Full Name">
-										<input
-											type="text"
-											disabled
-											value={form?.full_name ?? ""}
-											className={inputCls}
-										/>
-									</Field>
+					<Field label="Guardian Full Name">
+						<Input
+							type="text"
+							isDisabled
+							value={form?.full_name ?? ""}
+							classNames={filterInputCls}
+						/>
+					</Field>
 
-									<div className="grid grid-cols-2 gap-4">
-										<Field label="Date of consent decision">
-											<input
-												type="date"
-												required
-												value={form?.consent_date ?? ""}
-												onChange={(e) => update("consent_date", e.target.value)}
-												className={inputCls}
-												placeholder="First name"
-											/>
-										</Field>
+					<div className="grid grid-cols-2 gap-4">
+						<Field label="Date of consent decision">
+							<Input
+								type="date"
+								required
+								value={form?.consent_date ?? ""}
+								onChange={(e) => update("consent_date", e.target.value)}
+								classNames={filterInputCls}
+								placeholder="First name"
+							/>
+						</Field>
 
-										<Field label="Consent decision method">
-											<select
-												required
-												value={form?.consent_method ?? ""}
-												onChange={(e) =>
-													update(
-														"consent_method",
-														e.target.value as ConsentMethod,
-													)
-												}
-												className={inputCls}
-											>
-												<option value="">Select Method</option>
-												{CONSENT_METHOD.map((g) => (
-													<option
-														key={g}
-														value={g}
-													>
-														{g}
-													</option>
-												))}
-											</select>
-										</Field>
-									</div>
-								</div>
-							</section>
-
-							<section>
-								<h3 className="mb-4 text-lg font-semibold text-slate-800">
-									Home Page Visibility
-								</h3>
-								<p className="text-sm">
-									Foundation staff must indicate whether this child’s photo
-									should be displayed on the website home page.
-								</p>
-
-								<div className="space-y-4 pt-5 flex items-center justify-between ">
-									<p>Show child photo on home page</p>
-									<Switch
-										isSelected={form?.homepage_visibility ?? false}
-										size="sm"
-										aria-label="homepage_visibility"
-										onValueChange={(isSelected) =>
-											update("homepage_visibility", isSelected)
-										}
-									/>
-								</div>
-							</section>
-						</DrawerBody>
-
-						<DrawerFooter className="border-t border-slate-200">
-							<Button
-								variant="bordered"
-								onPress={closeDrawer}
-								className="text-slate-700"
+						<Field label="Consent decision method">
+							<Select
+								required
+								placeholder="Select Method"
+								selectedKeys={
+									form?.consent_method
+										? new Set([form.consent_method])
+										: new Set()
+								}
+								onSelectionChange={(keys) => {
+									const key = Array.from(keys as Set<string>)[0];
+									if (key) update("consent_method", key as ConsentMethod);
+								}}
+								classNames={filterSelectCls}
 							>
-								Cancel
-							</Button>
-							<Button
-								className="bg-primary text-white"
-								onPress={handleSave}
-								isLoading={isSaving}
-							>
-								Save changes
-							</Button>
-						</DrawerFooter>
-					</>
-				)}
-			</DrawerContent>
-		</Drawer>
+								{Object.entries(CONSENT_METHOD).map(([key, value]) => (
+									<SelectItem key={key}>{value}</SelectItem>
+								))}
+							</Select>
+						</Field>
+					</div>
+				</div>
+			</section>
+
+			<section>
+				<h3 className="mb-4 text-lg font-semibold text-slate-800">
+					Home Page Visibility
+				</h3>
+				<p className="text-sm">
+					Foundation staff must indicate whether this child’s photo should be
+					displayed on the website home page.
+				</p>
+
+				<div className="space-y-4 pt-5 flex items-center justify-between ">
+					<p>Show child photo on home page</p>
+					<Switch
+						isSelected={form?.homepage_visibility ?? false}
+						size="sm"
+						aria-label="homepage_visibility"
+						onValueChange={(isSelected) =>
+							update("homepage_visibility", isSelected)
+						}
+					/>
+				</div>
+			</section>
+		</FormDrawer>
 	);
 }

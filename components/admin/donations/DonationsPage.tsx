@@ -13,9 +13,7 @@ import { KpiCard } from "../shared/KpiCard";
 
 export default function DonationsPage() {
 	const [searchQuery, setSearchQuery] = useState("");
-	const [selectedCountry, setSelectedCountry] = useState<Set<string>>(
-		new Set(["all"]),
-	);
+	const [selectedCountry, setSelectedCountry] = useState("all");
 	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [donations, setDonations] = useState<DonationTableData[]>([]);
@@ -48,8 +46,9 @@ export default function DonationsPage() {
 
 	const filtered = donations.filter((d) => {
 		const countryMatches =
-			selectedCountry.has("all") ||
-			selectedCountry.has(d.country?.toLowerCase() ?? "");
+			selectedCountry === "all" ||
+			selectedCountry.toLowerCase() === d.country?.toLowerCase();
+
 		const q = searchQuery.toLowerCase();
 		const matchSearch =
 			!q ||
@@ -60,7 +59,6 @@ export default function DonationsPage() {
 	});
 
 	async function openDrawer(id: string) {
-		console.log(id);
 		const res = await fetch(`/api/supabase/donations/${id}`);
 
 		if (!res.ok) {

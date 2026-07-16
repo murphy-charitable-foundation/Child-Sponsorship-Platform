@@ -1,9 +1,10 @@
 import { Input, Select, SelectItem } from "@heroui/react";
 import { filterInputCls, filterSelectCls } from "../shared/styleConstants";
+import { SP_COUNTRIES } from "@/lib/constants";
 
 type DonationsFilterProps = {
-	selectedCountry: Set<string>;
-	setSelectedCountry: (country: Set<string>) => void;
+	selectedCountry: string;
+	setSelectedCountry: (country: string) => void;
 	searchQuery: string;
 	setSearchQuery: (query: string) => void;
 };
@@ -15,7 +16,7 @@ export default function DonationsFilters({
 	setSearchQuery,
 }: DonationsFilterProps) {
 	const handleReset = () => {
-		setSelectedCountry(new Set(["all"]));
+		setSelectedCountry("all");
 		setSearchQuery("");
 	};
 
@@ -53,48 +54,17 @@ export default function DonationsFilters({
 					<div className="w-1/5">
 						<Select
 							aria-label="Country"
-							selectedKeys={selectedCountry}
-							onSelectionChange={(keys) => {
-								const newKeys = new Set(Array.from(keys as Set<string>));
-
-								// If "all" is selected, keep only "all"
-								if (newKeys.has("all")) {
-									setSelectedCountry(new Set(["all"]));
-								}
-								// If an individual country is clicked when "all" was selected, switch to just that country
-								else if (newKeys.size > 0) {
-									setSelectedCountry(newKeys);
-								}
-								// Allow empty selection
-								else {
-									setSelectedCountry(new Set());
-								}
-							}}
+							selectedKeys={[selectedCountry]}
+							onChange={(e) => setSelectedCountry(e.target.value)}
 							className="w-full"
 							radius="none"
 							classNames={filterSelectCls}
-							renderValue={(items) => (
-								<span className="flex gap-2">
-									{items.length === 0 ? (
-										<span className="text-default-500">
-											No country selected
-										</span>
-									) : items.some((item) => item.key === "all") ? (
-										<span className="text-default-700">All countries</span>
-									) : (
-										items.map((item) => (
-											<span key={item.key}>{item.textValue}</span>
-										))
-									)}
-								</span>
-							)}
 						>
-							<SelectItem key="all">All countries</SelectItem>
-							<SelectItem key="usa">USA</SelectItem>
-							<SelectItem key="uk">UK</SelectItem>
-							<SelectItem key="canada">Canada</SelectItem>
-							<SelectItem key="australia">Australia</SelectItem>
-							<SelectItem key="spain">Spain</SelectItem>
+							{["all", ...SP_COUNTRIES].map((c) => (
+								<SelectItem key={c === "all" ? "all" : c.toLowerCase()}>
+									{c === "all" ? "All locations" : c}
+								</SelectItem>
+							))}
 						</Select>
 					</div>
 				</div>

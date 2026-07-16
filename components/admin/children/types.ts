@@ -1,8 +1,8 @@
-import { SponsorType } from "../sponsors/types";
+import { SponsorStatus, SponsorType } from "../sponsors/types";
 import { Frequencies } from "../sponsorships/types";
 
 export type GenderType = "Male" | "Female" | "Other";
-export type StatusType = "Active" | "Waiting" | "Exited";
+export type ChildStatus = "Active" | "Waiting" | "Exited";
 export type SponsorshipStatus = "Active" | "Inactive";
 export type ConsentMethod = "InPerson" | "Phone";
 
@@ -13,7 +13,7 @@ export type ChildTableData = {
 	age: number;
 	gender: GenderType;
 	location: string;
-	status: StatusType;
+	status: ChildStatus;
 	created_at: string;
 };
 
@@ -30,7 +30,7 @@ export type Guardian = {
 export type GuardianConsent = {
 	id: string;
 	full_name?: string;
-	status: StatusType | null;
+	status: ChildStatus | null;
 	consent_date?: string | null;
 	consent_method?: ConsentMethod | null;
 	homepage_visibility?: boolean;
@@ -45,7 +45,7 @@ export type ChildProfile = {
 	date_of_birth: string;
 	gender: GenderType;
 	location: string;
-	status: StatusType;
+	status: ChildStatus;
 	created_at: string;
 	favorite_activity: string;
 	dream_job: string;
@@ -118,7 +118,7 @@ export type ChildSponsor = {
 	job_title: string | null;
 	image_url?: string | null;
 	created_at: string;
-	sponsorship_active: boolean;
+	status: SponsorStatus;
 	start_date_time: string;
 	frequency: Frequencies;
 	amount: number;

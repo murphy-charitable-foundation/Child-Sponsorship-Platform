@@ -24,7 +24,7 @@ export async function GET(
 	const { data, error: sponsorshipsError } = await adminClient
 		.from("sponsorships")
 		.select(
-			"sponsorship_id, sponsorship_active, amount, frequency, start_date_time, children(*)",
+			"sponsorship_id, status, amount, frequency, start_date_time, children(*)",
 		)
 		.eq("sponsor_id", id);
 
@@ -76,7 +76,7 @@ export async function GET(
 				return {
 					id: s.sponsorship_id,
 					image_url: signedUrl,
-					sponsorship_active: s.sponsorship_active,
+					status: s.status,
 					start_date_time: s.start_date_time,
 					amount: s.amount,
 					frequency: s.frequency,

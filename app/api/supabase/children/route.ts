@@ -4,7 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdmin } from "@/lib/supabase/require-admin";
 import type {
 	CreateChild,
-	StatusType,
+	ChildStatus,
 } from "@/components/admin/children/types";
 
 function validate(data: CreateChild): string | null {
@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
 			family_biography: data.family_biography ?? null,
 			guardian_id: guardianId,
 			guardian_relationship: data.guardian_relationship ?? null,
-			status: "Waiting" as StatusType,
+			status: "Waiting" as ChildStatus,
 			field_officer_id: "02cf43ce-6edb-4adc-b6f9-42dda3de08f9", //TODO: change will require when find out what it is
 		})
 		.select("id")
@@ -188,7 +188,7 @@ export async function PATCH(req: NextRequest) {
 			family_biography: data.family_biography ?? null,
 			guardian_id: guardianId,
 			guardian_relationship: data.guardian_relationship ?? null,
-			status: "Waiting" as StatusType,
+			status: "Waiting" as ChildStatus,
 			field_officer_id: "02cf43ce-6edb-4adc-b6f9-42dda3de08f9", //TODO: change will require when find out what it is
 		})
 		.eq("id", data.id)

@@ -15,7 +15,7 @@ export async function GET() {
 
 	const { data, error: childrenError } = await adminClient
 		.from("children")
-		.select("id, sponsorships(sponsorship_active)");
+		.select("id, sponsorships(status)");
 
 	if (childrenError) {
 		return NextResponse.json(
@@ -25,7 +25,7 @@ export async function GET() {
 	}
 
 	const childrenAwaitingSponsorship = (data ?? []).filter(
-		(c) => !c.sponsorships?.some((s) => s.sponsorship_active),
+		(c) => !c.sponsorships?.some((s) => s.status === "Active"),
 	).length;
 
 	return NextResponse.json({ childrenAwaitingSponsorship });

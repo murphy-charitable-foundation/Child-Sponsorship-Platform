@@ -114,11 +114,19 @@ export default function DonationDetailsDrawer({
 	);
 }
 
-function Detail({ label, value }: { label: string; value: string }) {
+function Detail({
+	label,
+	value,
+	className,
+}: {
+	label: string;
+	value: string;
+	className?: string;
+}) {
 	return (
-		<div>
+		<div className={className}>
 			<p className="text-xs uppercase tracking-wide text-slate-400">{label}</p>
-			<p className="mt-0.5 text-sm text-slate-800">{value}</p>
+			<p className="mt-0.5 break-all text-sm text-slate-800">{value}</p>
 		</div>
 	);
 }

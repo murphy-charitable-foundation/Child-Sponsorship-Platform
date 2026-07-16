@@ -1,4 +1,4 @@
-import { GenderType, StatusType } from "../children/types";
+import { GenderType, ChildStatus } from "../children/types";
 import { Frequencies } from "../sponsorships/types";
 
 export type SponsorType =
@@ -99,7 +99,7 @@ export type EditSponsor = {
 
 export type SponsorSponsorship = {
 	id: string;
-	sponsorship_active: boolean;
+	status: SponsorStatus;
 	frequency: Frequencies;
 	amount: number;
 	start_date_time: string;
@@ -112,7 +112,7 @@ export type SponsorSponsorship = {
 		date_of_birth: string;
 		gender: GenderType;
 		location: string;
-		status: StatusType;
+		status: ChildStatus;
 		created_at: string;
 		favorite_activity: string;
 		dream_job: string;

@@ -20,7 +20,7 @@ export async function GET() {
 	} = await adminClient
 		.from("sponsorships")
 		.select("sponsors(country)", { count: "exact" })
-		.eq("sponsorship_active", true);
+		.eq("status", "Active");
 
 	if (sponsorshipsError) {
 		return NextResponse.json(

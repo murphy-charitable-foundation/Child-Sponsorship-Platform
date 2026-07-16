@@ -11,10 +11,10 @@ import {
 	Chip,
 } from "@heroui/react";
 
-import { ChildTableData, StatusType } from "./types";
+import { ChildTableData, ChildStatus } from "./types";
 import { tableCls } from "../shared/styleConstants";
 
-export function statusChipColor(status: StatusType) {
+export function statusChipColor(status: ChildStatus) {
 	if (status === "Active") return "success";
 	if (status === "Waiting") return "warning";
 	return "default"; // for Exited
