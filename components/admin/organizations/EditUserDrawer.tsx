@@ -32,9 +32,8 @@ export default function EditUserDrawer({ user, isOpen, onClose }: Props) {
 				last_name: user.last_name,
 				email: user.email,
 				role: user.role,
-				region: user.organization,
+				regions: user.organization,
 				status: user.status,
-				is_pending: user.status === "Pending",
 			});
 
 			setImageUrl(user.image_url ?? null);
@@ -181,10 +180,10 @@ export default function EditUserDrawer({ user, isOpen, onClose }: Props) {
 								<Select
 									isRequired
 									placeholder="Select region"
-									selectedKeys={form?.region ? [form.region] : []}
+									selectedKeys={form?.regions ? [form.regions] : []}
 									onSelectionChange={(keys) => {
 										const [value] = Array.from(keys as Set<string>);
-										update("region", (value as Regions) ?? "");
+										update("regions", (value as Regions) ?? "");
 									}}
 									classNames={filterSelectCls}
 								>

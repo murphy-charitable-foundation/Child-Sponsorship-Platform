@@ -13,7 +13,7 @@ export const EMPTY_USER_FORM: CreateUser = {
 	last_name: "",
 	email: "",
 	role: null,
-	region: null,
+	regions: null,
 };
 
 type Props = {
@@ -124,7 +124,7 @@ export default function AddUserDrawer({ isOpen, onClose }: Props) {
 									const [value] = Array.from(keys as Set<string>);
 									const role = (value as Role) ?? "";
 									update("role", role);
-									if (role !== "Admin") update("region", null);
+									if (role !== "Admin") update("regions", null);
 								}}
 								classNames={filterSelectCls}
 							>
@@ -139,10 +139,10 @@ export default function AddUserDrawer({ isOpen, onClose }: Props) {
 								<Select
 									isRequired
 									placeholder="Select region"
-									selectedKeys={form.region ? [form.region] : []}
+									selectedKeys={form.regions ? [form.regions] : []}
 									onSelectionChange={(keys) => {
 										const [value] = Array.from(keys as Set<string>);
-										update("region", (value as Regions) ?? "");
+										update("regions", (value as Regions) ?? "");
 									}}
 									classNames={filterSelectCls}
 								>

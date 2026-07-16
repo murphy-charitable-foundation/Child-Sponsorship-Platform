@@ -1,7 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
 import {
-	Chip,
 	Link,
 	Table,
 	TableBody,
@@ -11,7 +10,7 @@ import {
 	TableRow,
 } from "@heroui/react";
 import { tableCls } from "../shared/styleConstants";
-import { User, UserStatus } from "./type";
+import { User } from "./type";
 import EditUserDrawer from "./EditUserDrawer";
 import { useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
@@ -19,12 +18,6 @@ import { useAuth } from "@/components/AuthProvider";
 type Props = {
 	data: User[];
 };
-
-export function statusChipColor(status: UserStatus) {
-	if (status === "Active") return "success";
-	if (status === "Pending") return "warning";
-	return "default"; // for Inactive
-}
 
 export default function UsersTable({ data }: Props) {
 	const router = useRouter();
@@ -65,16 +58,16 @@ export default function UsersTable({ data }: Props) {
 							<TableCell className="text-slate-800">{u.first_name}</TableCell>
 							<TableCell className="text-slate-600">{u.organization}</TableCell>
 							<TableCell className="text-slate-600">{u.role}</TableCell>
-							<TableCell>
-								<Chip
-									size="md"
-									radius="full"
-									variant="flat"
-									color={statusChipColor(u.status)}
-									className="px-4 text-base"
-								>
-									{u.status}
-								</Chip>
+							<TableCell
+								className={
+									u.status === "Active"
+										? "text-success"
+										: u.status === "Pending"
+											? "text-warning"
+											: "text-default"
+								}
+							>
+								{u.status}
 							</TableCell>
 							<TableCell className="text-slate-600">
 								{u.last_active ? u.last_active.split("T")[0] : "-"}

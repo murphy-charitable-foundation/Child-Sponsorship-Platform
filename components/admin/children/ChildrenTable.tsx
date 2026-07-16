@@ -8,17 +8,10 @@ import {
 	TableRow,
 	TableCell,
 	Link,
-	Chip,
 } from "@heroui/react";
 
-import { ChildTableData, ChildStatus } from "./types";
+import { ChildTableData } from "./types";
 import { tableCls } from "../shared/styleConstants";
-
-export function statusChipColor(status: ChildStatus) {
-	if (status === "Active") return "success";
-	if (status === "Waiting") return "warning";
-	return "default"; // for Exited
-}
 
 type ChildrenTableProps = {
 	data: ChildTableData[];
@@ -59,16 +52,16 @@ export default function ChildrenTable({ data, onEdit }: ChildrenTableProps) {
 							<TableCell className="text-slate-600">{r.age}</TableCell>
 							<TableCell className="text-slate-600">{r.gender}</TableCell>
 							<TableCell className="text-slate-600">{r.location}</TableCell>
-							<TableCell>
-								<Chip
-									size="md"
-									radius="full"
-									variant="flat"
-									color={statusChipColor(r.status)}
-									className="px-4 text-base"
-								>
-									{r.status}
-								</Chip>
+							<TableCell
+								className={
+									r.status === "Active"
+										? "text-success"
+										: r.status === "Waiting"
+											? "text-warning"
+											: "text-default"
+								}
+							>
+								{r.status}
 							</TableCell>
 							<TableCell className="text-slate-600">
 								{r.created_at.split("T")[0]}

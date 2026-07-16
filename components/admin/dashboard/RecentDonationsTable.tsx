@@ -1,6 +1,5 @@
 "use client";
 import {
-	Chip,
 	Table,
 	TableHeader,
 	TableColumn,
@@ -44,18 +43,12 @@ export default function RecentDonationsTable({ donations }: Props) {
 							<TableCell className="whitespace-nowrap">
 								{formatDate(r.date_time)}
 							</TableCell>
-							<TableCell>
-								<Chip
-									size="sm"
-									variant="flat"
-									color={r.status === "Completed" ? "success" : "warning"}
-									classNames={{
-										base: "h-5 px-1.5",
-										content: "px-0 text-[10px]",
-									}}
-								>
-									{r.status}
-								</Chip>
+							<TableCell
+								className={
+									r.status === "Completed" ? "text-success" : "text-warning-50"
+								}
+							>
+								{r.status}
 							</TableCell>
 						</TableRow>
 					))}

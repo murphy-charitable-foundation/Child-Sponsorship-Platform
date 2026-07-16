@@ -10,7 +10,6 @@ import {
 	TableRow,
 	TableCell,
 	Link,
-	Chip,
 } from "@heroui/react";
 
 interface SponsorsTableProps {
@@ -70,18 +69,14 @@ export function SponsorsTable({
 											<TableCell className="text-slate-600">
 												{group.country}
 											</TableCell>
-											<TableCell>
-												<Chip
-													size="md"
-													radius="full"
-													variant="flat"
-													color={
-														group.status === "Active" ? "success" : "warning"
-													}
-													className="px-4 text-base"
-												>
-													{group.status}
-												</Chip>
+											<TableCell
+												className={
+													group.status === "Active"
+														? "text-success"
+														: "text-warning"
+												}
+											>
+												{group.status}
 											</TableCell>
 											<TableCell className="text-slate-600">
 												{group.children_count}
@@ -122,18 +117,14 @@ export function SponsorsTable({
 											<TableCell className="text-slate-600">
 												{sponsor.country}
 											</TableCell>
-											<TableCell>
-												<Chip
-													size="md"
-													radius="full"
-													variant="flat"
-													color={
-														sponsor.status === "Active" ? "success" : "warning"
-													}
-													className="px-4 text-base"
-												>
-													{sponsor.status}
-												</Chip>
+											<TableCell
+												className={
+													sponsor.status === "Active"
+														? "text-success"
+														: "text-warning"
+												}
+											>
+												{sponsor.status}
 											</TableCell>
 											<TableCell className="text-slate-600">
 												{sponsor.children_count}

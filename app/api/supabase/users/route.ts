@@ -118,8 +118,12 @@ function validate(data: EditUser): string | null {
 	if (!data.last_name?.trim()) return "Last name is required.";
 	if (!data.email?.trim()) return "Email is required.";
 	if (!data.role) return "Role is required.";
-	if (data.role === "Admin" && !data.region) return "Region is required.";
-	if (data.role === "Pending Admin" && data.status === "Active" && !data.region)
+	if (data.role === "Admin" && !data.regions) return "Region is required.";
+	if (
+		data.role === "Pending Admin" &&
+		data.status === "Active" &&
+		!data.regions
+	)
 		return "Region is required.";
 	return null;
 }
@@ -167,12 +171,10 @@ export async function PATCH(req: NextRequest) {
 
 	const isAdmin = data.role === "Admin";
 
-	console.log("targetTable");
-
 	if (isAdmin) {
 		const { error: updateError } = await adminClient
 			.from("admins")
-			.update({ regions: data.region })
+			.update({ regions: data.regions })
 			.eq("id", data.id);
 
 		if (updateError) {
@@ -186,7 +188,7 @@ export async function PATCH(req: NextRequest) {
 			"pending_admin_accept",
 			{
 				account_email: data.email,
-				regions: data.region,
+				regions: data.regions,
 			},
 		);
 

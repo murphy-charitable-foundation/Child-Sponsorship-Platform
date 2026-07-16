@@ -60,6 +60,7 @@ export async function POST(req: NextRequest) {
 			.upload(path, buffer, { contentType: "image/jpeg", upsert: true });
 
 		if (uploadError) {
+			console.log(uploadError);
 			return NextResponse.json(
 				{ error: `[storage] ${uploadError.message}` },
 				{ status: 500 },
@@ -77,10 +78,14 @@ export async function POST(req: NextRequest) {
 			);
 		}
 
+		console.log("dfs", signedData, signedError);
+
 		const { error: dbError } = await supabase
 			.from(targetType)
 			.update({ photo_path: path })
 			.eq("id", user.id);
+
+		console.log("db", dbError);
 
 		if (dbError) {
 			return NextResponse.json(

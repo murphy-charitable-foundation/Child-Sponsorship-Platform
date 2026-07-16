@@ -19,7 +19,7 @@ export type CreateUser = {
 	last_name: string;
 	email: string;
 	role: Role | null;
-	region: Regions | null;
+	regions: Regions | null;
 };
 
 export type EditUser = {
@@ -29,7 +29,6 @@ export type EditUser = {
 	last_name: string;
 	email: string;
 	role: Role | null;
-	region: Regions | null;
+	regions: Regions | null;
 	status?: UserStatus;
-	is_pending: boolean;
 };

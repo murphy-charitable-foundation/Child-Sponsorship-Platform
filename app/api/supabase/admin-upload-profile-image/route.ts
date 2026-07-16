@@ -6,7 +6,12 @@ import { requireAdmin } from "@/lib/supabase/require-admin";
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_BYTES = 45 * 1024;
 const BUCKET = "profiles";
-const ALLOWED_TARGETS = ["children", "sponsors"] as const;
+const ALLOWED_TARGETS = [
+	"children",
+	"sponsors",
+	"super_admins",
+	"admins",
+] as const;
 type TargetType = (typeof ALLOWED_TARGETS)[number];
 
 //This endpoint let admin upload the children or sponsors profile image

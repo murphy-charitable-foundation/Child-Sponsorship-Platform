@@ -1,5 +1,4 @@
 import {
-	Chip,
 	Link,
 	Table,
 	TableHeader,
@@ -65,15 +64,12 @@ export default function SponsorshipTable({ data }: Props) {
 							<TableCell className="text-slate-600">
 								{FREQUENCIES[s.frequency]}
 							</TableCell>
-							<TableCell>
-								<Chip
-									size="sm"
-									variant="flat"
-									color={s.status === "Active" ? "success" : "warning"}
-									className="px-2"
-								>
-									{s.status}
-								</Chip>
+							<TableCell
+								className={
+									s.status === "Active" ? "text-success" : "text-warning"
+								}
+							>
+								{s.status}
 							</TableCell>
 							<TableCell className="text-slate-600">
 								{formatDate(s.start_date_time)}
