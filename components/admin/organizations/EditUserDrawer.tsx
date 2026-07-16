@@ -78,6 +78,7 @@ export default function EditUserDrawer({ user, isOpen, onClose }: Props) {
 				const body = new FormData();
 				body.append("image", imageFile);
 				body.append("targetId", form.id);
+				body.append("bucketFile", "admins");
 				body.append(
 					"targetType",
 					form.role === "Super Admin" ? "super_admins" : "admins",

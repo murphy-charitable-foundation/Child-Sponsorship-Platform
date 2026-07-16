@@ -14,6 +14,12 @@ type ProfileHeaderProps = {
 	};
 };
 
+function statusColor(s: ChildStatus | SponsorStatus) {
+	if(s === "Active") return 'text-success';
+	else if (s === 'Inactive' || s === 'Waiting') return 'text-warning'
+	return 'text-default'
+}
+
 export function ProfileHeader({ data, type, href }: ProfileHeaderProps) {
 	return (
 		<div>
@@ -38,7 +44,7 @@ export function ProfileHeader({ data, type, href }: ProfileHeaderProps) {
 				)}
 				<p>enrolled {data.enrolled.split("T")[0]}</p>
 				<span>•</span>
-				<p className="text-green-600 uppercase">{data.status}</p>
+				<p className={`uppercase ${statusColor(data.status)}`}>{data.status}</p>
 			</div>
 		</div>
 	);

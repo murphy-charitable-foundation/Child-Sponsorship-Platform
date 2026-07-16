@@ -94,6 +94,7 @@ export default function EditChildDrawer({
 				body.append("image", imageFile);
 				body.append("targetId", form.id);
 				body.append("targetType", "children");
+				body.append("bucketFile", "children");
 
 				const imgRes = await fetch("/api/supabase/admin-upload-profile-image", {
 					method: "POST",

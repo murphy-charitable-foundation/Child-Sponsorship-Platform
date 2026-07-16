@@ -14,15 +14,15 @@ import { useState, useEffect, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 import ProfileImageUpload from "@/components/profile-image-upload";
-import { Sponsor } from "../admin/sponsors/types";
 import { ChildProfile } from "../admin/children/types";
+import { SponsorProfile } from "../admin/sponsors/types";
 
 type Props = {
 	type: "Child" | "Sponsor";
-	target: ChildProfile | Sponsor | null;
+	target: ChildProfile | SponsorProfile | null;
 	isOpen: boolean;
 	onOpenChange: (open: boolean) => void;
-	onSave: (updated: ChildProfile | Sponsor) => void;
+	onSave: (updated: ChildProfile | SponsorProfile) => void;
 };
 
 export default function ProfileEditModal({
@@ -32,7 +32,7 @@ export default function ProfileEditModal({
 	onOpenChange,
 	onSave,
 }: Props) {
-	const [form, setForm] = useState<ChildProfile | Sponsor | null>(null);
+	const [form, setForm] = useState<ChildProfile | SponsorProfile | null>(null);
 	const [imageFile, setImageFile] = useState<File | null>(null);
 	const [isSaving, setIsSaving] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -78,6 +78,7 @@ export default function ProfileEditModal({
 			body.append("image", imageFile);
 			body.append("targetId", form.id);
 			body.append("targetType", type === "Child" ? "children" : "sponsors");
+			body.append("bucketFile", type === "Child" ? "children" : "sponsors");
 
 			const res = await fetch("/api/supabase/admin-upload-profile-image", {
 				method: "POST",

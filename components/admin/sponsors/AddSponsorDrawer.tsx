@@ -88,6 +88,7 @@ export default function AddSponsorDrawer({
 				body.append("image", form.photo_file);
 				body.append("targetId", data.id);
 				body.append("targetType", "sponsors");
+				body.append("bucketFile", "sponsors");
 
 				const imgRes = await fetch("/api/supabase/admin-upload-profile-image", {
 					method: "POST",

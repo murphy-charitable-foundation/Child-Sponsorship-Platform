@@ -50,6 +50,7 @@ export type SponsorProfile = {
 	image_url?: string | null;
 	created_at: string;
 	status: SponsorStatus;
+	photo_path?: string;
 };
 
 export type SponsorGroup = {

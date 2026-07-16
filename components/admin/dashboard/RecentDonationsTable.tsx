@@ -45,7 +45,9 @@ export default function RecentDonationsTable({ donations }: Props) {
 							</TableCell>
 							<TableCell
 								className={
-									r.status === "Completed" ? "text-success" : "text-warning-50"
+									r.status.toUpperCase() === "COMPLETED"
+										? "text-success"
+										: "text-warning"
 								}
 							>
 								{r.status}

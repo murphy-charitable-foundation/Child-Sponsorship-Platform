@@ -57,6 +57,7 @@ export type ChildProfile = {
 	sponsorship_status: SponsorshipStatus;
 	school_grade: number | null;
 	homepage_visibility: boolean;
+	photo_path?: string;
 };
 
 export type CreateChild = {

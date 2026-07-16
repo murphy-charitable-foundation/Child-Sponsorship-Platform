@@ -9,8 +9,8 @@ const BUCKET = "profiles";
 const ALLOWED_TARGETS = [
 	"children",
 	"sponsors",
-	"super_admins",
 	"admins",
+	"super_admins",
 ] as const;
 type TargetType = (typeof ALLOWED_TARGETS)[number];
 
@@ -28,6 +28,7 @@ export async function POST(req: Request) {
 		const file = formData.get("image") as File | null;
 		const targetId = formData.get("targetId") as string;
 		const targetType = formData.get("targetType") as string;
+		const bucketFile = formData.get("bucketFile") as string;
 
 		if (!file || !targetId) {
 			return NextResponse.json(
@@ -57,7 +58,7 @@ export async function POST(req: Request) {
 			);
 		}
 
-		const path = `${targetType}/${targetId}/profile.jpg`;
+		const path = `${bucketFile}/${targetId}/profile.jpg`;
 		const buffer = new Uint8Array(await file.arrayBuffer());
 
 		const { error: uploadError } = await adminClient.storage
