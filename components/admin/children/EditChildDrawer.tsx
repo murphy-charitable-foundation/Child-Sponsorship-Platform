@@ -30,11 +30,14 @@ export default function EditChildDrawer({
 	const [imageFile, setImageFile] = useState<File | null>(null);
 	const [imageUrl, setImageUrl] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string | null>(null);
 
 	// Reset form to current child data whenever the drawer opens
 	useEffect(() => {
 		if (!child) return;
 		if (isOpen && child) {
+			setError(null);
+			setSuccess(null);
 			setForm({
 				id: child.id,
 				first_name: child.first_name ?? "",
@@ -74,6 +77,7 @@ export default function EditChildDrawer({
 		if (!form) return;
 		setIsSaving(true);
 		setError(null);
+		setSuccess(null);
 
 		try {
 			const res = await fetch("/api/supabase/children", {
@@ -115,7 +119,8 @@ export default function EditChildDrawer({
 				onSaved?.(updatedChild);
 			}
 
-			onClose();
+			setSuccess("Child updated successfully.");
+			setTimeout(onClose, 1500);
 		} finally {
 			setIsSaving(false);
 		}
@@ -130,6 +135,8 @@ export default function EditChildDrawer({
 			onSubmit={handleSave}
 			isSaving={isSaving}
 			error={error}
+			success={success}
+			saveDisabled={!!success}
 			saveLabel="Save changes"
 			bodyClassName="space-y-6 py-5 overflow-y-auto"
 		>

@@ -22,10 +22,13 @@ export default function EditUserDrawer({ user, isOpen, onClose }: Props) {
 	const [imageFile, setImageFile] = useState<File | null>(null);
 	const [imageUrl, setImageUrl] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string | null>(null);
 
 	useEffect(() => {
 		if (!user) return;
 		if (isOpen && user) {
+			setError(null);
+			setSuccess(null);
 			setForm({
 				id: user.id,
 				first_name: user.first_name,
@@ -51,6 +54,7 @@ export default function EditUserDrawer({ user, isOpen, onClose }: Props) {
 
 	function handleClose() {
 		setError(null);
+		setSuccess(null);
 		onClose();
 	}
 
@@ -59,6 +63,7 @@ export default function EditUserDrawer({ user, isOpen, onClose }: Props) {
 		if (!form) return;
 		setIsSaving(true);
 		setError(null);
+		setSuccess(null);
 
 		try {
 			const res = await fetch("/api/supabase/users", {
@@ -96,7 +101,8 @@ export default function EditUserDrawer({ user, isOpen, onClose }: Props) {
 			}
 
 			router.refresh();
-			handleClose();
+			setSuccess("User updated successfully.");
+			setTimeout(handleClose, 1500);
 		} finally {
 			setIsSaving(false);
 		}
@@ -111,6 +117,8 @@ export default function EditUserDrawer({ user, isOpen, onClose }: Props) {
 			onSubmit={handleSave}
 			isSaving={isSaving}
 			error={error}
+			success={success}
+			saveDisabled={!!success}
 			saveLabel="Save changes"
 			bodyClassName="space-y-6 py-5 overflow-y-auto"
 		>

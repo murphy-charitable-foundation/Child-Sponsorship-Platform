@@ -17,6 +17,7 @@ type FormDrawerProps = {
 	onSubmit?: (e: React.FormEvent) => void;
 	isSaving?: boolean;
 	error?: string | null;
+	success?: string | null;
 	saveLabel: string;
 	saveDisabled?: boolean;
 	bodyClassName?: string;
@@ -31,6 +32,7 @@ export default function FormDrawer({
 	onSubmit,
 	isSaving,
 	error,
+	success,
 	saveLabel,
 	saveDisabled,
 	bodyClassName = "py-5",
@@ -57,8 +59,13 @@ export default function FormDrawer({
 								onSubmit={onSubmit}
 							>
 								{error && (
-									<div className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+									<div className="rounded-sm bg-red-50 px-3 py-2 text-sm text-red-600">
 										{error}
+									</div>
+								)}
+								{success && (
+									<div className="rounded-sm bg-green-50 px-3 py-2 text-sm text-green-600">
+										{success}
 									</div>
 								)}
 								{children}

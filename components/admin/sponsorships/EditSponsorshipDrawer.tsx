@@ -25,6 +25,7 @@ export default function EditSponsorshipDrawer({
 	);
 	const [isSaving, setIsSaving] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string | null>(null);
 
 	const requiresEndDate =
 		form.frequency === "monthly" || form.frequency === "annual";
@@ -32,6 +33,8 @@ export default function EditSponsorshipDrawer({
 	useEffect(() => {
 		if (!sponsorship) return;
 		if (isOpen && sponsorship) {
+			setError(null);
+			setSuccess(null);
 			setForm({
 				sponsorship_id: sponsorship.sponsorship_id,
 				amount: sponsorship.amount,
@@ -53,6 +56,7 @@ export default function EditSponsorshipDrawer({
 
 	function handleClose() {
 		setError(null);
+		setSuccess(null);
 		onClose();
 		setForm(SPS_EMPTY_FORM as EditSponsorship);
 	}
@@ -61,6 +65,7 @@ export default function EditSponsorshipDrawer({
 		e.preventDefault();
 		setIsSaving(true);
 		setError(null);
+		setSuccess(null);
 
 		try {
 			const res = await fetch("/api/supabase/sponsorships", {
@@ -79,7 +84,8 @@ export default function EditSponsorshipDrawer({
 				return;
 			}
 
-			handleClose();
+			setSuccess("Sponsorship updated successfully.");
+			setTimeout(handleClose, 1500);
 		} finally {
 			setIsSaving(false);
 		}
@@ -96,6 +102,8 @@ export default function EditSponsorshipDrawer({
 			onSubmit={handleSubmit}
 			isSaving={isSaving}
 			error={error}
+			success={success}
+			saveDisabled={!!success}
 			saveLabel="Create sponsorship"
 		>
 			<section>

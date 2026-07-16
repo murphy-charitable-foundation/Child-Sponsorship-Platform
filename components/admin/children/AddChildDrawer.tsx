@@ -46,6 +46,7 @@ export default function AddChildDrawer({
 	const [form, setForm] = useState<CreateChild>(EMPTY_FORM);
 	const [isSaving, setIsSaving] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string | null>(null);
 
 	function update<K extends keyof CreateChild>(key: K, value: CreateChild[K]) {
 		setForm((prev) => ({ ...prev, [key]: value }));
@@ -54,6 +55,7 @@ export default function AddChildDrawer({
 	function handleClose() {
 		setForm(EMPTY_FORM);
 		setError(null);
+		setSuccess(null);
 		onClose();
 		router.replace("/admin/children");
 	}
@@ -62,6 +64,7 @@ export default function AddChildDrawer({
 		e.preventDefault();
 		setIsSaving(true);
 		setError(null);
+		setSuccess(null);
 
 		try {
 			const res = await fetch("/api/supabase/children", {
@@ -96,7 +99,8 @@ export default function AddChildDrawer({
 			}
 
 			router.refresh();
-			handleClose();
+			setSuccess("Child added successfully.");
+			setTimeout(handleClose, 1500);
 		} finally {
 			setIsSaving(false);
 		}
@@ -111,6 +115,8 @@ export default function AddChildDrawer({
 			onSubmit={handleSave}
 			isSaving={isSaving}
 			error={error}
+			success={success}
+			saveDisabled={!!success}
 			saveLabel="Add child"
 			bodyClassName="space-y-6 py-5 overflow-y-auto"
 		>

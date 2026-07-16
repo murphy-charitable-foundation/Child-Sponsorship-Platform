@@ -40,12 +40,15 @@ export default function EditSponsorDrawer({
 	const [imageFile, setImageFile] = useState<File | null>(null);
 	const [imageUrl, setImageUrl] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string | null>(null);
 
 	const states = useStatesForCountry(form?.country);
 
 	useEffect(() => {
 		if (!sponsor) return;
 		if (isOpen && sponsor) {
+			setError(null);
+			setSuccess(null);
 			setForm({
 				id: sponsor.id,
 				first_name: sponsor.first_name,
@@ -81,6 +84,7 @@ export default function EditSponsorDrawer({
 
 	function handleClose() {
 		setError(null);
+		setSuccess(null);
 		onClose();
 	}
 
@@ -97,6 +101,7 @@ export default function EditSponsorDrawer({
 		if (!form) return;
 		setIsSaving(true);
 		setError(null);
+		setSuccess(null);
 
 		try {
 			const res = await fetch("/api/supabase/sponsors", {
@@ -138,7 +143,8 @@ export default function EditSponsorDrawer({
 				onSaved?.(updatedSponsor);
 			}
 
-			onClose();
+			setSuccess("Sponsor updated successfully.");
+			setTimeout(onClose, 1500);
 		} finally {
 			setIsSaving(false);
 		}
@@ -153,6 +159,8 @@ export default function EditSponsorDrawer({
 			onSubmit={handleSave}
 			isSaving={isSaving}
 			error={error}
+			success={success}
+			saveDisabled={!!success}
 			saveLabel="Save changes"
 		>
 			{/* Sponsor Type */}

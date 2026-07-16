@@ -41,6 +41,7 @@ export default function AddSponsorDrawer({
 	const [form, setForm] = useState<CreateSponsor>(SP_EMPTY_FORM);
 	const [isSaving, setIsSaving] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string | null>(null);
 
 	function update<K extends keyof CreateSponsor>(
 		key: K,
@@ -52,6 +53,7 @@ export default function AddSponsorDrawer({
 	function handleClose() {
 		setSponsorType("none");
 		setError(null);
+		setSuccess(null);
 		setForm(SP_EMPTY_FORM);
 		onClose();
 	}
@@ -68,6 +70,7 @@ export default function AddSponsorDrawer({
 		e.preventDefault();
 		setIsSaving(true);
 		setError(null);
+		setSuccess(null);
 
 		try {
 			const res = await fetch("/api/supabase/sponsors", {
@@ -102,7 +105,8 @@ export default function AddSponsorDrawer({
 			}
 
 			router.refresh();
-			handleClose();
+			setSuccess("Sponsor added successfully.");
+			setTimeout(handleClose, 1500);
 		} finally {
 			setIsSaving(false);
 		}
@@ -117,8 +121,9 @@ export default function AddSponsorDrawer({
 			onSubmit={handleSave}
 			isSaving={isSaving}
 			error={error}
+			success={success}
 			saveLabel="Add sponsor"
-			saveDisabled={sponsorType === "none"}
+			saveDisabled={sponsorType === "none" || !!success}
 		>
 			{/* Sponsor type selector — always visible */}
 			<div>

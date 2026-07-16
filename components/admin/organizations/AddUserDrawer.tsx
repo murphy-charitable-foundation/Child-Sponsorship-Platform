@@ -26,6 +26,7 @@ export default function AddUserDrawer({ isOpen, onClose }: Props) {
 	const [form, setForm] = useState<CreateUser>(EMPTY_USER_FORM);
 	const [isSaving, setIsSaving] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string | null>(null);
 
 	function update<K extends keyof CreateUser>(key: K, value: CreateUser[K]) {
 		setForm((prev) => ({ ...prev, [key]: value }));
@@ -34,6 +35,7 @@ export default function AddUserDrawer({ isOpen, onClose }: Props) {
 	function handleClose() {
 		setForm(EMPTY_USER_FORM);
 		setError(null);
+		setSuccess(null);
 		onClose();
 	}
 
@@ -41,6 +43,7 @@ export default function AddUserDrawer({ isOpen, onClose }: Props) {
 		e.preventDefault();
 		setIsSaving(true);
 		setError(null);
+		setSuccess(null);
 
 		try {
 			const res = await fetch("/api/supabase/children", {
@@ -57,7 +60,8 @@ export default function AddUserDrawer({ isOpen, onClose }: Props) {
 			}
 
 			router.refresh();
-			handleClose();
+			setSuccess("User added successfully.");
+			setTimeout(handleClose, 1500);
 		} finally {
 			setIsSaving(false);
 		}
@@ -72,6 +76,8 @@ export default function AddUserDrawer({ isOpen, onClose }: Props) {
 			onSubmit={handleSave}
 			isSaving={isSaving}
 			error={error}
+			success={success}
+			saveDisabled={!!success}
 			saveLabel="Add user"
 			bodyClassName="space-y-6 py-5 overflow-y-auto"
 		>

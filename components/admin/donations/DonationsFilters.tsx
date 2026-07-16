@@ -30,7 +30,7 @@ export default function DonationsFilters({
 							Search
 						</label>
 					</div>
-					<div className="w-1/5">
+					<div className="w-1/3">
 						<label className="text-xs font-semibold text-gray-600 tracking-wider">
 							Country
 						</label>
