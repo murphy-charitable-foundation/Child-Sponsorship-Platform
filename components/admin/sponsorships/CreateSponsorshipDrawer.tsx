@@ -48,8 +48,8 @@ export default function CreateSponsorshipDrawer({
 		async function fetchSponsors() {
 			try {
 				const [individualsRes, groupsRes] = await Promise.all([
-					fetch("/api/supabase/sponsors?tab=individuals"),
-					fetch("/api/supabase/sponsors?tab=groups"),
+					fetch("/api/supabase/sponsors?tab=individuals&status=Active"),
+					fetch("/api/supabase/sponsors?tab=groups&status=Active"),
 				]);
 
 				if (!individualsRes.ok || !groupsRes.ok) {
