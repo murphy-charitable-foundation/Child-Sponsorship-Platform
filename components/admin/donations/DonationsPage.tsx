@@ -71,6 +71,10 @@ export default function DonationsPage() {
 		setDrawerOpen(true);
 	}
 
+	const uniqueCountries = new Set(
+		donations.map((s) => s.country).filter(Boolean),
+	);
+
 	//kpi values//
 	const now = new Date();
 	const monthlyTotal = donations
@@ -122,6 +126,7 @@ export default function DonationsPage() {
 							setSearchQuery={setSearchQuery}
 							selectedCountry={selectedCountry}
 							setSelectedCountry={setSelectedCountry}
+							countries={uniqueCountries}
 						/>
 
 						{/* Table */}

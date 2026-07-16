@@ -1,12 +1,12 @@
 import { Input, Select, SelectItem } from "@heroui/react";
 import { filterInputCls, filterSelectCls } from "../shared/styleConstants";
-import { SP_COUNTRIES } from "@/lib/constants";
 
 type DonationsFilterProps = {
 	selectedCountry: string;
 	setSelectedCountry: (country: string) => void;
 	searchQuery: string;
 	setSearchQuery: (query: string) => void;
+	countries: Set<string | null>;
 };
 
 export default function DonationsFilters({
@@ -14,6 +14,7 @@ export default function DonationsFilters({
 	setSelectedCountry,
 	searchQuery,
 	setSearchQuery,
+	countries,
 }: DonationsFilterProps) {
 	const handleReset = () => {
 		setSelectedCountry("all");
@@ -51,7 +52,7 @@ export default function DonationsFilters({
 						/>
 					</div>
 
-					<div className="w-1/5">
+					<div className="w-1/3">
 						<Select
 							aria-label="Country"
 							selectedKeys={[selectedCountry]}
@@ -60,8 +61,8 @@ export default function DonationsFilters({
 							radius="none"
 							classNames={filterSelectCls}
 						>
-							{["all", ...SP_COUNTRIES].map((c) => (
-								<SelectItem key={c === "all" ? "all" : c.toLowerCase()}>
+							{["all", ...countries].map((c) => (
+								<SelectItem key={c === "all" ? "all" : c?.toLowerCase()}>
 									{c === "all" ? "All locations" : c}
 								</SelectItem>
 							))}

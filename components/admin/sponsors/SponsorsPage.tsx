@@ -109,6 +109,10 @@ export default function SponsorPage() {
 
 	const uniqueSponsors = sponsors.length ?? 0;
 
+	const uniqueCountries = new Set(
+		sponsors.map((s) => s.country).filter(Boolean),
+	);
+
 	const filtered = sponsors.filter((item) => {
 		// Search filter
 		const searchMatches = isGroupsTab
@@ -220,6 +224,7 @@ export default function SponsorPage() {
 					onStatusChange={setStatusValue}
 					typeValue={typeValue}
 					onTypeChange={setTypeValue}
+					countries={uniqueCountries}
 					onResetFilters={() => {
 						setSearchValue("");
 						setLocationValue("all");

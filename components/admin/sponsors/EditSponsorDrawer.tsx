@@ -2,11 +2,22 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-
+import {
+	Autocomplete,
+	AutocompleteItem,
+	Input,
+	Select,
+	SelectItem,
+} from "@heroui/react";
 import { EditSponsor, SponsorProfile, SponsorType } from "./types";
 import ProfileImageUpload from "@/components/profile-image-upload";
-import FormDrawer, { Field, inputCls } from "../shared/FormDrawer";
-import { SP_COUNTRIES, SPONSOR_GROUP_TYPES } from "@/lib/constants";
+import FormDrawer, { Field } from "../shared/FormDrawer";
+import { filterInputCls, filterSelectCls } from "../shared/styleConstants";
+import {
+	COUNTRIES,
+	SPONSOR_GROUP_TYPES,
+	useStatesForCountry,
+} from "@/lib/constants";
 
 type EditSponsorDrawerProps = {
 	sponsor: SponsorProfile | null;
@@ -29,6 +40,8 @@ export default function EditSponsorDrawer({
 	const [imageFile, setImageFile] = useState<File | null>(null);
 	const [imageUrl, setImageUrl] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
+
+	const states = useStatesForCountry(form?.country);
 
 	useEffect(() => {
 		if (!sponsor) return;
@@ -208,27 +221,22 @@ export default function EditSponsorDrawer({
 					</h3>
 					<div className="space-y-3">
 						<Field label="Group type">
-							<select
-								className={inputCls}
+							<Select
+								classNames={filterSelectCls}
+								isClearable
 								value={form?.sponsor_type ?? ""}
 								onChange={(e) =>
 									update("sponsor_type", e.target.value as SponsorType)
 								}
 							>
-								<option value="">Select group description</option>
 								{SPONSOR_GROUP_TYPES.map((t) => (
-									<option
-										key={t.key}
-										value={t.key}
-									>
-										{t.label}
-									</option>
+									<SelectItem key={t.key}>{t.label}</SelectItem>
 								))}
-							</select>
+							</Select>
 						</Field>
 						<Field label="Group name">
-							<input
-								className={inputCls}
+							<Input
+								classNames={filterInputCls}
 								value={form?.group_name ?? ""}
 								onChange={(e) => update("group_name", e.target.value)}
 							/>
@@ -245,69 +253,84 @@ export default function EditSponsorDrawer({
 				<div className="space-y-3">
 					<div className="grid grid-cols-2 gap-3">
 						<Field label="First name">
-							<input
-								className={inputCls}
+							<Input
+								classNames={filterInputCls}
 								value={form?.first_name ?? ""}
 								onChange={(e) => update("first_name", e.target.value)}
 							/>
 						</Field>
 						<Field label="Last name">
-							<input
-								className={inputCls}
+							<Input
+								classNames={filterInputCls}
 								value={form?.last_name ?? ""}
 								onChange={(e) => update("last_name", e.target.value)}
 							/>
 						</Field>
 					</div>
 					<Field label="Address line 1">
-						<input
-							className={inputCls}
+						<Input
+							classNames={filterInputCls}
 							value={form?.address_line1 ?? ""}
 							onChange={(e) => update("address_line1", e.target.value)}
 						/>
 					</Field>
 					<Field label="Address line 2">
-						<input
-							className={inputCls}
+						<Input
+							classNames={filterInputCls}
 							value={form?.address_line2 ?? ""}
 							onChange={(e) => update("address_line2", e.target.value)}
 						/>
 					</Field>
 					<div className="grid grid-cols-2 gap-3">
 						<Field label="City">
-							<input
-								className={inputCls}
+							<Input
+								classNames={filterInputCls}
 								value={form?.city ?? ""}
 								onChange={(e) => update("city", e.target.value)}
 							/>
 						</Field>
 						<Field label="State/Province">
-							<input
-								className={inputCls}
-								value={form?.state ?? ""}
-								onChange={(e) => update("state", e.target.value)}
-							/>
+							<Autocomplete
+								inputProps={{ classNames: filterInputCls }}
+								placeholder={
+									form?.country ? "Select state" : "Select a country first"
+								}
+								isClearable
+								isDisabled={!form?.country || states.length === 0}
+								selectedKey={form?.state ?? null}
+								onSelectionChange={(key) => {
+									update("state", (key as string) ?? "");
+								}}
+							>
+								{states.map((s) => (
+									<AutocompleteItem key={s.name}>{s.name}</AutocompleteItem>
+								))}
+							</Autocomplete>
 						</Field>
 					</div>
 					<div className="grid grid-cols-2 gap-3">
 						<Field label="Zip/postal code">
-							<input
-								className={inputCls}
+							<Input
+								classNames={filterInputCls}
 								value={form?.zip ?? ""}
 								onChange={(e) => update("zip", e.target.value)}
 							/>
 						</Field>
 						<Field label="Country">
-							<select
-								className={inputCls}
-								value={form?.country ?? ""}
-								onChange={(e) => update("country", e.target.value)}
+							<Autocomplete
+								inputProps={{ classNames: filterInputCls }}
+								placeholder="Select country"
+								isClearable
+								selectedKey={form?.country ?? null}
+								onSelectionChange={(key) => {
+									update("country", (key as string) ?? "");
+									update("state", "");
+								}}
 							>
-								<option value="">Select country</option>
-								{SP_COUNTRIES.map((c) => (
-									<option key={c}>{c}</option>
+								{COUNTRIES.map((c) => (
+									<AutocompleteItem key={c.name}>{c.name}</AutocompleteItem>
 								))}
-							</select>
+							</Autocomplete>
 						</Field>
 					</div>
 				</div>
@@ -320,17 +343,17 @@ export default function EditSponsorDrawer({
 				</h3>
 				<div className="grid grid-cols-2 gap-3 mb-4">
 					<Field label="Phone number">
-						<input
+						<Input
 							type="tel"
-							className={inputCls}
+							classNames={filterInputCls}
 							value={form?.phone_number ?? ""}
 							onChange={(e) => update("phone_number", e.target.value)}
 						/>
 					</Field>
 					<Field label="Email">
-						<input
+						<Input
 							type="email"
-							className={inputCls}
+							classNames={filterInputCls}
 							value={form?.email ?? ""}
 							onChange={(e) => update("email", e.target.value)}
 						/>
@@ -339,8 +362,8 @@ export default function EditSponsorDrawer({
 
 				{sponsorType === "group" && (
 					<Field label="Job title">
-						<input
-							className={inputCls}
+						<Input
+							classNames={filterInputCls}
 							value={form?.job_title ?? ""}
 							onChange={(e) => update("job_title", e.target.value)}
 						/>

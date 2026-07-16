@@ -187,7 +187,7 @@ export default function AddChildDrawer({
 							<Select
 								isRequired
 								placeholder="Select country"
-								selectedKeys={form?.location ? form.location : ""}
+								selectedKeys={form?.location ? [form.location] : []}
 								onSelectionChange={(keys) => {
 									const [value] = Array.from(keys as Set<string>);
 

@@ -4,12 +4,13 @@ import { useState } from "react";
 import Image from "next/image";
 import SponsorSponsorshipsTab from "./SponsorSponsorshipsTab";
 import EditSponsorDrawer from "./EditSponsorDrawer";
-import { SponsorProfile, SPONSOR_TYPE_LABELS } from "./types";
+import { SponsorProfile } from "./types";
 import { ProfileHeader } from "../shared/ProfileHeader";
-import { ProfileTabs } from "../shared/ProfileTabs";
+import { TabSwitcher } from "../shared/TabSwitcher";
 import { Avatar } from "@heroui/react";
 import { SquarePen } from "lucide-react";
 import { DetailItem } from "../children/DetailItem";
+import { SPONSOR_TYPE_LABELS } from "@/lib/constants";
 
 type Props = { sponsor: SponsorProfile };
 
@@ -52,7 +53,7 @@ export default function SponsorProfilePage({ sponsor: initialSponsor }: Props) {
 
 			{/* Tabs */}
 			<div className="mt-6">
-				<ProfileTabs
+				<TabSwitcher
 					tabs={SPTabs}
 					activeTab={activeTab}
 					onChange={setActiveTab}

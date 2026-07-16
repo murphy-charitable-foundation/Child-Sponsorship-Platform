@@ -24,35 +24,24 @@ export async function GET(req: NextRequest) {
 	if (authError) return authError;
 
 	const isGroupsTab = req.nextUrl.searchParams.get("tab") === "groups";
-	const status = req.nextUrl.searchParams.get("status");
 
 	const adminClient = createAdminClient();
 
 	const { data, error: sponsorsError } = isGroupsTab
-		? await (() => {
-				let query = adminClient
-					.from("sponsors")
-					.select(
-						"id, country, status, sponsor_type, group_name, sponsorships(count)",
-					)
-					.neq("sponsor_type", "individual");
-
-				if (status) query = query.eq("status", status);
-
-				return query.order("created_at");
-			})()
-		: await (() => {
-				let query = adminClient
-					.from("sponsors")
-					.select(
-						"last_name, first_name, id, country, status, sponsor_type, sponsorships(count)",
-					)
-					.eq("sponsor_type", "individual");
-
-				if (status) query = query.eq("status", status);
-
-				return query.order("created_at");
-			})();
+		? await adminClient
+				.from("sponsors")
+				.select(
+					"id, country, status, sponsor_type, group_name, sponsorships(count)",
+				)
+				.neq("sponsor_type", "individual")
+				.order("created_at")
+		: await adminClient
+				.from("sponsors")
+				.select(
+					"last_name, first_name, id, country, status, sponsor_type, sponsorships(count)",
+				)
+				.eq("sponsor_type", "individual")
+				.order("created_at");
 
 	if (sponsorsError) {
 		return NextResponse.json(

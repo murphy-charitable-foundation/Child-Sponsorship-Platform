@@ -1,9 +1,9 @@
 import ProfileImageUpload from "@/components/profile-image-upload";
 import { CreateSponsor } from "./types";
 import { Field } from "../shared/FormDrawer";
-import { SP_COUNTRIES } from "@/lib/constants";
-import { Input, Select, SelectItem } from "@heroui/react";
-import { filterInputCls, filterSelectCls } from "../shared/styleConstants";
+import { Autocomplete, AutocompleteItem, Input } from "@heroui/react";
+import { filterInputCls } from "../shared/styleConstants";
+import { COUNTRIES, useStatesForCountry } from "@/lib/constants";
 
 type AddIndividualFormProps = {
 	form: CreateSponsor;
@@ -17,6 +17,8 @@ export default function AddIndividualForm({
 	form,
 	update,
 }: AddIndividualFormProps) {
+	const states = useStatesForCountry(form?.country);
+
 	return (
 		<div className="space-y-6">
 			<section>
@@ -76,11 +78,22 @@ export default function AddIndividualForm({
 							/>
 						</Field>
 						<Field label="State/Province">
-							<Input
-								classNames={filterInputCls}
-								value={form.state}
-								onChange={(e) => update("state", e.target.value)}
-							/>
+							<Autocomplete
+								inputProps={{ classNames: filterInputCls }}
+								placeholder={
+									form?.country ? "Select state" : "Select a country first"
+								}
+								isClearable
+								isDisabled={!form?.country || states.length === 0}
+								selectedKey={form?.state ?? null}
+								onSelectionChange={(key) => {
+									update("state", (key as string) ?? "");
+								}}
+							>
+								{states.map((s) => (
+									<AutocompleteItem key={s.name}>{s.name}</AutocompleteItem>
+								))}
+							</Autocomplete>
 						</Field>
 					</div>
 					<div className="grid grid-cols-2 gap-3">
@@ -92,15 +105,20 @@ export default function AddIndividualForm({
 							/>
 						</Field>
 						<Field label="Country">
-							<Select
-								classNames={filterSelectCls}
-								value={form.country}
-								onChange={(e) => update("country", e.target.value)}
+							<Autocomplete
+								inputProps={{ classNames: filterInputCls }}
+								placeholder="Select country"
+								isClearable
+								selectedKey={form?.country ?? null}
+								onSelectionChange={(key) => {
+									update("country", (key as string) ?? "");
+									update("state", "");
+								}}
 							>
-								{SP_COUNTRIES.map((c) => (
-									<SelectItem key={c}>{c}</SelectItem>
+								{COUNTRIES.map((c) => (
+									<AutocompleteItem key={c.name}>{c.name}</AutocompleteItem>
 								))}
-							</Select>
+							</Autocomplete>
 						</Field>
 					</div>
 				</div>

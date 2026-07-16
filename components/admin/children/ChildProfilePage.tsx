@@ -14,7 +14,7 @@ import { ChildProfile } from "./types";
 import { Avatar } from "@heroui/react";
 import GuardianConsentDrawer from "./GuardianConsentDrawer";
 import { ProfileHeader } from "../shared/ProfileHeader";
-import { ProfileTabs } from "../shared/ProfileTabs";
+import { TabSwitcher } from "../shared/TabSwitcher";
 
 type ChildProfilePageProps = {
 	child: ChildProfile;
@@ -73,7 +73,7 @@ export default function ChildProfilePage({
 			/>
 
 			<div className="mt-6">
-				<ProfileTabs
+				<TabSwitcher
 					tabs={ChildTabs}
 					activeTab={activeTab}
 					onChange={setActiveTab}

@@ -40,8 +40,8 @@ export default function FormDrawer({
 		<Drawer
 			isOpen={isOpen}
 			onOpenChange={onClose}
-			size="lg"
 			placement="right"
+			classNames={{ base: "w-[600px] max-w-[600px]" }}
 		>
 			<DrawerContent>
 				{(closeDrawer) => (
@@ -90,13 +90,6 @@ export default function FormDrawer({
 		</Drawer>
 	);
 }
-
-export const inputCls =
-	"w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200";
-
-export const textareaCls =
-	"w-full resize-vertical rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200";
-
 export function Field({
 	label,
 	children,

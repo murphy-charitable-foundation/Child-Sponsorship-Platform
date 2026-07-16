@@ -3,19 +3,22 @@ type TabItem<T extends string> = {
 	label: string;
 };
 
-type ProfileTabsProps<T extends string> = {
+type TabSwitcherProps<T extends string> = {
 	tabs: TabItem<T>[];
 	activeTab: T;
 	onChange: (tab: T) => void;
 };
 
-export function ProfileTabs<T extends string>({
+export function TabSwitcher<T extends string>({
 	tabs,
 	activeTab,
 	onChange,
-}: ProfileTabsProps<T>) {
+}: TabSwitcherProps<T>) {
 	return (
-		<div className="grid grid-cols-5 rounded-2xl bg-slate-100 p-1">
+		<div
+			className="grid rounded-2xl bg-slate-100 p-1"
+			style={{ gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))` }}
+		>
 			{tabs.map((tab) => (
 				<button
 					key={String(tab.key)}

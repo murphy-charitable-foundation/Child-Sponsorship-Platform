@@ -1,149 +1,160 @@
 "use client";
 
 import { useState } from "react";
-import { X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Input, Select, SelectItem } from "@heroui/react";
+import FormDrawer, { Field } from "../shared/FormDrawer";
+import { filterInputCls, filterSelectCls } from "../shared/styleConstants";
+import { REGIONS } from "@/lib/constants";
+import { Role, CreateUser, Regions } from "./type";
 
-type AddUserDrawerProps = {
-  isOpen: boolean;
-  onClose: () => void;
+export const EMPTY_USER_FORM: CreateUser = {
+	first_name: "",
+	last_name: "",
+	email: "",
+	role: null,
+	region: null,
 };
 
-export default function AddUserDrawer({
-  isOpen,
-  onClose,
-}: AddUserDrawerProps) {
-  const [lastName, setLastName] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [email, setEmail] = useState("");
-  const [currency, setCurrency] = useState("Select country");
-  const [timeZone, setTimeZone] = useState("");
+type Props = {
+	isOpen: boolean;
+	onClose: () => void;
+};
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log({
-      lastName,
-      firstName,
-      email,
-      currency,
-      timeZone,
-    });
-    onClose();
-  };
+export default function AddUserDrawer({ isOpen, onClose }: Props) {
+	const router = useRouter();
+	const [form, setForm] = useState<CreateUser>(EMPTY_USER_FORM);
+	const [isSaving, setIsSaving] = useState(false);
+	const [error, setError] = useState<string | null>(null);
 
-  if (!isOpen) return null;
+	function update<K extends keyof CreateUser>(key: K, value: CreateUser[K]) {
+		setForm((prev) => ({ ...prev, [key]: value }));
+	}
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="w-full max-w-2xl rounded-2xl bg-white p-8 shadow-xl max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-slate-900">Add User</h2>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-slate-600"
-          >
-            <X size={24} />
-          </button>
-        </div>
+	function handleClose() {
+		setForm(EMPTY_USER_FORM);
+		setError(null);
+		onClose();
+	}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Section Title 1 */}
-          <div>
-            <h3 className="text-sm font-semibold text-slate-800 mb-4">
-              Section Title
-            </h3>
+	async function handleSave(e: React.FormEvent) {
+		e.preventDefault();
+		setIsSaving(true);
+		setError(null);
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="mb-1 block text-xs text-slate-500">Last name</label>
-                <input
-                  type="text"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-xs text-slate-500">First name</label>
-                <input
-                  type="text"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-              </div>
-            </div>
-          </div>
+		try {
+			const res = await fetch("/api/supabase/children", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(form),
+			});
 
-          {/* Section Title 2 */}
-          <div>
-            <h3 className="text-sm font-semibold text-slate-800 mb-4">
-              Section Title
-            </h3>
+			const data = await res.json().catch(() => ({}));
 
-            <div>
-              <label className="mb-1 block text-xs text-slate-500">Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </div>
-          </div>
+			if (!res.ok) {
+				setError(data.error ?? "Failed to create child.");
+				return;
+			}
 
-          {/* Section Title 3 */}
-          <div>
-            <h3 className="text-sm font-semibold text-slate-800 mb-4">
-              Section Title
-            </h3>
+			router.refresh();
+			handleClose();
+		} finally {
+			setIsSaving(false);
+		}
+	}
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="mb-1 block text-xs text-slate-500">Currency</label>
-                <select
-                  value={currency}
-                  onChange={(e) => setCurrency(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  <option>Select country</option>
-                  <option>USD</option>
-                  <option>EUR</option>
-                  <option>GBP</option>
-                  <option>UGX</option>
-                </select>
-              </div>
-              <div>
-                <label className="mb-1 block text-xs text-slate-500">Time zone</label>
-                <input
-                  type="text"
-                  value={timeZone}
-                  onChange={(e) => setTimeZone(e.target.value)}
-                  placeholder="e.g. EAT"
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-              </div>
-            </div>
-          </div>
+	return (
+		<FormDrawer
+			isOpen={isOpen}
+			onClose={handleClose}
+			title="Add User"
+			formId="add-user-form"
+			onSubmit={handleSave}
+			isSaving={isSaving}
+			error={error}
+			saveLabel="Add user"
+			bodyClassName="space-y-6 py-5 overflow-y-auto"
+		>
+			{/* User Details */}
+			<section>
+				<h3 className="mb-4 text-sm font-semibold text-slate-800">
+					User Details
+				</h3>
+				<div className="space-y-4">
+					<div className="grid grid-cols-2 gap-4">
+						<Field label="First/given name">
+							<Input
+								type="text"
+								required
+								value={form.first_name}
+								onChange={(e) => update("first_name", e.target.value)}
+								classNames={filterInputCls}
+								placeholder="First name"
+							/>
+						</Field>
 
-          {/* Actions */}
-          <div className="flex gap-3 justify-end pt-6 border-t border-slate-200">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-6 py-2 rounded-lg border border-slate-300 text-slate-700 font-medium hover:bg-slate-50 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-6 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 transition-colors"
-            >
-              Add user
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
+						<Field label="Last/family name">
+							<Input
+								type="text"
+								required
+								value={form.last_name}
+								onChange={(e) => update("last_name", e.target.value)}
+								classNames={filterInputCls}
+								placeholder="Last name"
+							/>
+						</Field>
+					</div>
+
+					<Field label="Email">
+						<Input
+							type="text"
+							value={form?.email}
+							onChange={(e) => update("email", e.target.value)}
+							classNames={filterInputCls}
+						/>
+					</Field>
+
+					<div className="grid grid-cols-2 gap-4">
+						<Field label="Role">
+							<Select
+								isRequired
+								placeholder="Select Role"
+								selectedKeys={form.role ? [form.role] : []}
+								onSelectionChange={(keys) => {
+									const [value] = Array.from(keys as Set<string>);
+									const role = (value as Role) ?? "";
+									update("role", role);
+									if (role !== "Admin") update("region", null);
+								}}
+								classNames={filterSelectCls}
+							>
+								{["Admin", "Super Admin"].map((c) => (
+									<SelectItem key={c}>{c}</SelectItem>
+								))}
+							</Select>
+						</Field>
+
+						{form.role === "Admin" && (
+							<Field label="Region">
+								<Select
+									isRequired
+									placeholder="Select region"
+									selectedKeys={form.region ? [form.region] : []}
+									onSelectionChange={(keys) => {
+										const [value] = Array.from(keys as Set<string>);
+										update("region", (value as Regions) ?? "");
+									}}
+									classNames={filterSelectCls}
+								>
+									{REGIONS.map((r) => (
+										<SelectItem key={r}>{r}</SelectItem>
+									))}
+								</Select>
+							</Field>
+						)}
+					</div>
+				</div>
+			</section>
+		</FormDrawer>
+	);
 }

@@ -3,9 +3,13 @@
 import { useEffect, useState } from "react";
 import type { ChildProfile, EditChild, GenderType } from "./types";
 import ProfileImageUpload from "@/components/profile-image-upload";
-import FormDrawer, { Field, textareaCls } from "../shared/FormDrawer";
+import FormDrawer, { Field } from "../shared/FormDrawer";
 import { CHILD_COUNTRIES, GENDERS } from "@/lib/constants";
-import { filterInputCls, filterSelectCls } from "../shared/styleConstants";
+import {
+	filterInputCls,
+	filterSelectCls,
+	filterTextareaCls,
+} from "../shared/styleConstants";
 import { Input, Select, SelectItem, Textarea } from "@heroui/react";
 
 type EditChildDrawerProps = {
@@ -203,7 +207,7 @@ export default function EditChildDrawer({
 							<Select
 								isRequired
 								placeholder="Select country"
-								selectedKeys={form?.location ? form.location : ""}
+								selectedKeys={form?.location ? [form.location] : []}
 								onSelectionChange={(keys) => {
 									const [value] = Array.from(keys as Set<string>);
 
@@ -248,7 +252,7 @@ export default function EditChildDrawer({
 						<Textarea
 							value={form?.biography ?? ""}
 							onChange={(e) => update("biography", e.target.value)}
-							className={textareaCls}
+							classNames={filterTextareaCls}
 							placeholder="Child's biography"
 							rows={4}
 						/>
@@ -265,7 +269,7 @@ export default function EditChildDrawer({
 					<Textarea
 						value={form?.family_biography ?? ""}
 						onChange={(e) => update("family_biography", e.target.value)}
-						className={textareaCls}
+						classNames={filterTextareaCls}
 						placeholder="Describe the family background"
 						rows={4}
 					/>

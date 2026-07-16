@@ -3,7 +3,7 @@
 import React from "react";
 import { Select, SelectItem, Input } from "@heroui/react";
 import { filterInputCls, filterSelectCls } from "../shared/styleConstants";
-import { SP_COUNTRIES, SP_STATUS, SPONSOR_TYPE_LABELS } from "@/lib/constants";
+import { SP_STATUS, SPONSOR_TYPE_LABELS } from "@/lib/constants";
 
 interface SponsorsFilterProps {
 	activeTab: "individuals" | "groups";
@@ -16,6 +16,7 @@ interface SponsorsFilterProps {
 	typeValue: string;
 	onTypeChange: (value: string) => void;
 	onResetFilters: () => void;
+	countries: Set<string>;
 }
 
 export function SponsorsFilter({
@@ -29,6 +30,7 @@ export function SponsorsFilter({
 	typeValue,
 	onTypeChange,
 	onResetFilters,
+	countries,
 }: SponsorsFilterProps) {
 	const isGroupsTab = activeTab === "groups";
 
@@ -110,7 +112,7 @@ export function SponsorsFilter({
 							radius="none"
 							classNames={filterSelectCls}
 						>
-							{["all", ...SP_COUNTRIES].map((c) => (
+							{["all", ...countries].map((c) => (
 								<SelectItem key={c === "all" ? "all" : c.toLowerCase()}>
 									{c === "all" ? "All locations" : c}
 								</SelectItem>
