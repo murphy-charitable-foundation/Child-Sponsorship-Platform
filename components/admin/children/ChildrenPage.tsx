@@ -7,6 +7,7 @@ import ChildrenFilters from "@/components/admin/children/ChildrenFilters";
 import ChildrenTable from "@/components/admin/children/ChildrenTable";
 import { ChildProfile, ChildTableData } from "./types";
 import EditChildDrawer from "./EditChildDrawer";
+import TablePagination from "../shared/TablePagination";
 
 export default function ChildrenPage() {
 	const [selectedStatus, setSelectedStatus] = useState("all");
@@ -19,6 +20,9 @@ export default function ChildrenPage() {
 	const [activeSponsorships, setActiveSponsorships] = useState(0);
 	const [childrenAwaitingSponsorship, setChildrenAwaitingSponsorship] =
 		useState(0);
+
+	const [selectedPageCapacity, setPageCapacity] = useState(10);
+	const [page, setPage] = useState(1);
 
 	useEffect(() => {
 		setError(null);
@@ -91,6 +95,10 @@ export default function ChildrenPage() {
 		fetchChildrenAwaitingSponsorship();
 	}, []);
 
+	useEffect(() => {
+		setPage(1);
+	}, [selectedStatus, selectedGender, searchQuery]);
+
 	// Filter rows based on selection
 	const filtered = children.filter((c) => {
 		// Status filter
@@ -145,6 +153,16 @@ export default function ChildrenPage() {
 		);
 	}
 
+	//Pagination//
+	const totalPage = Math.max(
+		1,
+		Math.ceil(filtered.length / selectedPageCapacity),
+	);
+	const paginated = filtered.slice(
+		(page - 1) * selectedPageCapacity,
+		page * selectedPageCapacity,
+	);
+
 	return (
 		<div>
 			{/* header */}
@@ -192,8 +210,15 @@ export default function ChildrenPage() {
 					</div>
 				)}
 				<ChildrenTable
-					data={filtered}
+					data={paginated}
 					onEdit={openEdit}
+				/>
+				<TablePagination
+					page={page}
+					onSetPage={setPage}
+					totalPage={totalPage}
+					selectedPageCapacity={selectedPageCapacity}
+					onSetPageCapacity={setPageCapacity}
 				/>
 			</div>
 

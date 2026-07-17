@@ -48,7 +48,12 @@ export default function ChildrenTable({ data, onEdit }: ChildrenTableProps) {
 						<TableRow key={r.id}>
 							<TableCell className="text-slate-800">{r.last_name}</TableCell>
 							<TableCell className="text-slate-800">{r.first_name}</TableCell>
-							<TableCell className="text-slate-600">{r.id}</TableCell>
+							<TableCell
+								className="whitespace-nowrap text-slate-600"
+								title={r.id}
+							>
+								{r.id.slice(0, 10)}...
+							</TableCell>
 							<TableCell className="text-slate-600">{r.age}</TableCell>
 							<TableCell className="text-slate-600">{r.gender}</TableCell>
 							<TableCell className="text-slate-600">{r.location}</TableCell>

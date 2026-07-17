@@ -7,6 +7,7 @@ import DonationsFilters from "./DonationsFilters";
 import DonationsTable from "./DonationsTable";
 import { formatDate } from "../sponsorships/SponsorshipTable";
 import { KpiCard } from "../shared/KpiCard";
+import TablePagination from "../shared/TablePagination";
 
 //TODO:Donation and payments are not associated yet. which we need to do.
 //For now get the donation values from 'payments table' we need to update api/supabase/donations when we modified
@@ -20,6 +21,8 @@ export default function DonationsPage() {
 	const [selectedDonation, setSelectedDonation] = useState<Donation | null>(
 		null,
 	);
+	const [selectedPageCapacity, setPageCapacity] = useState(10);
+	const [page, setPage] = useState(1);
 
 	useEffect(() => {
 		setError(null);
@@ -43,6 +46,10 @@ export default function DonationsPage() {
 		}
 		fetchDonations();
 	}, []);
+
+	useEffect(() => {
+		setPage(1);
+	}, [selectedCountry, selectedDonation, searchQuery]);
 
 	const filtered = donations.filter((d) => {
 		const countryMatches =
@@ -98,6 +105,16 @@ export default function DonationsPage() {
 		.reduce((sum, d) => sum + d.amount, 0);
 	const formattedYearlyTotal = `$${yearlyTotal.toLocaleString("en-US")}`;
 
+	//Pagination//
+	const totalPage = Math.max(
+		1,
+		Math.ceil(filtered.length / selectedPageCapacity),
+	);
+	const paginated = filtered.slice(
+		(page - 1) * selectedPageCapacity,
+		page * selectedPageCapacity,
+	);
+
 	return (
 		<div>
 			{/* Header */}
@@ -137,8 +154,15 @@ export default function DonationsPage() {
 						)}
 
 						<DonationsTable
-							data={filtered}
+							data={paginated}
 							onView={openDrawer}
+						/>
+						<TablePagination
+							page={page}
+							onSetPage={setPage}
+							totalPage={totalPage}
+							selectedPageCapacity={selectedPageCapacity}
+							onSetPageCapacity={setPageCapacity}
 						/>
 					</div>
 				</div>

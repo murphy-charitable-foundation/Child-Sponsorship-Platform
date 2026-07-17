@@ -59,3 +59,5 @@ export const CONSENT_METHOD: Record<ConsentMethod, string> = {
 };
 
 export const SP_STATUS: SponsorStatus[] = ["Active", "Inactive"];
+
+export const pageCapacities = ["10", "25", "50"];

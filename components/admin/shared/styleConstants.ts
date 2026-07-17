@@ -6,7 +6,7 @@ export const tableCls = {
 	th: "!rounded-none border-b border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500",
 	tbody: "divide-y divide-slate-100",
 	tr: "cursor-pointer hover:bg-slate-50",
-	td: "px-4 py-3",
+	td: "h-11 px-4 align-middle",
 	emptyWrapper: "px-4 py-8 text-center text-slate-400",
 };
 

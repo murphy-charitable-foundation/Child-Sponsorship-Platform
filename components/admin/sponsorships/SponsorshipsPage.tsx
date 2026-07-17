@@ -6,6 +6,7 @@ import SponsorshipFilter from "./SponsorshipFilter";
 import { Sponsorship } from "./types";
 import SponsorshipTable from "./SponsorshipTable";
 import { KpiCard } from "../shared/KpiCard";
+import TablePagination from "../shared/TablePagination";
 
 export default function SponsorshipsPage() {
 	const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -15,8 +16,10 @@ export default function SponsorshipsPage() {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [error, setError] = useState("");
 	const [sponsorships, setSponsorships] = useState<Sponsorship[]>([]);
-
 	const [awaitingCount, setAwaitingCount] = useState(0);
+
+	const [selectedPageCapacity, setPageCapacity] = useState(10);
+	const [page, setPage] = useState(1);
 
 	useEffect(() => {
 		async function fetchSponsorships() {
@@ -64,6 +67,10 @@ export default function SponsorshipsPage() {
 		fetchAwaitingCount();
 	}, []);
 
+	useEffect(() => {
+		setPage(1);
+	}, [selectedStatus, selectedFrequency, selectedLocation]);
+
 	const activeCount = sponsorships.filter((s) => s.status === "Active").length;
 	const uniqueSponsors = new Set(sponsorships.map((s) => s.sponsor_name)).size;
 
@@ -90,6 +97,16 @@ export default function SponsorshipsPage() {
 			statusMatches && locationMatches && frequencyMatches && searchMatches
 		);
 	});
+
+	//Pagination//
+	const totalPage = Math.max(
+		1,
+		Math.ceil(filtered.length / selectedPageCapacity),
+	);
+	const paginated = filtered.slice(
+		(page - 1) * selectedPageCapacity,
+		page * selectedPageCapacity,
+	);
 
 	return (
 		<div>
@@ -121,7 +138,7 @@ export default function SponsorshipsPage() {
 			</div>
 
 			{/* Filters */}
-			<div className="mt-6">
+			<div className="mt-10">
 				<SponsorshipFilter
 					selectedStatus={selectedStatus}
 					setSelectedStatus={setSelectedStatus}
@@ -132,15 +149,23 @@ export default function SponsorshipsPage() {
 					searchQuery={searchQuery}
 					setSearchQuery={setSearchQuery}
 				/>
-			</div>
 
-			{/* Table */}
-			{error && (
-				<div className="mb-4 rounded-md bg-danger-50 px-4 py-3 text-sm text-danger">
-					{error}
-				</div>
-			)}
-			<SponsorshipTable data={filtered} />
+				{/* Table */}
+				{error && (
+					<div className="mb-4 rounded-md bg-danger-50 px-4 py-3 text-sm text-danger">
+						{error}
+					</div>
+				)}
+				<SponsorshipTable data={paginated} />
+
+				<TablePagination
+					page={page}
+					onSetPage={setPage}
+					totalPage={totalPage}
+					selectedPageCapacity={selectedPageCapacity}
+					onSetPageCapacity={setPageCapacity}
+				/>
+			</div>
 
 			<CreateSponsorshipDrawer
 				isOpen={isCreateOpen}

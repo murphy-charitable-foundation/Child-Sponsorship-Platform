@@ -13,6 +13,7 @@ import {
 	SponsorTableData,
 } from "./types";
 import EditSponsorDrawer from "./EditSponsorDrawer";
+import TablePagination from "../shared/TablePagination";
 
 export default function SponsorPage() {
 	const [activeTab, setActiveTab] = useState<"individuals" | "groups">(
@@ -32,6 +33,8 @@ export default function SponsorPage() {
 	const [activeSponsorships, setActiveSponsorships] = useState(0);
 	const [childrenAwaitingSponsorship, setChildrenAwaitingSponsorship] =
 		useState(0);
+	const [selectedPageCapacity, setPageCapacity] = useState(10);
+	const [page, setPage] = useState(1);
 
 	const isGroupsTab = activeTab === "groups";
 
@@ -107,6 +110,10 @@ export default function SponsorPage() {
 		fetchChildrenAwaitingSponsorship();
 	}, []);
 
+	useEffect(() => {
+		setPage(1);
+	}, [locationValue, statusValue, searchValue, typeValue]);
+
 	const uniqueSponsors = sponsors.length ?? 0;
 
 	const uniqueCountries = new Set(
@@ -179,6 +186,17 @@ export default function SponsorPage() {
 			),
 		);
 	}
+
+	//Pagination//
+	const totalPage = Math.max(
+		1,
+		Math.ceil(filtered.length / selectedPageCapacity),
+	);
+	const paginated = filtered.slice(
+		(page - 1) * selectedPageCapacity,
+		page * selectedPageCapacity,
+	);
+
 	return (
 		<div>
 			<div className="flex items-center justify-between">
@@ -240,9 +258,17 @@ export default function SponsorPage() {
 					</div>
 				)}
 				<SponsorsTable
-					data={filtered}
+					data={paginated}
 					isGroupsTab={isGroupsTab}
 					onEdit={openEdit}
+				/>
+
+				<TablePagination
+					page={page}
+					onSetPage={setPage}
+					totalPage={totalPage}
+					selectedPageCapacity={selectedPageCapacity}
+					onSetPageCapacity={setPageCapacity}
 				/>
 			</div>
 

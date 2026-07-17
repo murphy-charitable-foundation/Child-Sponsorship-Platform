@@ -35,8 +35,8 @@ export function SponsorsFilter({
 	const isGroupsTab = activeTab === "groups";
 
 	return (
-		<div className="bg-gray-100 p-6">
-			<div className="space-y-3">
+		<div className="bg-gray-100 p-5">
+			<div className="space-y-1">
 				<div className="flex gap-5">
 					<div className={isGroupsTab ? "flex-1" : "flex-1"}>
 						<label className="text-xs font-semibold text-gray-600 tracking-wider">
