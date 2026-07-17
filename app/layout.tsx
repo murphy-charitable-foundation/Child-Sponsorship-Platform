@@ -3,9 +3,8 @@ import "./globals.css";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-
-import { AuthProvider } from "@/components/AuthProvider";
 import PublicShell from "@/components/admin/layout/PublicShell";
+import { AuthProvider } from "@/components/AuthProvider";
 import { UserProfileProvider } from "@/components/UserProfileContext";
 
 const geistSans = Geist({
@@ -63,13 +62,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.className} antialiased`}>
+        <Suspense fallback={null}>
+
         <AuthProvider>
-          <UserProfileProvider>
-            <Suspense>
-              <PublicShell>{children}</PublicShell>
-            </Suspense>
-          </UserProfileProvider>
+          <PublicShell>{children}</PublicShell>
         </AuthProvider>
+        </Suspense>
       </body>
     </html>
   );

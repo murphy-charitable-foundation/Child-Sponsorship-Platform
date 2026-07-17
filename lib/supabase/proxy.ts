@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { hasEnvVars } from "../utils";
 
-const PUBLIC_PATH = ["/terms", "/privacy", "/auth", "about-us"];
+const PUBLIC_PATH = ["/terms", "/privacy", "/auth", "/about-us"];
 
 export async function updateSession(request: NextRequest) {
 	let supabaseResponse = NextResponse.next({
