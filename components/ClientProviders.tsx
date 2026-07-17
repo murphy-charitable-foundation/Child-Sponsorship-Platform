@@ -32,7 +32,7 @@ export default function ClientProviders({
 
           <article
             aria-label="Footer information sections"
-            className="flex flex-row justify-between my-4 text-primary-300"
+            className="flex flex-row justify-between my-4 text-[--blue-300]"
           >
             <section
               aria-label="Organization registration details"

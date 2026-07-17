@@ -5,12 +5,15 @@ import { usePathname } from "next/navigation";
 import ClientProviders from "@/components/ClientProviders";
 
 export default function PublicShell({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  const isAdminRoute = pathname?.startsWith("/admin");
+	const pathname = usePathname();
+	const isAdminRoute =
+		pathname?.startsWith("/admin") || pathname?.startsWith("/auth");
 
-  return <>{!isAdminRoute && <ClientProviders>{children}</ClientProviders>}</>;
+	if (isAdminRoute) return <>{children}</>;
+
+	return <ClientProviders>{children}</ClientProviders>;
 }

@@ -1,30 +1,54 @@
 "use client";
 
-import React from "react";
+import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@heroui/react";
-import { usePathname } from "next/navigation";
 
 export default function AdminTopActions() {
-  const pathname = usePathname();
+	const pathname = usePathname();
+	const router = useRouter();
 
-  // Show "Add Child" button only on children page
-  if (pathname === "/admin/children") {
-    return (
-      <Button radius="md" color="primary">
-        Add Child
-      </Button>
-    );
-  }
+	const isChildrenRoute = pathname?.startsWith("/admin/children");
+	const isSponsorshipsRoute = pathname?.startsWith("/admin/sponsorships");
+	const isSponsorsRoute =
+		pathname?.startsWith("/admin/sponsors") && !isSponsorshipsRoute;
 
-  // Show "Add Sponsor" button only on sponsors page
-  if (pathname === "/admin/sponsors") {
-    return (
-      <Button radius="md" color="primary">
-        Add Sponsor
-      </Button>
-    );
-  }
+	if (isChildrenRoute && pathname !== "/admin/children/add") {
+		return (
+			<Button
+				as={Link}
+				href="/admin/children/add"
+				radius="md"
+				color="primary"
+			>
+				Add Child
+			</Button>
+		);
+	}
 
-  // Return null for other pages
-  return null;
+	if (isSponsorsRoute && !pathname?.includes("/admin/sponsors/")) {
+		return (
+			<Button
+				radius="md"
+				color="primary"
+				onPress={() => router.push("/admin/sponsors?add=1")}
+			>
+				Add Sponsor
+			</Button>
+		);
+	}
+
+	if (isSponsorshipsRoute) {
+		return (
+			<Button
+				radius="md"
+				color="primary"
+				onPress={() => router.push("/admin/sponsorships?create=1")}
+			>
+				Create Sponsorship
+			</Button>
+		);
+	}
+
+	return null;
 }

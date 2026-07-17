@@ -1,39 +1,69 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
 import { KpiCard } from "@/components/admin/dashboard/KpiCard";
 import { PanelCard } from "@/components/admin/dashboard/PanelCard";
 import ChildrenFilters from "@/components/admin/children/ChildrenFilters";
 import ChildrenTable from "@/components/admin/children/ChildrenTable";
 
 export default function ChildrenPage() {
-  return (
-    <div className="space-y-8 w-full">
-      {/* header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-4xl font-bold">Children</h1>
-      </div>
+	const [selectedStatus, setSelectedStatus] = useState<Set<string>>(
+		new Set(["all"]),
+	);
+	const [selectedGender, setSelectedGender] = useState<Set<string>>(new Set());
+	const [searchQuery, setSearchQuery] = useState("");
 
-      {/* KPI */}
-      <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-3">
-        <KpiCard
-          title="Children in Program"
-          subtitle="Need KPI visualization"
-        />
-        <KpiCard
-          title="Active Sponsorships"
-          subtitle="Need KPI visualization"
-        />
-        <KpiCard
-          title="Children Awaiting Sponsorship"
-          subtitle="Need KPI visualization"
-        />
-      </div>
+	return (
+		<div className="space-y-8 w-full">
+			{/* header */}
+			<div className="flex items-center justify-between">
+				<h1 className="text-2xl font-semibold text-primary">Children</h1>
+				<Link
+					href="/admin/children/add"
+					className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90"
+				>
+					Add Child
+				</Link>
+			</div>
 
-      {/* BOX containing Filters + Table */}
-      <PanelCard title="" className="w-full">
-        <div className="space-y-8">
-          <ChildrenFilters />
-          <ChildrenTable />
-        </div>
-      </PanelCard>
-    </div>
-  );
+			{/* KPI */}
+			<div className="grid w-full grid-cols-1 gap-6 md:grid-cols-3">
+				<KpiCard
+					title="Children in Program"
+					subtitle="Need KPI visualization"
+				/>
+				<KpiCard
+					title="Active Sponsorships"
+					subtitle="Need KPI visualization"
+				/>
+				<KpiCard
+					title="Children Awaiting Sponsorship"
+					subtitle="Need KPI visualization"
+				/>
+			</div>
+
+			{/* BOX containing Filters + Table */}
+			<PanelCard
+				title=""
+				className="w-full"
+			>
+				<div className="space-y-8">
+					<ChildrenFilters
+						selectedStatus={selectedStatus}
+						setSelectedStatus={setSelectedStatus}
+						selectedGender={selectedGender}
+						setSelectedGender={setSelectedGender}
+						searchQuery={searchQuery}
+						setSearchQuery={setSearchQuery}
+					/>
+					<ChildrenTable
+						selectedStatus={selectedStatus}
+						selectedGender={selectedGender}
+						searchQuery={searchQuery}
+					/>
+				</div>
+			</PanelCard>
+		</div>
+	);
 }
