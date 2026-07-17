@@ -5,7 +5,6 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import PublicShell from "@/components/admin/layout/PublicShell";
 import { AuthProvider } from "@/components/AuthProvider";
-import { Suspense } from "react";
 import { UserProfileProvider } from "@/components/UserProfileContext";
 
 const geistSans = Geist({
