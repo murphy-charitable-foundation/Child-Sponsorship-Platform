@@ -3,8 +3,6 @@
 import { Donation } from "./types";
 import { formatDate } from "../sponsorships/SponsorshipTable";
 import FormDrawer from "../shared/FormDrawer";
-import { Frequencies } from "../sponsorships/types";
-import { FREQUENCIES } from "@/lib/constants";
 
 type Props = {
 	donation: Donation | null;
@@ -43,10 +41,6 @@ export default function DonationDetailsDrawer({
 						value={donation.country ?? ""}
 					/>
 					<Detail
-						label="Phone number"
-						value={donation.phone_number ?? ""}
-					/>
-					<Detail
 						label="Email"
 						value={donation.email ?? ""}
 					/>
@@ -62,14 +56,6 @@ export default function DonationDetailsDrawer({
 					<Detail
 						label="Amount"
 						value={donation.amount.toString()}
-					/>
-					<Detail
-						label="Frequency"
-						value={
-							donation.frequency
-								? FREQUENCIES[donation.frequency as Frequencies]
-								: ""
-						}
 					/>
 					<Detail
 						label="Payment method"

@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
 			frequency: data.frequency,
 			start_date_time: data.start_date,
 			end_date_time: data.end_date ?? null,
-			status: "Active",
+			status: "Inactive",
 			is_recurring: data.frequency === "onetime" ? false : true,
 		})
 		.select("sponsorship_id")

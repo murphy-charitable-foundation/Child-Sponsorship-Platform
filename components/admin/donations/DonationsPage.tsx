@@ -10,7 +10,6 @@ import { KpiCard } from "../shared/KpiCard";
 import TablePagination from "../shared/TablePagination";
 
 //TODO:Donation and payments are not associated yet. which we need to do.
-//For now get the donation values from 'payments table' we need to update api/supabase/donations when we modified
 
 export default function DonationsPage() {
 	const [searchQuery, setSearchQuery] = useState("");
@@ -66,6 +65,7 @@ export default function DonationsPage() {
 	});
 
 	async function openDrawer(id: string) {
+		console.log("id", id);
 		const res = await fetch(`/api/supabase/donations/${id}`);
 
 		if (!res.ok) {
@@ -89,19 +89,14 @@ export default function DonationsPage() {
 			const dt = new Date(d.date_time);
 			return (
 				dt.getFullYear() === now.getFullYear() &&
-				dt.getMonth() === now.getMonth() &&
-				d.status.toUpperCase() === "COMPLETED"
+				dt.getMonth() === now.getMonth()
 			);
 		})
 		.reduce((sum, d) => sum + d.amount, 0);
 	const formattedMonthlyTotal = `$${monthlyTotal.toLocaleString("en-US")}`;
 
 	const yearlyTotal = donations
-		.filter(
-			(d) =>
-				new Date(d.date_time).getFullYear() === now.getFullYear() &&
-				d.status.toUpperCase() === "COMPLETED",
-		)
+		.filter((d) => new Date(d.date_time).getFullYear() === now.getFullYear())
 		.reduce((sum, d) => sum + d.amount, 0);
 	const formattedYearlyTotal = `$${yearlyTotal.toLocaleString("en-US")}`;
 

@@ -2,13 +2,16 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/supabase/require-admin";
 import { NextRequest, NextResponse } from "next/server";
-import { countryCodeToName, SponsorshipSponsorEmbed } from "../route";
+import { countryCodeToName } from "../route";
+import { faker } from "@faker-js/faker";
 
 export async function GET(
 	req: NextRequest,
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	const { id } = await params;
+
+	console.log(id);
 
 	const supabase = await createClient();
 
@@ -19,11 +22,11 @@ export async function GET(
 	const adminClient = createAdminClient();
 
 	const { data: donation, error } = await adminClient
-		.from("payments")
+		.from("donations")
 		.select(
-			"payment_id, user_id, amount_value, created_at, plan_type, raw, payment_methods(label), sponsorships(sponsors(first_name, last_name, country, email, phone_number))",
+			"id, date_time, amount, payment_methods(label), payments(raw, status)",
 		)
-		.eq("payment_id", id)
+		.eq("id", id)
 		.single();
 
 	if (error) {
@@ -34,34 +37,26 @@ export async function GET(
 		);
 	}
 
-	const sponsor = (donation.sponsorships as unknown as SponsorshipSponsorEmbed)
-		?.sponsors;
+	const payment = donation.payments[0];
+
 	const paymentMethod = (
 		donation.payment_methods as unknown as { label: string } | null
 	)?.label;
 
+	const countryCode = payment?.raw?.payer?.address?.country_code;
+
 	const data = {
-		id: donation.payment_id,
-		amount: Number(donation.amount_value),
-		date_time: donation.created_at,
+		id: donation.id,
+		amount: donation.amount,
+		date_time: donation.date_time,
 		payment_method: paymentMethod,
 		purpose: "",
-		frequency: donation.plan_type,
-		user_id: donation.user_id,
 		first_name:
-			donation.raw?.payer?.name?.given_name ?? sponsor?.first_name ?? "",
-		last_name: donation.raw?.payer?.name?.surname ?? sponsor?.last_name ?? "",
-		country:
-			(donation.raw?.payer?.address?.country_code
-				? countryCodeToName(donation.raw.payer.address.country_code)
-				: null) ??
-			sponsor?.country ??
-			null,
-		email: donation.raw?.payer?.email_address ?? sponsor?.email ?? "",
-		phone_number: sponsor?.phone_number ?? "",
+			payment?.raw?.payer?.name?.given_name ?? faker.person.firstName(),
+		last_name: payment?.raw?.payer?.name?.surname ?? faker.person.lastName(),
+		country: countryCode ? countryCodeToName(countryCode) : null,
+		email: payment.raw?.payer?.email_address,
 	};
-
-	console.log(data);
 
 	return NextResponse.json({ data });
 }

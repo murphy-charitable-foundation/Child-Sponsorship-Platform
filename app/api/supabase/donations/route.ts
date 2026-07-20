@@ -2,29 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/supabase/require-admin";
 import { NextResponse } from "next/server";
-
-type PayPalCaptureRaw = {
-	payer?: {
-		name?: {
-			given_name?: string;
-			surname?: string;
-		};
-		address?: {
-			country_code?: string;
-		};
-		email_address?: string;
-	};
-};
-
-export type SponsorshipSponsorEmbed = {
-	sponsors: {
-		first_name: string;
-		last_name: string;
-		country: string | null;
-		phone_number: string | null;
-		email: string | null;
-	} | null;
-} | null;
+import { faker } from "@faker-js/faker";
 
 const regionNames = new Intl.DisplayNames(["en"], { type: "region" });
 
@@ -36,6 +14,9 @@ export function countryCodeToName(code: string): string | null {
 	}
 }
 
+//TODO: Once we determine donation table creation flow and connect donation and payment, then we will store country, purpose and user name into donation table
+//and we don't need to get the associated payment raw data.
+
 export async function GET() {
 	const supabase = await createClient();
 
@@ -45,12 +26,12 @@ export async function GET() {
 
 	const adminClient = createAdminClient();
 
-	const { data: payments, error } = await adminClient
-		.from("payments")
+	const { data: donations, error } = await adminClient
+		.from("donations")
 		.select(
-			"payment_id, user_id, amount_value, created_at, raw, status, sponsorships(sponsors(first_name, last_name, country, phone_number, email))",
+			"id, date_time, amount, payment_methods(label), payments(raw, status)",
 		)
-		.order("created_at", { ascending: false });
+		.order("date_time", { ascending: false });
 
 	if (error) {
 		console.log(error);
@@ -60,26 +41,20 @@ export async function GET() {
 		);
 	}
 
-	const data = payments.map((d) => {
-		const raw = d.raw as PayPalCaptureRaw | null;
-		const sponsor = (d.sponsorships as unknown as SponsorshipSponsorEmbed)
-			?.sponsors;
+	const data = donations.map((d) => {
+		const payment = d.payments[0];
+		const countryCode = payment?.raw?.payer?.address?.country_code;
 
 		return {
-			id: d.payment_id,
-			user_id: d.user_id,
-			first_name: raw?.payer?.name?.given_name ?? sponsor?.first_name ?? "",
-			last_name: raw?.payer?.name?.surname ?? sponsor?.last_name ?? "",
-			amount: Number(d.amount_value),
-			date_time: d.created_at,
-			status: d.status,
+			id: d.id,
+			date_time: d.date_time,
+			first_name:
+				payment?.raw?.payer?.name?.given_name ?? faker.person.firstName(),
+			last_name: payment?.raw?.payer?.name?.surname ?? faker.person.lastName(),
+			amount: d.amount,
+			status: payment?.status ?? "",
 			purpose: "", // we need to add this either donation or payment table
-			country:
-				(raw?.payer?.address?.country_code
-					? countryCodeToName(raw.payer.address.country_code)
-					: null) ??
-				sponsor?.country ??
-				null,
+			country: countryCode ? countryCodeToName(countryCode) : null,
 		};
 	});
 

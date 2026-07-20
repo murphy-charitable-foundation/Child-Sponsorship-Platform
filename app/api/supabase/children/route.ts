@@ -16,19 +16,27 @@ function validate(data: CreateChild): string | null {
 	return null;
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
 	const supabase = await createClient();
 
 	const { error: authError } = await requireAdmin(supabase);
 
 	if (authError) return authError;
 
-	const { data, error: childrenError } = await supabase
+	const statuses = req.nextUrl.searchParams.get("status")?.split(",");
+
+	let query = supabase
 		.from("children_with_ages")
 		.select(
 			"last_name, first_name, id, age, gender, location, created_at, status",
 		)
 		.order("created_at");
+
+	if (statuses?.length) {
+		query = query.in("status", statuses);
+	}
+
+	const { data, error: childrenError } = await query;
 
 	if (childrenError) {
 		return NextResponse.json(

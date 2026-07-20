@@ -78,7 +78,9 @@ export default function CreateSponsorshipDrawer({
 
 		async function fetchChildren() {
 			try {
-				const res = await fetch("/api/supabase/children");
+				const res = await fetch(
+					"/api/supabase/children?status=Active,Waiting",
+				);
 
 				if (!res.ok) {
 					setError("Failed to get children data");
