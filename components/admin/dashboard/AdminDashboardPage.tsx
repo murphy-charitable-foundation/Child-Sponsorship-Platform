@@ -132,7 +132,7 @@ export default function AdminDashboardPage() {
 					title="Recent Donations"
 					className="lg:col-span-3"
 				>
-					<RecentDonationsTable donations={donations.slice(0, 6)} />
+					<RecentDonationsTable donations={donations.slice(0, 8)} />
 				</PanelCard>
 			</div>
 		</div>

@@ -19,9 +19,11 @@ function validate(data: CreateChild): string | null {
 export async function GET(req: NextRequest) {
 	const supabase = await createClient();
 
-	const { error: authError } = await requireAdmin(supabase);
+	const adminResult = await requireAdmin(supabase);
 
-	if (authError) return authError;
+	if (adminResult.error) return adminResult.error;
+
+	const { userRole, region } = adminResult;
 
 	const statuses = req.nextUrl.searchParams.get("status")?.split(",");
 
@@ -31,6 +33,10 @@ export async function GET(req: NextRequest) {
 			"last_name, first_name, id, age, gender, location, created_at, status",
 		)
 		.order("created_at");
+
+	if (userRole === "admin" && region) {
+		query = query.eq("location", region);
+	}
 
 	if (statuses?.length) {
 		query = query.in("status", statuses);

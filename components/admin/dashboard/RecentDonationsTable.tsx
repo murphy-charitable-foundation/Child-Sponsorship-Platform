@@ -26,31 +26,21 @@ export default function RecentDonationsTable({ donations }: Props) {
 				}}
 			>
 				<TableHeader>
-					<TableColumn>ID</TableColumn>
 					<TableColumn>Donor</TableColumn>
+					<TableColumn>ID</TableColumn>
 					<TableColumn>Amount</TableColumn>
 					<TableColumn>Date</TableColumn>
-					<TableColumn>Status</TableColumn>
 				</TableHeader>
 				<TableBody>
 					{donations.map((r) => (
 						<TableRow key={r.id}>
-							<TableCell>{r.id}</TableCell>
 							<TableCell className="whitespace-nowrap">
 								{r.first_name} {r.last_name}
 							</TableCell>
+							<TableCell>{r.id}</TableCell>
 							<TableCell>{r.amount}</TableCell>
 							<TableCell className="whitespace-nowrap">
 								{formatDate(r.date_time)}
-							</TableCell>
-							<TableCell
-								className={
-									r.status.toUpperCase() === "COMPLETED"
-										? "text-success"
-										: "text-warning"
-								}
-							>
-								{r.status}
 							</TableCell>
 						</TableRow>
 					))}

@@ -11,8 +11,6 @@ export async function GET(
 ) {
 	const { id } = await params;
 
-	console.log(id);
-
 	const supabase = await createClient();
 
 	const { error: authError } = await requireAdmin(supabase);
