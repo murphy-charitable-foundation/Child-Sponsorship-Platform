@@ -2,8 +2,6 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/supabase/require-admin";
 import { NextRequest, NextResponse } from "next/server";
-import { countryCodeToName } from "../route";
-import { faker } from "@faker-js/faker";
 
 export async function GET(
 	req: NextRequest,
@@ -21,9 +19,7 @@ export async function GET(
 
 	const { data: donation, error } = await adminClient
 		.from("donations")
-		.select(
-			"id, date_time, amount, payment_methods(label), payments(raw, status)",
-		)
+		.select("*, payment_methods(label)")
 		.eq("id", id)
 		.single();
 
@@ -35,25 +31,16 @@ export async function GET(
 		);
 	}
 
-	const payment = donation.payments[0];
-
-	const paymentMethod = (
-		donation.payment_methods as unknown as { label: string } | null
-	)?.label;
-
-	const countryCode = payment?.raw?.payer?.address?.country_code;
-
 	const data = {
 		id: donation.id,
 		amount: donation.amount,
 		date_time: donation.date_time,
-		payment_method: paymentMethod,
-		purpose: "",
-		first_name:
-			payment?.raw?.payer?.name?.given_name ?? faker.person.firstName(),
-		last_name: payment?.raw?.payer?.name?.surname ?? faker.person.lastName(),
-		country: countryCode ? countryCodeToName(countryCode) : null,
-		email: payment.raw?.payer?.email_address,
+		payment_method: donation.payment_methods.label,
+		purpose: donation.purpose ?? "-",
+		first_name: donation.first_name,
+		last_name: donation.last_name,
+		country: donation.country,
+		email: donation.email,
 	};
 
 	return NextResponse.json({ data });

@@ -16,6 +16,7 @@ type Props = {
 };
 
 export default function DonationsTable({ data, onView }: Props) {
+	console.log("d", data);
 	return (
 		<div>
 			<Table
@@ -43,12 +44,8 @@ export default function DonationsTable({ data, onView }: Props) {
 							<TableCell className="text-slate-800">
 								{formatDate(d.date_time)}
 							</TableCell>
-							<TableCell className="text-slate-800">
-								{d.country ?? "—"}
-							</TableCell>
-							<TableCell className="text-slate-800">
-								{d.purpose ?? "—"}
-							</TableCell>
+							<TableCell className="text-slate-800">{d.country}</TableCell>
+							<TableCell className="text-slate-800">{d.purpose}</TableCell>
 							<TableCell>
 								<button
 									onClick={() => onView(d.id)}

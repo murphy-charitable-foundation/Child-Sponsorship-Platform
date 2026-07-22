@@ -9,8 +9,6 @@ import { formatDate } from "../sponsorships/SponsorshipTable";
 import { KpiCard } from "../shared/KpiCard";
 import TablePagination from "../shared/TablePagination";
 
-//TODO:Donation and payments are not associated yet. which we need to do.
-
 export default function DonationsPage() {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedCountry, setSelectedCountry] = useState("all");
@@ -36,6 +34,8 @@ export default function DonationsPage() {
 				}
 
 				const { data } = await res.json();
+
+				console.log("dat", data);
 
 				setDonations(data);
 			} catch (err) {
