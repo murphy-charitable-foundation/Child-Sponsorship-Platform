@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import { createClient } from "@/lib/supabase/client";
+import { Avatar } from "@heroui/react";
 
 type NavItem = {
 	label: string;
@@ -50,7 +51,10 @@ const NAV_SECTIONS: NavSection[] = [
 	},
 	{
 		title: "SYSTEM",
-		items: [{ label: "Settings", href: "/admin/settings", icon: Settings }],
+		items: [
+			{ label: "Settings", href: "/admin/settings", icon: Settings },
+			{ label: "Admin", href: "/admin/organizations", icon: Shield },
+		],
 	},
 ];
 
@@ -77,11 +81,9 @@ export function AdminSidebar() {
 		if (!user) return;
 		const role = user.app_metadata.role;
 
-		if (role === "sponsor") {
-			setTarget("sponsors");
-		} else if (role === "admin") {
+		if (role === "admin") {
 			setTarget("admins");
-		} else if (role === "super_admin") {
+		} else {
 			setTarget("super_admins");
 		}
 
@@ -101,7 +103,7 @@ export function AdminSidebar() {
 
 			if (data.photo_path && target) {
 				const res = await fetch(
-					`/api/supabase/signed-url/${target}?path=${data.photo_path}`,
+					`/api/supabase/signed-url/admins?path=${data.photo_path}`,
 					{ method: "GET" },
 				);
 
@@ -117,10 +119,6 @@ export function AdminSidebar() {
 			fetchProfileImage();
 		}
 	}, [user, target]);
-
-	const userFirstName =
-		user?.user_metadata.first_name || user?.email?.split("@")[0] || "User";
-	const userLastName = user?.user_metadata.last_name || "";
 
 	return (
 		<aside className="w-80 bg-primary text-white h-screen flex flex-col">
@@ -173,49 +171,32 @@ export function AdminSidebar() {
 							</ul>
 						</div>
 					))}
-
-					{/* Admin button */}
-					<div className="mt-4 pt-4 border-t border-white/20">
-						{(() => {
-							const isAdmin =
-								pathname === "/admin/organizations" ||
-								pathname.startsWith("/admin/organizations/");
-							return (
-								<Link
-									href="/admin/organizations"
-									className={[
-										"flex items-center gap-3 px-4 py-3 text-base text-left transition-colors rounded-sm",
-										isAdmin
-											? "bg-primary-200 text-primary-900 font-semibold"
-											: "text-white hover:bg-primary-200/50",
-									].join(" ")}
-								>
-									<Shield
-										size={18}
-										className="shrink-0"
-									/>
-									Admin
-								</Link>
-							);
-						})()}
-					</div>
 				</div>
 
 				{/* Profile (fixed at bottom) */}
-				{!loading && user && (
-					<div className="shrink-0 px-6 pb-6 pt-4">
+				{mounted && !loading && user && (
+					<div className="mt-auto px-6 pb-6 pt-6">
 						<div className="mb-4 border-t border-white/30" />
 
-						<div className="min-w-0 mb-4">
-							<div className="text-base font-medium truncate">
-								{user.user_metadata.first_name} {user.user_metadata.last_name}
+						<div className="flex items-center gap-3 mb-4">
+							<Avatar
+								name={`${user.user_metadata.first_name} ${user.user_metadata.last_name}`}
+								src={avatarUrl}
+								size="sm"
+								color="primary"
+								className="flex h-8 w-8 items-center justify-center rounded-full bg-white/30 text-lg font-semibold text-primary"
+							/>
+
+							<div className="min-w-0">
+								<div className="text-base truncate font-semibold text-blue-300">
+									{`${user.user_metadata.first_name} ${user.user_metadata.last_name}`}
+								</div>
 							</div>
-							<div className="text-xs text-white/70 truncate">{user.email}</div>
 						</div>
 
 						<button
-							onClick={logout}
 							className="w-full rounded-sm border border-white/70 py-3 text-center font-medium text-white hover:bg-white/10 transition"
+							onClick={logout}
 						>
 							Sign out
 						</button>
