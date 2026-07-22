@@ -33,7 +33,7 @@ type SponsorshipRow = {
   start_date_time: string;
   end_date_time: string | null;
   frequency_period: number;
-  sponsorship_active: boolean | null;
+  status: string | null;
   is_recurring: boolean;
 
   children: ChildRow[] | ChildRow;
@@ -43,7 +43,7 @@ type SponsorshipRow = {
 type SponsorRow = {
   sponsor_id: string;
   start_date_time: string | null;
-  sponsorship_active: boolean | null;
+  status: string | null;
   first_name: string | null;
   amount: number;
 };
@@ -137,7 +137,7 @@ export async function GET() {
         start_date_time,
         end_date_time,
         frequency_period,
-        sponsorship_active,
+        status,
         is_recurring,
 
         children (
@@ -230,7 +230,7 @@ export async function GET() {
   const sponsorData = {
     sponsor_id: sponsors[0]?.id,
     start_date_time: sponsorships[0]?.start_date_time ?? null,
-    sponsorship_active: sponsorships[0]?.sponsorship_active ?? null,
+    status: sponsorships[0]?.status ?? null,
     first_name: sponsors[0]?.first_name,
     amount: +totalAmount.toFixed(2),
   };
@@ -258,7 +258,9 @@ export async function GET() {
         frequencyPeriod: sponsorship?.frequency_period ?? 0,
         img: child.photo_path ? (signedUrls[child.photo_path] ?? null) : null,
         status:
-          sponsorship?.sponsorship_active === false ? "Stopped" : "Sponsoring",
+          sponsorship?.status?.toLocaleLowerCase() === "inactive"
+            ? "Stopped"
+            : "Sponsoring",
       };
     }),
   };
