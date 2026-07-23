@@ -204,7 +204,7 @@ export default function ChildProfilePage({
 
 			{activeTab === "reports" && (
 				<div className="mt-8">
-					<ChildReportsTab child={child} />
+					<ChildReportsTab />
 				</div>
 			)}
 

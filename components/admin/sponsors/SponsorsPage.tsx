@@ -7,9 +7,9 @@ import { SponsorsFilter } from "./SponsorsFilter";
 import { TabSelection } from "./TabSelection";
 import AddSponsorDrawer from "./AddSponsorDrawer";
 import EditSponsorDrawer from "./EditSponsorDrawer";
-import type { SponsorProfile } from "./SponsorProfilePage";
 import { Sponsor, SponsorGroup } from "./types";
 import { SponsorsTable } from "./SponsorsTable";
+import { SponsorProfile } from "./SponsorProfilePage";
 
 function toSponsorProfile(row: Sponsor | SponsorGroup): SponsorProfile {
 	const isGroup = "group_name" in row;

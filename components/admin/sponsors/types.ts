@@ -60,6 +60,19 @@ export type SponsorGroup = {
 	children_count: number;
 };
 
+export interface Sponsor {
+	id: string;
+	first_name: string;
+	last_name: string;
+	sponsor_type: string;
+	notes?: string;
+	active: boolean;
+	photo_path?: string;
+	image_url?: string;
+	location?: string;
+	children_count?: number;
+}
+
 export type CreateSponsor = {
 	photo_file: File | null;
 	first_name: string;
