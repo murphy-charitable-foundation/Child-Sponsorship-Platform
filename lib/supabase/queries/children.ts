@@ -191,7 +191,7 @@ export async function createChild(
 		guardianId = guardian.id;
 	}
 
-	const { data, error: childError } = await adminClient
+	const { data, error } = await adminClient
 		.from("children")
 		.insert({
 			first_name: payload.first_name.trim(),
@@ -212,7 +212,7 @@ export async function createChild(
 		.select("id")
 		.single();
 
-	if (childError || !data) throw new Error("Failed to create child");
+	if (error || !data) throw new Error("Failed to create child");
 
 	return data.id;
 }

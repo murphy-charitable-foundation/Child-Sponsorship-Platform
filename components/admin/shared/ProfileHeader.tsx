@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ChildStatus } from "../children/types";
+import { SponsorStatus } from "../sponsors/types";
 
 type ProfileHeaderProps = {
 	href: string;
@@ -9,13 +10,13 @@ type ProfileHeaderProps = {
 		full_name: string;
 		enrolled: string;
 		age?: number;
-		status: ChildStatus;
+		status: ChildStatus | SponsorStatus;
 	};
 };
 
-function statusColor(s: ChildStatus) {
+function statusColor(s: ChildStatus | SponsorStatus) {
 	if (s === "Active") return "text-success";
-	else if (s === "Waiting") return "text-warning";
+	else if (s === "Inactive" || s === "Waiting") return "text-warning";
 	return "text-default";
 }
 

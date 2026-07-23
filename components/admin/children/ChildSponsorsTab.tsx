@@ -26,33 +26,26 @@ export default function ChildSponsorsTab({ child }: ChildSponsorsTabProps) {
 	const [sponsors, setSponsors] = useState<ChildSponsor[]>([]);
 	const [loading, setLoading] = useState(true);
 
-	useEffect(() => {
-		async function fetchSponsors() {
-			setLoading(true);
+	async function fetchSponsors(id: string) {
+		try {
+			const res = await fetch(`/api/supabase/sponsorships/child/${id}`);
 
-			try {
-				const res = await fetch(`/api/supabase/sponsorships/child/${child.id}`);
-
-				if (!res.ok) {
-					setSponsors([]);
-					return;
-				}
-
-				const { sponsors } = await res.json();
-				setSponsors(sponsors ?? []);
-			} catch {
+			if (!res.ok) {
 				setSponsors([]);
-			} finally {
-				setLoading(false);
+				return;
 			}
+
+			const { sponsors } = await res.json();
+			setSponsors(sponsors ?? []);
+		} catch {
+			setSponsors([]);
 		}
-
-		fetchSponsors();
-	}, [child]);
-
-	function handleSponsorshipSaved(newData: ChildSponsor[]) {
-		setSponsors(newData);
 	}
+
+	useEffect(() => {
+		setLoading(true);
+		fetchSponsors(child.id).finally(() => setLoading(false));
+	}, [child]);
 
 	return (
 		<div className="space-y-6">
@@ -68,7 +61,7 @@ export default function ChildSponsorsTab({ child }: ChildSponsorsTabProps) {
 				<p className="text-sm text-gray-500">No sponsors yet.</p>
 			)}
 
-			{sponsors.map((sponsor) => {
+			{sponsors.map((sponsor, i) => {
 				const address = [
 					sponsor.address_line1,
 					sponsor.address_line2,
@@ -86,7 +79,7 @@ export default function ChildSponsorsTab({ child }: ChildSponsorsTabProps) {
 
 				return (
 					<div
-						key={sponsor.id}
+						key={i}
 						className="overflow-hidden rounded-2xl border border-gray-200 bg-white p-6"
 					>
 						<div className="flex">
@@ -200,7 +193,7 @@ export default function ChildSponsorsTab({ child }: ChildSponsorsTabProps) {
 				isOpen={isCreateOpen}
 				onClose={() => setIsCreateOpen(false)}
 				child={{ id: child.id, name: `${child.first_name} ${child.last_name}` }}
-				onSaved={handleSponsorshipSaved}
+				onSaved={() => fetchSponsors(child.id)}
 			/>
 		</div>
 	);

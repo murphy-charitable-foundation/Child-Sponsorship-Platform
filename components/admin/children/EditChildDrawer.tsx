@@ -106,7 +106,7 @@ export default function EditChildDrawer({
 				});
 
 				if (!imgRes.ok) {
-					setError(`Photo upload failed for child ${data.id}`);
+					setError(`Photo upload failed for child ${data.childId}`);
 					return;
 				}
 			}

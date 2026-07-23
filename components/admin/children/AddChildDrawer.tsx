@@ -85,7 +85,7 @@ export default function AddChildDrawer({
 				});
 
 				if (!imgRes.ok) {
-					setError(`Photo upload failed for new child ${data.id}`);
+					setError(`Photo upload failed for new child ${data.childId}`);
 					return;
 				}
 			}

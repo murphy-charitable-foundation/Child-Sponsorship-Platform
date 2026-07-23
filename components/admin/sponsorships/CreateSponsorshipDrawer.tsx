@@ -5,7 +5,7 @@ import { Input, Select, SelectItem } from "@heroui/react";
 import { CreateSponsorship, EditSponsorship, Frequencies } from "./types";
 import FormDrawer, { Field } from "../shared/FormDrawer";
 import { filterInputCls, filterSelectCls } from "../shared/styleConstants";
-import { ChildSponsor, ChildTableData } from "../children/types";
+import { ChildTableData } from "../children/types";
 import { SponsorGroupTableData, SponsorTableData } from "../sponsors/types";
 import { FREQUENCIES } from "@/lib/constants";
 
@@ -15,8 +15,9 @@ type Option = { id: string; name: string };
 type CreateSponsorshipDrawerProps = {
 	isOpen: boolean;
 	onClose: () => void;
-	onSaved: (sp: ChildSponsor[]) => void;
-	child?: Option;
+	onSaved: (id: string) => void;
+	child?: Option | null;
+	sponsor?: Option | null;
 };
 
 export const SPS_EMPTY_FORM: CreateSponsorship | EditSponsorship = {
@@ -34,6 +35,7 @@ export default function CreateSponsorshipDrawer({
 	onClose,
 	onSaved,
 	child,
+	sponsor,
 }: CreateSponsorshipDrawerProps) {
 	const [sponsors, setSponsors] = useState<Option[]>([]);
 	const [children, setChildren] = useState<Option[]>([]);
@@ -71,9 +73,6 @@ export default function CreateSponsorshipDrawer({
 
 				const { sponsors: individuals } = await individualsRes.json();
 				const { sponsors: groups } = await groupsRes.json();
-
-				console.log("fds", individuals);
-				console.log("e", groups);
 
 				const individualOptions = (individuals as SponsorTableData[]).map(
 					(s) => ({ id: s.id, name: `${s.first_name} ${s.last_name}` }),
@@ -113,7 +112,12 @@ export default function CreateSponsorshipDrawer({
 			}
 		}
 
-		fetchSponsors();
+		if (!sponsor) {
+			fetchSponsors();
+		} else {
+			update("sponsor_id", sponsor.id);
+			setSponsors([{ id: sponsor.id, name: sponsor.name }]);
+		}
 
 		if (!child) {
 			fetchChildren();
@@ -121,7 +125,7 @@ export default function CreateSponsorshipDrawer({
 			update("child_id", child.id);
 			setChildren([{ id: child.id, name: child.name }]);
 		}
-	}, [isOpen, child]);
+	}, [isOpen, child, sponsor]);
 
 	async function handleSave(e: React.FormEvent) {
 		e.preventDefault();
@@ -146,14 +150,7 @@ export default function CreateSponsorshipDrawer({
 				return;
 			}
 
-			const refreshRes = await fetch(
-				`/api/supabase/sponsorships/child/${form.child_id}`,
-			);
-
-			if (refreshRes.ok) {
-				const { sponsors } = await refreshRes.json();
-				onSaved?.(sponsors);
-			}
+			onSaved?.(form.child_id);
 
 			setSuccess("Sponsorship created successfully.");
 			setTimeout(handleClose, 1500);

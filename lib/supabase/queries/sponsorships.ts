@@ -50,6 +50,42 @@ export async function getSponsorshipsByChildId(childId: string) {
 	return data ?? [];
 }
 
+export async function getSponsorshipsBySponsorId(sponsorId: string) {
+	const { data, error } = await adminClient
+		.from("sponsorships")
+		.select(
+			"sponsorship_id, status, amount, frequency, start_date_time, children(*)",
+		)
+		.eq("sponsor_id", sponsorId);
+
+	if (error) throw new Error("Failed to get sponsorships data");
+
+	const childIds = (data ?? [])
+		.filter((s) => s.children)
+		.map((s) => (s.children as unknown as { id: string }).id);
+
+	const ageById = new Map<string, number>();
+
+	if (childIds.length > 0) {
+		const { data: agesData } = await adminClient
+			.from("children_with_ages")
+			.select("id, age")
+			.in("id", childIds);
+
+		for (const c of agesData ?? []) {
+			ageById.set(c.id, c.age);
+		}
+	}
+
+	for (const s of data ?? []) {
+		if (!s.children) continue;
+		const child = s.children as unknown as { id: string; age?: number };
+		child.age = ageById.get(child.id);
+	}
+
+	return data ?? [];
+}
+
 export async function createSponsorship(
 	payload: CreateSponsorship,
 ): Promise<{ id: string }> {

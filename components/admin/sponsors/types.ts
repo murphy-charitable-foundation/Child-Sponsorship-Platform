@@ -1,3 +1,6 @@
+import { GenderType, ChildStatus } from "../children/types";
+import { Frequencies } from "../sponsorships/types";
+
 export type SponsorType =
 	| "individual"
 	| "family"
@@ -17,6 +20,7 @@ export type SponsorTableData = {
 	group_name?: string;
 	children_count?: number;
 	active_sponsorships?: number;
+	created_at: string;
 };
 
 export type SponsorGroupTableData = {
@@ -27,6 +31,7 @@ export type SponsorGroupTableData = {
 	status: SponsorStatus;
 	children_count?: number;
 	active_sponsorships?: number;
+	created_at: string;
 };
 
 export type SponsorProfile = {
@@ -59,19 +64,6 @@ export type SponsorGroup = {
 	active: boolean;
 	children_count: number;
 };
-
-export interface Sponsor {
-	id: string;
-	first_name: string;
-	last_name: string;
-	sponsor_type: string;
-	notes?: string;
-	active: boolean;
-	photo_path?: string;
-	image_url?: string;
-	location?: string;
-	children_count?: number;
-}
 
 export type CreateSponsor = {
 	photo_file: File | null;
@@ -106,4 +98,31 @@ export type EditSponsor = {
 	phone_number: string | null;
 	email: string | null;
 	job_title: string | null;
+};
+
+export type SponsorSponsorship = {
+	id: string;
+	status: SponsorStatus;
+	frequency: Frequencies;
+	amount: number;
+	start_date_time: string;
+	child: {
+		id: string;
+		first_name: string;
+		last_name: string;
+		full_name: string;
+		age: number;
+		date_of_birth: string;
+		gender: GenderType;
+		location: string;
+		status: ChildStatus;
+		created_at: string;
+		favorite_activity: string;
+		dream_job: string;
+		biography: string | null;
+		family_biography: string | null;
+		language: string | null;
+		image_url?: string | null;
+		homepage_visibility: boolean;
+	};
 };
