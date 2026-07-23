@@ -1,12 +1,14 @@
 "use client";
 
-import { Input, Select, SelectItem, Button } from "@heroui/react";
+import { Input, Select, SelectItem } from "@heroui/react";
+import { CHILD_STATUS, GENDERS } from "@/lib/constants";
+import { filterInputCls, filterSelectCls } from "../shared/styleConstants";
 
 type ChildrenFiltersProps = {
-	selectedStatus: Set<string>;
-	setSelectedStatus: (status: Set<string>) => void;
-	selectedGender: Set<string>;
-	setSelectedGender: (gender: Set<string>) => void;
+	selectedStatus: string;
+	setSelectedStatus: (value: string) => void;
+	selectedGender: string;
+	setSelectedGender: (value: string) => void;
 	searchQuery: string;
 	setSearchQuery: (query: string) => void;
 };
@@ -19,116 +21,117 @@ export default function ChildrenFilters({
 	searchQuery,
 	setSearchQuery,
 }: ChildrenFiltersProps) {
+	const handleReset = () => {
+		setSelectedStatus("all");
+		setSelectedGender("all");
+		setSearchQuery("");
+	};
+
 	return (
-		<div className="w-full">
-			<div className="grid grid-cols-1 gap-4 lg:grid-cols-12 items-end">
-				{/* Search */}
-				<div className="lg:col-span-6">
-					<div className="mb-1 text-sm font-medium text-default-700">
-						Who are you looking for?
+		<div className="bg-gray-100 p-5">
+			<div className="space-y-1">
+				<div className="flex gap-5">
+					<div className="flex-1">
+						<label className="text-xs font-semibold text-gray-600 tracking-wider">
+							Search
+						</label>
 					</div>
-					<Input
-						placeholder="Search by name"
-						radius="md"
-						variant="bordered"
-						isClearable
-						value={searchQuery}
-						onChange={(e) => setSearchQuery(e.target.value)}
-						onClear={() => setSearchQuery("")}
-					/>
+					<div className="w-1/5">
+						<label className="text-xs font-semibold text-gray-600 tracking-wider">
+							Gender
+						</label>
+					</div>
+					<div className="w-1/5">
+						<label className="text-xs font-semibold text-gray-600 tracking-wider">
+							Status
+						</label>
+					</div>
 				</div>
 
-				{/* Gender */}
-				<div className="lg:col-span-3">
-					<div className="mb-1 text-sm font-medium text-default-700">
-						Gender
+				<div className="flex gap-6 items-end">
+					<div className="flex-1">
+						<Input
+							aria-label="Search"
+							placeholder="Search by name"
+							isClearable
+							value={searchQuery}
+							onChange={(e) => setSearchQuery(e.target.value)}
+							onClear={() => setSearchQuery("")}
+							className="w-full"
+							radius="none"
+							classNames={filterInputCls}
+						/>
 					</div>
-					<Select
-						placeholder="Select gender"
-						radius="md"
-						variant="bordered"
-						selectedKeys={selectedGender}
-						onSelectionChange={(keys) =>
-							setSelectedGender(new Set(Array.from(keys as Set<string>)))
-						}
+
+					<div className="w-1/5">
+						<Select
+							aria-label="Gender"
+							disallowEmptySelection
+							selectedKeys={[selectedGender]}
+							onChange={(e) => setSelectedGender(e.target.value)}
+							className="w-full"
+							radius="none"
+							classNames={filterSelectCls}
+						>
+							{["all", ...GENDERS].map((g) => (
+								<SelectItem key={g === "all" ? "all" : g.toLowerCase()}>
+									{g === "all" ? "All genders" : g}
+								</SelectItem>
+							))}
+						</Select>
+					</div>
+
+					<div className="w-1/5">
+						<Select
+							aria-label="Status"
+							disallowEmptySelection
+							selectedKeys={[selectedStatus]}
+							onChange={(e) => setSelectedStatus(e.target.value)}
+							className="w-full"
+							radius="none"
+							classNames={filterSelectCls}
+							renderValue={(items) => (
+								<span className="flex gap-2">
+									{items.length === 0 ? (
+										<span className="text-default-500">No status selected</span>
+									) : items.some((item) => item.key === "all") ? (
+										<span className="text-default-700">All statuses</span>
+									) : (
+										items.map((item) => (
+											<span
+												key={item.key}
+												className={
+													item.key === "active"
+														? "text-success"
+														: item.key === "waiting"
+															? "text-warning"
+															: "text-default-500"
+												}
+											>
+												{item.textValue}
+											</span>
+										))
+									)}
+								</span>
+							)}
+						>
+							{["all", ...CHILD_STATUS].map((s) => (
+								<SelectItem key={s === "all" ? "all" : s.toLowerCase()}>
+									{s === "all" ? "All statuses" : s}
+								</SelectItem>
+							))}
+						</Select>
+					</div>
+				</div>
+
+				<div className="flex-1 pt-2">
+					<button
+						onClick={handleReset}
+						className="text-sm font-semibold text-primary hover:underline cursor-pointer transition-all"
 					>
-						<SelectItem key="male">Male</SelectItem>
-						<SelectItem key="female">Female</SelectItem>
-						<SelectItem key="other">Other</SelectItem>
-					</Select>
+						Reset filters
+					</button>
 				</div>
-
-				{/* Status */}
-				<div className="lg:col-span-3">
-					<div className="mb-1 text-sm font-medium text-default-700">
-						Status
-					</div>
-					<Select
-						radius="md"
-						variant="bordered"
-						selectedKeys={selectedStatus}
-						onSelectionChange={(keys) => {
-							const newKeys = new Set(Array.from(keys as Set<string>));
-
-							// If "all" is selected, keep only "all"
-							if (newKeys.has("all")) {
-								setSelectedStatus(new Set(["all"]));
-							}
-							// If an individual status is clicked when "all" was selected, switch to just that status
-							else if (newKeys.size > 0) {
-								setSelectedStatus(newKeys);
-							}
-							// Allow empty selection
-							else {
-								setSelectedStatus(new Set());
-							}
-						}}
-						renderValue={(items) => (
-							<span className="flex gap-2">
-								{items.length === 0 ? (
-									<span className="text-default-500">No status selected</span>
-								) : items.some((item) => item.key === "all") ? (
-									<span className="text-default-700">All statuses</span>
-								) : (
-									items.map((item) => (
-										<span
-											key={item.key}
-											className={
-												item.key === "active"
-													? "text-success"
-													: item.key === "waiting"
-														? "text-warning"
-														: "text-default-500"
-											}
-										>
-											{item.textValue}
-										</span>
-									))
-								)}
-							</span>
-						)}
-					>
-						<SelectItem key="all">All statuses</SelectItem>
-						<SelectItem key="active">Active</SelectItem>
-						<SelectItem key="waiting">Waiting</SelectItem>
-						<SelectItem key="exited">Exited</SelectItem>
-					</Select>
-				</div>
-			</div>
-
-			{/* Reset filters */}
-			<div className="mt-3 flex justify-end">
-				<Button
-					variant="light"
-					size="sm"
-					className="text-primary font-medium"
-					onPress={() => {
-						setSelectedStatus(new Set(["all"]));
-						setSelectedGender(new Set());
-					}}
-				>
-					Reset filters
-				</Button>
 			</div>
 		</div>
 	);

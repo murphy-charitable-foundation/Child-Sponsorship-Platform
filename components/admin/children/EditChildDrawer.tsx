@@ -1,293 +1,357 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
+import type { ChildProfile, EditChild, GenderType } from "./types";
+import ProfileImageUpload from "@/components/profile-image-upload";
+import FormDrawer, { Field } from "../shared/FormDrawer";
+import { CHILD_COUNTRIES, GENDERS } from "@/lib/constants";
 import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerBody,
-  DrawerFooter,
-  Button,
-} from "@heroui/react";
-import type { ChildProfile } from "./types";
-
-type EditForm = {
-  firstName: string;
-  lastName: string;
-  gender: string;
-  dob: string;
-  schoolLevel: string;
-  country: string;
-  language: string;
-  biography: string;
-  familyBiography: string;
-  guardianName: string;
-  guardianRelationship: string;
-  guardianNin: string;
-  guardianPhone: string;
-  guardianEmail: string;
-  guardianAddress: string;
-};
-
-function toForm(child: ChildProfile): EditForm {
-  const nameParts = child.name.trim().split(" ");
-  return {
-    firstName: nameParts[0] ?? "",
-    lastName: nameParts.slice(1).join(" ") ?? "",
-    gender: child.gender,
-    dob: child.dob,
-    schoolLevel: child.schoolLevel,
-    country: child.country,
-    language: child.language,
-    biography: child.biography,
-    familyBiography: child.familyBiography,
-    guardianName: child.guardian.name,
-    guardianRelationship: child.guardian.relationship,
-    guardianNin: child.guardian.nin,
-    guardianPhone: child.guardian.phone,
-    guardianEmail: child.guardian.email,
-    guardianAddress: child.guardian.address,
-  };
-}
+	filterInputCls,
+	filterSelectCls,
+	filterTextareaCls,
+} from "../shared/styleConstants";
+import { Input, Select, SelectItem, Textarea } from "@heroui/react";
 
 type EditChildDrawerProps = {
-  child: ChildProfile;
-  isOpen: boolean;
-  onClose: () => void;
+	child: ChildProfile | null;
+	isOpen: boolean;
+	onClose: () => void;
+	onSaved: (child: ChildProfile) => void;
 };
 
 export default function EditChildDrawer({
-  child,
-  isOpen,
-  onClose,
+	child,
+	isOpen,
+	onClose,
+	onSaved,
 }: EditChildDrawerProps) {
-  const [form, setForm] = useState<EditForm>(() => toForm(child));
+	const [form, setForm] = useState<EditChild | null>(null);
+	const [isSaving, setIsSaving] = useState(false);
+	const [imageFile, setImageFile] = useState<File | null>(null);
+	const [imageUrl, setImageUrl] = useState<string | null>(null);
+	const [error, setError] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string | null>(null);
 
-  // Reset form to current child data whenever the drawer opens
-  useEffect(() => {
-    if (isOpen) setForm(toForm(child));
-  }, [isOpen, child]);
+	// Reset form to current child data whenever the drawer opens
+	useEffect(() => {
+		if (!child) return;
+		if (isOpen && child) {
+			setError(null);
+			setSuccess(null);
+			setForm({
+				id: child.id,
+				first_name: child.first_name ?? "",
+				last_name: child.last_name ?? "",
+				gender: child.gender ?? "",
+				date_of_birth: child.date_of_birth ?? "",
+				location: child.location ?? "",
+				language: child.language ?? "",
+				biography: child.biography ?? "",
+				dream_job: child.dream_job ?? "",
+				favorite_activity: child.favorite_activity ?? "",
+				family_biography: child.family_biography ?? "",
+				guardian_id: child.guardian?.id ?? "",
+				guardian_name: child.guardian?.full_name ?? "",
+				guardian_relationship: child.guardian?.relationship ?? "",
+				guardian_nin: child.guardian?.nin ?? "",
+				guardian_phone: child.guardian?.phone ?? "",
+				guardian_email: child.guardian?.email ?? "",
+				guardian_address: child.guardian?.address ?? "",
+			});
 
-  function update<K extends keyof EditForm>(key: K, value: EditForm[K]) {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  }
+			if (child.image_url) {
+				setImageUrl(child.image_url);
+			}
+		}
+	}, [isOpen, child]);
 
-  function handleSave() {
-    // TODO: persist to Supabase
-    console.log("Saving child edits:", form);
-    onClose();
-  }
+	function update<K extends keyof EditChild>(key: K, value: EditChild[K]) {
+		setForm((prev) => {
+			if (!prev) return prev;
+			return { ...prev, [key]: value };
+		});
+	}
 
-  return (
-    <Drawer isOpen={isOpen} onOpenChange={onClose} size="md" placement="right">
-      <DrawerContent>
-        {(closeDrawer) => (
-          <>
-            <DrawerHeader className="border-b border-slate-200 text-lg font-semibold text-slate-900">
-              Edit Child
-            </DrawerHeader>
+	async function handleSave(e: React.FormEvent) {
+		e.preventDefault();
+		if (!form) return;
+		setIsSaving(true);
+		setError(null);
+		setSuccess(null);
 
-            <DrawerBody className="space-y-6 py-5">
-              {/* Photo */}
-              <div className="h-40 w-40 overflow-hidden rounded-xl bg-slate-100">
-                <Image
-                  src={child.imageUrl}
-                  alt={child.name}
-                  width={160}
-                  height={160}
-                  className="h-full w-full object-cover"
-                />
-              </div>
+		try {
+			const res = await fetch("/api/supabase/children", {
+				method: "PATCH",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(form),
+			});
 
-              {/* Child Details */}
-              <section>
-                <h3 className="mb-4 text-base font-semibold text-slate-900">
-                  Child Details
-                </h3>
+			const data = await res.json().catch(() => ({}));
 
-                <div className="grid grid-cols-2 gap-4">
-                  <Field label="First/given name">
-                    <input
-                      className={inputCls}
-                      value={form.firstName}
-                      onChange={(e) => update("firstName", e.target.value)}
-                    />
-                  </Field>
-                  <Field label="Last/family name">
-                    <input
-                      className={inputCls}
-                      value={form.lastName}
-                      onChange={(e) => update("lastName", e.target.value)}
-                    />
-                  </Field>
-                  <Field label="Gender">
-                    <select
-                      className={inputCls}
-                      value={form.gender}
-                      onChange={(e) => update("gender", e.target.value)}
-                    >
-                      <option>Female</option>
-                      <option>Male</option>
-                      <option>Other</option>
-                    </select>
-                  </Field>
-                  <Field label="Date of birth">
-                    <input
-                      type="date"
-                      className={inputCls}
-                      value={form.dob}
-                      onChange={(e) => update("dob", e.target.value)}
-                    />
-                  </Field>
-                  <Field label="School level">
-                    <input
-                      className={inputCls}
-                      value={form.schoolLevel}
-                      onChange={(e) => update("schoolLevel", e.target.value)}
-                    />
-                  </Field>
-                  <Field label="Country">
-                    <select
-                      className={inputCls}
-                      value={form.country}
-                      onChange={(e) => update("country", e.target.value)}
-                    >
-                      <option>Uganda</option>
-                      <option>Kenya</option>
-                      <option>Tanzania</option>
-                      <option>Rwanda</option>
-                    </select>
-                  </Field>
-                  <Field label="Language">
-                    <input
-                      className={inputCls}
-                      value={form.language}
-                      onChange={(e) => update("language", e.target.value)}
-                    />
-                  </Field>
-                </div>
+			if (!res.ok) {
+				setError(data.error ?? "Failed to update child.");
+				return;
+			}
 
-                <div className="mt-4">
-                  <Field label="Biography">
-                    <textarea
-                      rows={5}
-                      className={textareaCls}
-                      value={form.biography}
-                      onChange={(e) => update("biography", e.target.value)}
-                    />
-                  </Field>
-                </div>
-              </section>
+			if (imageFile) {
+				const body = new FormData();
+				body.append("image", imageFile);
+				body.append("targetId", form.id);
+				body.append("targetType", "children");
+				body.append("bucketFile", "children");
 
-              {/* Family Details */}
-              <section>
-                <h3 className="mb-4 text-base font-semibold text-slate-900">
-                  Family Details
-                </h3>
-                <Field label="Family description">
-                  <textarea
-                    rows={3}
-                    className={textareaCls}
-                    value={form.familyBiography}
-                    onChange={(e) => update("familyBiography", e.target.value)}
-                  />
-                </Field>
-              </section>
+				const imgRes = await fetch("/api/supabase/admin-upload-profile-image", {
+					method: "POST",
+					body,
+				});
 
-              {/* Guardian */}
-              <section>
-                <h3 className="mb-4 text-base font-semibold text-slate-900">
-                  Guardian 1
-                </h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <Field label="Guardian name">
-                    <input
-                      className={inputCls}
-                      value={form.guardianName}
-                      onChange={(e) => update("guardianName", e.target.value)}
-                    />
-                  </Field>
-                  <Field label="Relationship to child">
-                    <input
-                      className={inputCls}
-                      value={form.guardianRelationship}
-                      onChange={(e) =>
-                        update("guardianRelationship", e.target.value)
-                      }
-                    />
-                  </Field>
-                  <Field label="Guardian NIN">
-                    <input
-                      className={inputCls}
-                      value={form.guardianNin}
-                      onChange={(e) => update("guardianNin", e.target.value)}
-                    />
-                  </Field>
-                  <Field label="Phone number">
-                    <input
-                      className={inputCls}
-                      value={form.guardianPhone}
-                      onChange={(e) => update("guardianPhone", e.target.value)}
-                    />
-                  </Field>
-                  <Field label="Email">
-                    <input
-                      type="email"
-                      className={inputCls}
-                      value={form.guardianEmail}
-                      onChange={(e) => update("guardianEmail", e.target.value)}
-                    />
-                  </Field>
-                  <Field label="Address">
-                    <textarea
-                      rows={2}
-                      className={textareaCls}
-                      value={form.guardianAddress}
-                      onChange={(e) =>
-                        update("guardianAddress", e.target.value)
-                      }
-                    />
-                  </Field>
-                </div>
-              </section>
-            </DrawerBody>
+				if (!imgRes.ok) {
+					setError(`Photo upload failed for child ${data.id}`);
+					return;
+				}
+			}
 
-            <DrawerFooter className="border-t border-slate-200">
-              <Button variant="light" onPress={closeDrawer} className="text-slate-700">
-                Cancel
-              </Button>
-              <Button
-                className="bg-primary text-white"
-                onPress={handleSave}
-              >
-                Save changes
-              </Button>
-            </DrawerFooter>
-          </>
-        )}
-      </DrawerContent>
-    </Drawer>
-  );
-}
+			const refreshRes = await fetch(`/api/supabase/children/${data.id}`);
 
-const inputCls =
-  "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200";
+			if (refreshRes.ok) {
+				const { child: updatedChild } = await refreshRes.json();
+				setImageUrl(updatedChild.image_url ?? null);
+				onSaved?.(updatedChild);
+			}
 
-const textareaCls =
-  "w-full resize-vertical rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200";
+			setSuccess("Child updated successfully.");
+			setTimeout(onClose, 1500);
+		} finally {
+			setIsSaving(false);
+		}
+	}
 
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="block">
-      <span className="mb-1 block text-xs text-slate-500">{label}</span>
-      {children}
-    </label>
-  );
+	return (
+		<FormDrawer
+			isOpen={isOpen}
+			onClose={onClose}
+			title="Edit Child"
+			formId="edit-child-form"
+			onSubmit={handleSave}
+			isSaving={isSaving}
+			error={error}
+			success={success}
+			saveDisabled={!!success}
+			saveLabel="Save changes"
+			bodyClassName="space-y-6 py-5 overflow-y-auto"
+		>
+			{/* Photo Upload */}
+			<div>
+				<ProfileImageUpload
+					currentUrl={imageUrl ?? undefined}
+					name={`${form?.first_name} ${form?.last_name}`.trim()}
+					onChange={(file) => setImageFile(file)}
+					size={200}
+				/>
+			</div>
+
+			{/* Child Details */}
+			<section>
+				<h3 className="mb-4 text-sm font-semibold text-slate-800">
+					Child Details
+				</h3>
+				<div className="space-y-4">
+					<div className="grid grid-cols-2 gap-4">
+						<Field label="First/given name">
+							<Input
+								type="text"
+								required
+								value={form?.first_name ?? ""}
+								onChange={(e) => update("first_name", e.target.value)}
+								classNames={filterInputCls}
+								placeholder="First name"
+							/>
+						</Field>
+
+						<Field label="Last/family name">
+							<Input
+								type="text"
+								required
+								value={form?.last_name ?? ""}
+								onChange={(e) => update("last_name", e.target.value)}
+								classNames={filterInputCls}
+								placeholder="Last name"
+							/>
+						</Field>
+					</div>
+
+					<div className="grid grid-cols-2 gap-4">
+						<Field label="Gender">
+							<Select
+								isRequired
+								placeholder="Select gender"
+								selectedKeys={form?.gender ? [form.gender] : []}
+								onSelectionChange={(keys) => {
+									const [value] = Array.from(keys as Set<string>);
+
+									update("gender", (value as GenderType) ?? "");
+								}}
+								classNames={filterSelectCls}
+							>
+								{GENDERS.map((g) => (
+									<SelectItem key={g}>{g}</SelectItem>
+								))}
+							</Select>
+						</Field>
+
+						<Field label="Date of birth">
+							<Input
+								type="date"
+								required
+								value={form?.date_of_birth ?? ""}
+								onChange={(e) => update("date_of_birth", e.target.value)}
+								classNames={filterInputCls}
+							/>
+						</Field>
+					</div>
+
+					<div className="grid grid-cols-2 gap-4">
+						<Field label="Country">
+							<Select
+								isRequired
+								placeholder="Select country"
+								selectedKeys={form?.location ? [form.location] : []}
+								onSelectionChange={(keys) => {
+									const [value] = Array.from(keys as Set<string>);
+
+									update("location", value ?? "");
+								}}
+								classNames={filterSelectCls}
+							>
+								{CHILD_COUNTRIES.map((c) => (
+									<SelectItem key={c}>{c}</SelectItem>
+								))}
+							</Select>
+						</Field>
+						<Field label="Language">
+							<Input
+								type="text"
+								value={form?.language ?? ""}
+								onChange={(e) => update("language", e.target.value)}
+								classNames={filterInputCls}
+								placeholder="e.g. Luganda"
+							/>
+						</Field>
+					</div>
+
+					<Field label="Dream job">
+						<Input
+							type="text"
+							value={form?.dream_job ?? ""}
+							onChange={(e) => update("dream_job", e.target.value)}
+							classNames={filterInputCls}
+						/>
+					</Field>
+					<Field label="Favorite activities">
+						<Input
+							type="text"
+							value={form?.favorite_activity ?? ""}
+							onChange={(e) => update("favorite_activity", e.target.value)}
+							classNames={filterInputCls}
+						/>
+					</Field>
+
+					<Field label="Biography">
+						<Textarea
+							value={form?.biography ?? ""}
+							onChange={(e) => update("biography", e.target.value)}
+							classNames={filterTextareaCls}
+							placeholder="Child's biography"
+							rows={4}
+						/>
+					</Field>
+				</div>
+			</section>
+
+			{/* Family Details */}
+			<div>
+				<h3 className="mb-4 text-sm font-semibold text-slate-800">
+					Family Details
+				</h3>
+				<Field label="Family description">
+					<Textarea
+						value={form?.family_biography ?? ""}
+						onChange={(e) => update("family_biography", e.target.value)}
+						classNames={filterTextareaCls}
+						placeholder="Describe the family background"
+						rows={4}
+					/>
+				</Field>
+			</div>
+
+			{/* Guardian */}
+			<div>
+				<h3 className="mb-4 text-sm font-semibold text-slate-800">Guardian</h3>
+				<div className="space-y-4">
+					<Field label="Guardian name">
+						<Input
+							value={form?.guardian_name ?? ""}
+							onChange={(e) => update("guardian_name", e.target.value)}
+							classNames={filterInputCls}
+							placeholder="Full name"
+						/>
+					</Field>
+
+					<div className="grid grid-cols-2 gap-4">
+						<Field label="Relationship">
+							<Input
+								type="text"
+								value={form?.guardian_relationship ?? ""}
+								onChange={(e) =>
+									update("guardian_relationship", e.target.value)
+								}
+								classNames={filterInputCls}
+								placeholder="e.g. Mother"
+							/>
+						</Field>
+						<Field label="NIN/ID">
+							<Input
+								type="text"
+								value={form?.guardian_nin ?? ""}
+								onChange={(e) => update("guardian_nin", e.target.value)}
+								classNames={filterInputCls}
+								placeholder="National ID"
+							/>
+						</Field>
+					</div>
+
+					<div className="grid grid-cols-2 gap-4">
+						<Field label="Phone">
+							<Input
+								type="tel"
+								value={form?.guardian_phone ?? ""}
+								onChange={(e) => update("guardian_phone", e.target.value)}
+								classNames={filterInputCls}
+								placeholder="Phone number"
+							/>
+						</Field>
+						<Field label="Email">
+							<Input
+								type="email"
+								value={form?.guardian_email ?? ""}
+								onChange={(e) => update("guardian_email", e.target.value)}
+								classNames={filterInputCls}
+								placeholder="Email address"
+							/>
+						</Field>
+					</div>
+
+					<Field label="Address">
+						<Input
+							type="text"
+							value={form?.guardian_address ?? ""}
+							onChange={(e) => update("guardian_address", e.target.value)}
+							classNames={filterInputCls}
+							placeholder="Full address"
+						/>
+					</Field>
+				</div>
+			</div>
+		</FormDrawer>
+	);
 }
