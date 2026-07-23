@@ -218,6 +218,8 @@ export async function createChild(
 }
 
 export async function getChildrenAwaitingSponsorshipCount(): Promise<number> {
+	const adminClient = createAdminClient();
+
 	const { data, error } = await adminClient
 		.from("children")
 		.select("id, sponsorships(status)");

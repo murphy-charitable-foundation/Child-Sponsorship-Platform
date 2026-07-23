@@ -75,7 +75,7 @@ export default function AddChildDrawer({
 			if (form.photo_file) {
 				const body = new FormData();
 				body.append("image", form.photo_file);
-				body.append("targetId", data.id);
+				body.append("targetId", data.childId);
 				body.append("targetType", "children");
 				body.append("bucketFile", "children");
 
@@ -90,7 +90,7 @@ export default function AddChildDrawer({
 				}
 			}
 
-			const refreshRes = await fetch(`/api/supabase/children/${data.id}`);
+			const refreshRes = await fetch(`/api/supabase/children/${data.childId}`);
 
 			if (refreshRes.ok) {
 				const { child: createdChild } = await refreshRes.json();
@@ -104,10 +104,19 @@ export default function AddChildDrawer({
 		}
 	}
 
+	function handleClose() {
+		setForm(EMPTY_FORM);
+		setError(null);
+		setSuccess(null);
+		onClose();
+	}
+
+	const todayStr = new Date().toISOString().split("T")[0];
+
 	return (
 		<FormDrawer
 			isOpen={isOpen}
-			onClose={onClose}
+			onClose={handleClose}
 			title="Add Child"
 			formId="add-child-form"
 			onSubmit={handleSave}
@@ -161,6 +170,7 @@ export default function AddChildDrawer({
 						<Field label="Gender">
 							<Select
 								isRequired
+								aria-label="Gender"
 								placeholder="Select gender"
 								selectedKeys={form?.gender ? [form.gender] : []}
 								onSelectionChange={(keys) => {
@@ -180,6 +190,7 @@ export default function AddChildDrawer({
 							<Input
 								type="date"
 								required
+								max={todayStr}
 								value={form?.date_of_birth}
 								onChange={(e) => update("date_of_birth", e.target.value)}
 								classNames={filterInputCls}
@@ -191,6 +202,7 @@ export default function AddChildDrawer({
 						<Field label="Country">
 							<Select
 								isRequired
+								aria-label="Country"
 								placeholder="Select country"
 								selectedKeys={form?.location ? [form.location] : []}
 								onSelectionChange={(keys) => {

@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/supabase/require-admin";
 import ChildrenPage from "../../../components/admin/children/ChildrenPage";
-import { getActiveSponsorships } from "@/lib/supabase/queries/sponsorship";
+import { getActiveSponsorships } from "@/lib/supabase/queries/sponsorships";
 import {
 	getChildren,
 	getChildrenAwaitingSponsorshipCount,

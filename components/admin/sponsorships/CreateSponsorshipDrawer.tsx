@@ -5,7 +5,7 @@ import { Input, Select, SelectItem } from "@heroui/react";
 import { CreateSponsorship, EditSponsorship, Frequencies } from "./types";
 import FormDrawer, { Field } from "../shared/FormDrawer";
 import { filterInputCls, filterSelectCls } from "../shared/styleConstants";
-import { ChildTableData } from "../children/types";
+import { ChildSponsor, ChildTableData } from "../children/types";
 import { SponsorGroupTableData, SponsorTableData } from "../sponsors/types";
 import { FREQUENCIES } from "@/lib/constants";
 
@@ -15,6 +15,8 @@ type Option = { id: string; name: string };
 type CreateSponsorshipDrawerProps = {
 	isOpen: boolean;
 	onClose: () => void;
+	onSaved: (sp: ChildSponsor[]) => void;
+	child?: Option;
 };
 
 export const SPS_EMPTY_FORM: CreateSponsorship | EditSponsorship = {
@@ -22,7 +24,7 @@ export const SPS_EMPTY_FORM: CreateSponsorship | EditSponsorship = {
 	sponsor_id: "",
 	child_id: "",
 	amount: null,
-	frequency: "monthly",
+	frequency: "",
 	start_date: "",
 	end_date: "",
 };
@@ -30,6 +32,8 @@ export const SPS_EMPTY_FORM: CreateSponsorship | EditSponsorship = {
 export default function CreateSponsorshipDrawer({
 	isOpen,
 	onClose,
+	onSaved,
+	child,
 }: CreateSponsorshipDrawerProps) {
 	const [sponsors, setSponsors] = useState<Option[]>([]);
 	const [children, setChildren] = useState<Option[]>([]);
@@ -42,6 +46,13 @@ export default function CreateSponsorshipDrawer({
 
 	const requiresEndDate =
 		form.frequency === "monthly" || form.frequency === "annual";
+
+	function update<K extends keyof CreateSponsorship>(
+		key: K,
+		value: CreateSponsorship[K],
+	) {
+		setForm((prev) => ({ ...prev, [key]: value }));
+	}
 
 	useEffect(() => {
 		if (!isOpen) return;
@@ -103,22 +114,14 @@ export default function CreateSponsorshipDrawer({
 		}
 
 		fetchSponsors();
-		fetchChildren();
-	}, [isOpen]);
 
-	function update<K extends keyof CreateSponsorship>(
-		key: K,
-		value: CreateSponsorship[K],
-	) {
-		setForm((prev) => ({ ...prev, [key]: value }));
-	}
-
-	function handleClose() {
-		setForm(SPS_EMPTY_FORM as CreateSponsorship);
-		setError(null);
-		setSuccess(null);
-		onClose();
-	}
+		if (!child) {
+			fetchChildren();
+		} else {
+			update("child_id", child.id);
+			setChildren([{ id: child.id, name: child.name }]);
+		}
+	}, [isOpen, child]);
 
 	async function handleSave(e: React.FormEvent) {
 		e.preventDefault();
@@ -143,11 +146,27 @@ export default function CreateSponsorshipDrawer({
 				return;
 			}
 
+			const refreshRes = await fetch(
+				`/api/supabase/sponsorships/child/${form.child_id}`,
+			);
+
+			if (refreshRes.ok) {
+				const { sponsors } = await refreshRes.json();
+				onSaved?.(sponsors);
+			}
+
 			setSuccess("Sponsorship created successfully.");
 			setTimeout(handleClose, 1500);
 		} finally {
 			setIsSaving(false);
 		}
+	}
+
+	function handleClose() {
+		setForm(SPS_EMPTY_FORM as CreateSponsorship);
+		setError(null);
+		setSuccess(null);
+		onClose();
 	}
 
 	return (
@@ -162,6 +181,7 @@ export default function CreateSponsorshipDrawer({
 			success={success}
 			saveDisabled={!!success}
 			saveLabel="Create sponsorship"
+			bodyClassName="space-y-6 py-5 overflow-y-auto"
 		>
 			<section>
 				<h3 className="mb-4 text-sm font-semibold text-slate-800">
@@ -211,7 +231,9 @@ export default function CreateSponsorshipDrawer({
 						<Field label="Frequency">
 							<Select
 								isRequired
-								selectedKeys={[form.frequency]}
+								aria-label="Frequency"
+								placeholder="Select Frequency"
+								selectedKeys={form?.frequency ? [form.frequency] : []}
 								onSelectionChange={(keys) => {
 									const [value] = Array.from(keys as Set<string>);
 									const nextFrequency = value as Frequencies;

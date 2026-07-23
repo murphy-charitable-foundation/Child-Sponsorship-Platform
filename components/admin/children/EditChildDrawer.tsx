@@ -111,7 +111,7 @@ export default function EditChildDrawer({
 				}
 			}
 
-			const refreshRes = await fetch(`/api/supabase/children/${data.id}`);
+			const refreshRes = await fetch(`/api/supabase/children/${data.childId}`);
 
 			if (refreshRes.ok) {
 				const { child: updatedChild } = await refreshRes.json();
@@ -125,6 +125,8 @@ export default function EditChildDrawer({
 			setIsSaving(false);
 		}
 	}
+
+	const todayStr = new Date().toISOString().split("T")[0];
 
 	return (
 		<FormDrawer
@@ -184,6 +186,7 @@ export default function EditChildDrawer({
 						<Field label="Gender">
 							<Select
 								isRequired
+								aria-label="Gender"
 								placeholder="Select gender"
 								selectedKeys={form?.gender ? [form.gender] : []}
 								onSelectionChange={(keys) => {
@@ -203,6 +206,7 @@ export default function EditChildDrawer({
 							<Input
 								type="date"
 								required
+								max={todayStr}
 								value={form?.date_of_birth ?? ""}
 								onChange={(e) => update("date_of_birth", e.target.value)}
 								classNames={filterInputCls}
@@ -214,6 +218,7 @@ export default function EditChildDrawer({
 						<Field label="Country">
 							<Select
 								isRequired
+								aria-label="Country"
 								placeholder="Select country"
 								selectedKeys={form?.location ? [form.location] : []}
 								onSelectionChange={(keys) => {

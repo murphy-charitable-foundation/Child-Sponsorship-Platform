@@ -20,7 +20,7 @@ export type CreateSponsorship = {
 	sponsor_id: string;
 	child_id: string;
 	amount: number | string | null;
-	frequency: Frequencies;
+	frequency: Frequencies | "";
 	start_date: string;
 	end_date: string | null;
 };
@@ -28,7 +28,7 @@ export type CreateSponsorship = {
 export type EditSponsorship = {
 	sponsorship_id: string;
 	amount: number | string | null;
-	frequency: Frequencies;
+	frequency: Frequencies | "";
 	start_date: string;
 	end_date: string | null;
 };

@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { getSponsors } from "@/lib/supabase/queries/sponsor";
+import { getSponsors } from "@/lib/supabase/queries/sponsors";
 import { requireAdmin } from "@/lib/supabase/require-admin";
 import { NextRequest, NextResponse } from "next/server";
 

@@ -72,7 +72,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 	try {
 		const childId = await createChild(data);
 
-		return NextResponse.json({ id: childId }, { status: 201 });
+		return NextResponse.json({ childId }, { status: 201 });
 	} catch (err) {
 		return NextResponse.json(
 			{ error: err instanceof Error ? err.message : "Failed to create child" },

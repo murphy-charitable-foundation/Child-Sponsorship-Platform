@@ -85,21 +85,27 @@ export default function ChildrenPage({
 			return;
 		}
 
-		setChildren((prev) =>
-			prev.map((c) =>
-				c.id === newData.id
-					? {
-							...c,
-							first_name: newData.first_name,
-							last_name: newData.last_name,
-							age: newData.age,
-							gender: newData.gender,
-							location: newData.location,
-							status: newData.status,
-						}
-					: c,
-			),
-		);
+		const tableRow: ChildTableData = {
+			id: newData.id,
+			first_name: newData.first_name,
+			last_name: newData.last_name,
+			age: newData.age,
+			gender: newData.gender,
+			location: newData.location,
+			status: newData.status,
+			created_at: newData.created_at,
+		};
+
+		//Add the new child if it's not in "Children" otherwise just update the data
+		setChildren((prev) => {
+			const exists = prev.some((c) => c.id === newData.id);
+
+			if (!exists) {
+				return [tableRow, ...prev];
+			}
+
+			return prev.map((c) => (c.id === newData.id ? tableRow : c));
+		});
 	}
 
 	//Pagination//

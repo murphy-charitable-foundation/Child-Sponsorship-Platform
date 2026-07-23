@@ -6,11 +6,11 @@ import { Avatar } from "@heroui/react";
 import { ChildTabHeader } from "./ChildTabHeader";
 import CreateSponsorshipDrawer from "@/components/admin/sponsorships/CreateSponsorshipDrawer";
 
-import { ChildSponsor } from "./types";
+import { ChildProfile, ChildSponsor } from "./types";
 import { SPONSOR_TYPE_LABELS } from "@/lib/constants";
 
 type ChildSponsorsTabProps = {
-	childId: string;
+	child: ChildProfile;
 };
 
 export function formatSinceDate(date: string) {
@@ -21,7 +21,7 @@ export function formatSinceDate(date: string) {
 	});
 }
 
-export default function ChildSponsorsTab({ childId }: ChildSponsorsTabProps) {
+export default function ChildSponsorsTab({ child }: ChildSponsorsTabProps) {
 	const [isCreateOpen, setIsCreateOpen] = useState(false);
 	const [sponsors, setSponsors] = useState<ChildSponsor[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -31,7 +31,7 @@ export default function ChildSponsorsTab({ childId }: ChildSponsorsTabProps) {
 			setLoading(true);
 
 			try {
-				const res = await fetch(`/api/supabase/sponsorships/child/${childId}`);
+				const res = await fetch(`/api/supabase/sponsorships/child/${child.id}`);
 
 				if (!res.ok) {
 					setSponsors([]);
@@ -48,7 +48,11 @@ export default function ChildSponsorsTab({ childId }: ChildSponsorsTabProps) {
 		}
 
 		fetchSponsors();
-	}, [childId]);
+	}, [child]);
+
+	function handleSponsorshipSaved(newData: ChildSponsor[]) {
+		setSponsors(newData);
+	}
 
 	return (
 		<div className="space-y-6">
@@ -132,7 +136,8 @@ export default function ChildSponsorsTab({ childId }: ChildSponsorsTabProps) {
 											$ {sponsor.amount} / {freq}
 										</p>
 										<p className="text-sm text-gray-400">
-											Since {formatSinceDate(sponsor.start_date_time)}
+											{freq !== "one-time" ? "Since " : null}
+											{formatSinceDate(sponsor.start_date_time)}
 										</p>
 									</div>
 								</div>
@@ -194,6 +199,8 @@ export default function ChildSponsorsTab({ childId }: ChildSponsorsTabProps) {
 			<CreateSponsorshipDrawer
 				isOpen={isCreateOpen}
 				onClose={() => setIsCreateOpen(false)}
+				child={{ id: child.id, name: `${child.first_name} ${child.last_name}` }}
+				onSaved={handleSponsorshipSaved}
 			/>
 		</div>
 	);
