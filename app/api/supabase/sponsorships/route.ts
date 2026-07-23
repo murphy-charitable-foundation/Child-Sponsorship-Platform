@@ -1,4 +1,3 @@
-import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/supabase/require-admin";
 import { CreateSponsorship } from "@/components/admin/sponsorships/types";
@@ -64,52 +63,4 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 			{ status: 500 },
 		);
 	}
-}
-
-export async function PATCH(req: NextRequest) {
-	const supabase = await createClient();
-
-	const { error: authError } = await requireAdmin(supabase);
-
-	if (authError) return authError;
-
-	const data = await req.json();
-
-	if (!data) {
-		return NextResponse.json(
-			{ error: "Invalid request data" },
-			{ status: 400 },
-		);
-	}
-
-	const validationError = validate(data, "update");
-
-	if (validationError) {
-		return NextResponse.json({ error: validationError }, { status: 400 });
-	}
-
-	const adminClient = createAdminClient();
-
-	const { data: sponsorship, error: sponsorshipError } = await adminClient
-		.from("sponsorships")
-		.update({
-			amount: Number(data.amount),
-			frequency: data.frequency,
-			start_date_time: data.start_date,
-			end_date_time: data.end_date ?? null,
-			status: "Active",
-			is_recurring: data.frequency === "onetime" ? false : true,
-		})
-		.eq("sponsorship_id", data.sponsorship_id)
-		.select("sponsorship_id")
-		.single();
-
-	if (sponsorshipError || !sponsorship) {
-		return NextResponse.json(
-			{ error: sponsorshipError?.message ?? "Failed to create sponsorship" },
-			{ status: 500 },
-		);
-	}
-
-	return NextResponse.json({ id: sponsorship.sponsorship_id }, { status: 201 });
 }
