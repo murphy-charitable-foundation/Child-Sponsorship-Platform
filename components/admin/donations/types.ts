@@ -6,7 +6,6 @@ export type DonationTableData = {
 	date_time: Date;
 	purpose: string;
 	country: string;
-	payment_method: string;
 };
 
 export type Donation = {

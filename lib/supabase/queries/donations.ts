@@ -22,3 +22,17 @@ export async function getDonations(): Promise<DonationTableData[]> {
 		payment_method: d.payment_methods.label,
 	}));
 }
+
+export async function getDonorByDonationId(id: string) {
+	const adminClient = createAdminClient();
+
+	const { data: donation, error } = await adminClient
+		.from("donations")
+		.select("*")
+		.eq("id", id)
+		.single();
+
+	if (error) throw new Error("Failed to get donor data");
+
+	return donation;
+}

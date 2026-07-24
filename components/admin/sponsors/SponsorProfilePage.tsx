@@ -47,7 +47,7 @@ export default function SponsorProfilePage({ sponsor: initialSponsor }: Props) {
 			{/* Header */}
 			<ProfileHeader
 				data={sponsorHeaderData}
-				type="sponsor"
+				type="Sponsors"
 				href="/admin/sponsors"
 			/>
 

@@ -68,7 +68,7 @@ export default function ChildProfilePage({
 		<div>
 			<ProfileHeader
 				data={childHeaderData}
-				type="child"
+				type="Children"
 				href="/admin/children"
 			/>
 
