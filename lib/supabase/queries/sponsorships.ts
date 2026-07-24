@@ -1,4 +1,7 @@
-import { CreateSponsorship } from "@/components/admin/sponsorships/types";
+import {
+	CreateSponsorship,
+	EditSponsorship,
+} from "@/components/admin/sponsorships/types";
 import { createAdminClient } from "@/lib/supabase/admin";
 const adminClient = createAdminClient();
 
@@ -36,6 +39,63 @@ export async function getActiveSponsorships(): Promise<{
 	}));
 
 	return { activeSponsorships: count ?? 0, byCountry };
+}
+
+export async function getSponsorships() {
+	const { data, error } = await adminClient
+		.from("sponsorships")
+		.select(
+			"*, sponsors(first_name, last_name, group_name), children(first_name, last_name, location)",
+		)
+		.order("start_date_time");
+
+	if (error) throw new Error("Failed to get Sponsorships data");
+
+	const sponsorships = (data ?? []).map((s) => ({
+		...s,
+		sponsor_name: s.sponsors
+			? s.sponsors.group_name ||
+				`${s.sponsors.first_name} ${s.sponsors.last_name}`
+			: "",
+		child_name: s.children
+			? `${s.children.first_name} ${s.children.last_name}`
+			: "",
+		child_location: s.children?.location ?? "",
+	}));
+
+	return sponsorships;
+}
+
+export async function getSponsorshipById(id: string) {
+	const { data, error } = await adminClient
+		.from("sponsorships")
+		.select(
+			"*, sponsors(first_name, last_name, group_name, sponsor_type, address_line1, address_line2, city, state, zip, country, phone_number, email), children(first_name, last_name, location)",
+		)
+		.eq("sponsorship_id", id)
+		.single();
+
+	if (error || !data) throw new Error("Sponsorship not found");
+
+	const { sponsors, children, ...rest } = data;
+
+	return {
+		...rest,
+		sponsor_name: sponsors
+			? sponsors.group_name || `${sponsors.first_name} ${sponsors.last_name}`
+			: "",
+		sponsor_type: sponsors?.sponsor_type ?? null,
+		address_line1: sponsors?.address_line1 ?? null,
+		address_line2: sponsors?.address_line2 ?? null,
+		city: sponsors?.city ?? "",
+		state: sponsors?.state ?? "",
+		zip: sponsors?.zip ?? "",
+		country: sponsors?.country ?? "",
+		phone_number: sponsors?.phone_number ?? null,
+		email: sponsors?.email ?? null,
+		child_name: children ? `${children.first_name} ${children.last_name}` : "",
+		child_location: children?.location ?? "",
+	};
 }
 
 export async function getSponsorshipsByChildId(childId: string) {
@@ -101,6 +161,27 @@ export async function createSponsorship(
 			status: "Active",
 			is_recurring: payload.frequency === "onetime" ? false : true,
 		})
+		.select("sponsorship_id")
+		.single();
+
+	if (error || !data) throw new Error("Failed to create sponsorship");
+
+	return data.sponsorship_id;
+}
+
+export async function updateSponsorship(
+	payload: EditSponsorship,
+): Promise<{ id: string }> {
+	const { data, error } = await adminClient
+		.from("sponsorships")
+		.update({
+			amount: Number(payload.amount),
+			frequency: payload.frequency,
+			start_date_time: payload.start_date,
+			end_date_time: payload.end_date ?? null,
+			is_recurring: payload.frequency === "onetime" ? false : true,
+		})
+		.eq("sponsorship_id", payload.sponsorship_id)
 		.select("sponsorship_id")
 		.single();
 

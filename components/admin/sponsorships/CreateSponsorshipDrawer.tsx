@@ -187,6 +187,7 @@ export default function CreateSponsorshipDrawer({
 				<div className="space-y-4">
 					<Field label="Sponsor">
 						<Select
+							aria-label="Sponsor"
 							isRequired
 							placeholder="Select sponsor"
 							selectedKeys={form.sponsor_id ? [form.sponsor_id] : []}
@@ -194,13 +195,19 @@ export default function CreateSponsorshipDrawer({
 							classNames={filterSelectCls}
 						>
 							{sponsors.map((s) => (
-								<SelectItem key={s.id}>{s.name}</SelectItem>
+								<SelectItem
+									key={s.id}
+									textValue={s.name}
+								>
+									{s.name}
+								</SelectItem>
 							))}
 						</Select>
 					</Field>
 
 					<Field label="Child">
 						<Select
+							aria-label="Child"
 							isRequired
 							placeholder="Select child"
 							selectedKeys={form.child_id ? [form.child_id] : []}
@@ -208,7 +215,12 @@ export default function CreateSponsorshipDrawer({
 							classNames={filterSelectCls}
 						>
 							{children.map((c) => (
-								<SelectItem key={c.id}>{c.name}</SelectItem>
+								<SelectItem
+									key={c.id}
+									textValue={c.name}
+								>
+									{c.name}
+								</SelectItem>
 							))}
 						</Select>
 					</Field>
@@ -241,7 +253,12 @@ export default function CreateSponsorshipDrawer({
 								classNames={filterSelectCls}
 							>
 								{Object.entries(FREQUENCIES).map(([key, value]) => (
-									<SelectItem key={key}>{value}</SelectItem>
+									<SelectItem
+										key={key}
+										textValue={value}
+									>
+										{value}
+									</SelectItem>
 								))}
 							</Select>
 						</Field>
