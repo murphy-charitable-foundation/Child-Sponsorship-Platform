@@ -109,14 +109,14 @@ export default function EditSponsorshipDrawer({
 		<FormDrawer
 			isOpen={isOpen}
 			onClose={handleClose}
-			title="Create Sponsorship"
-			formId="create-sponsorship-form"
+			title="Edit Sponsorship"
+			formId="edit-sponsorship-form"
 			onSubmit={handleSave}
 			isSaving={isSaving}
 			error={error}
 			success={success}
 			saveDisabled={!!success}
-			saveLabel="Update sponsorship"
+			saveLabel="Edit sponsorship"
 		>
 			<section>
 				<h3 className="mb-4 text-sm font-semibold text-slate-800">
