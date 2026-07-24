@@ -3,6 +3,7 @@ import {
 	ConsentMethod,
 	GenderType,
 } from "@/components/admin/children/types";
+import { Regions, UserStatus } from "@/components/admin/organizations/type";
 import { SponsorStatus, SponsorType } from "@/components/admin/sponsors/types";
 import { Frequencies } from "@/components/admin/sponsorships/types";
 import { Country, State } from "country-state-city";
@@ -24,8 +25,8 @@ export const ROLE_LABELS: Record<string, string> = {
 	sponsor: "Sponsor",
 };
 
-// export const USER_STATUS: UserStatus[] = ["Active", "Pending"];
-// export const REGIONS: Regions[] = ["Uganda", "Kenya", "Tanzania", "Rwanda"];
+export const USER_STATUS: UserStatus[] = ["Active", "Pending"];
+export const REGIONS: Regions[] = ["Uganda", "Kenya", "Tanzania", "Rwanda"];
 
 export const SPONSOR_TYPE_LABELS: Record<SponsorType, string> = {
 	individual: "Individual",
