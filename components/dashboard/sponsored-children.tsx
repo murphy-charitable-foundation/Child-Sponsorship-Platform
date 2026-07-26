@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import Image from "next/image";
 type Child = {
@@ -28,6 +29,7 @@ type DashboardProps = {
 };
 
 type CardProps = {
+  id: string;
   name: string;
   age: number;
   costs: number;
@@ -48,6 +50,7 @@ const formatDate = (date: string | null) => {
 };
 
 const Card = ({
+  id,
   name,
   age,
   costs,
@@ -56,6 +59,8 @@ const Card = ({
   lastPaymentDate,
   frequencyPeriod,
 }: CardProps) => {
+  const router = useRouter();
+
   const imageSrc = img ?? "/children/kid1.png";
 
   return (
@@ -123,6 +128,7 @@ const Card = ({
         className="border-2 flex flex-row items-center
         justify-center border-secondary text-secondary rounded-xl py-2"
         aria-label={`View details for ${name}`}
+        onClick={() => router.push(`/dashboard/child/${id}`)}
       >
         <Image src="/dashboard/heart.svg" alt="" width={20} height={20} />
         <span className="ps-2 font-semibold">View Details</span>
@@ -167,6 +173,7 @@ const SponsoredChildren = ({
           return (
             <Card
               key={child.id}
+              id={child?.id}
               name={child.name}
               age={child.age}
               costs={child.costs}
