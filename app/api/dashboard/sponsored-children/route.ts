@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 
 const BUCKET = "profiles";
 const IMAGE_EXPIRY_SECONDS = 60 * 60;
 const S3_PREFIX = "children/";
 
 /* ---------------- types ---------------- */
+type Frequency = "annual" | "monthly" | "onetime";
 
 type ChildRow = {
   id: string;
@@ -19,7 +21,7 @@ type ChildRow = {
 
 type PaymentRow = {
   payment_id: string;
-  frequency_period: number;
+  frequency: Frequency;
   amount_value: number | string;
   currency_code: string;
   status: string;
@@ -32,20 +34,19 @@ type SponsorshipRow = {
   amount: number;
   start_date_time: string;
   end_date_time: string | null;
-  frequency_period: number;
+  frequency: Frequency;
   status: string | null;
   is_recurring: boolean;
-
   children: ChildRow[] | ChildRow;
   payments: PaymentRow[];
 };
 
 type SponsorRow = {
   sponsor_id: string;
-  start_date_time: string | null;
   status: string | null;
   first_name: string | null;
   amount: number;
+  daysSupporting: number;
 };
 
 type SponsoredChild = {
@@ -54,13 +55,13 @@ type SponsoredChild = {
   age: number | string;
   date: string | null;
   costs: number;
-  frequencyPeriod: number;
+  frequency: Frequency;
   img: string | null;
   status: "Sponsoring" | "Stopped";
 };
 
 type RecentActivity = {
-  payments: [string, number][];
+  payments: [string, string][];
   sponsorName: string;
   type: string;
 };
@@ -71,7 +72,10 @@ const calculateAge = (dob?: string | null): number => {
   if (!dob) return 0;
 
   const birth = new Date(dob);
-  if (Number.isNaN(birth.getTime())) return 0;
+
+  if (Number.isNaN(birth.getTime())) {
+    return 0;
+  }
 
   const now = new Date();
 
@@ -81,9 +85,73 @@ const calculateAge = (dob?: string | null): number => {
     now.getMonth() < birth.getMonth() ||
     (now.getMonth() === birth.getMonth() && now.getDate() < birth.getDate());
 
-  if (notHadBirthdayThisYear) age -= 1;
+  if (notHadBirthdayThisYear) {
+    age -= 1;
+  }
 
   return age;
+};
+
+const calculateDaysSupporting = (sponsorships: SponsorshipRow[]): number => {
+  if (!sponsorships.length) {
+    return 0;
+  }
+
+  const activeSponsorships = sponsorships.filter(
+    (sponsorship) => sponsorship.status?.toLowerCase() === "active",
+  );
+
+  let startDate: Date;
+  let endDate: Date;
+
+  if (activeSponsorships.length > 0) {
+    const activeSponsorship = activeSponsorships.reduce((oldest, current) =>
+      new Date(current.start_date_time).getTime() <
+      new Date(oldest.start_date_time).getTime()
+        ? current
+        : oldest,
+    );
+
+    startDate = new Date(activeSponsorship.start_date_time);
+    endDate = new Date();
+  } else {
+    const oldestSponsorship = sponsorships.reduce((oldest, current) =>
+      new Date(current.start_date_time).getTime() <
+      new Date(oldest.start_date_time).getTime()
+        ? current
+        : oldest,
+    );
+
+    const sponsorshipsWithEndDate = sponsorships.filter(
+      (sponsorship) => sponsorship.end_date_time,
+    );
+
+    if (!sponsorshipsWithEndDate.length) {
+      return 0;
+    }
+
+    const latestSponsorshipEndDate = sponsorshipsWithEndDate.reduce(
+      (latest, current) =>
+        new Date(current.end_date_time!).getTime() >
+        new Date(latest.end_date_time!).getTime()
+          ? current
+          : latest,
+    );
+
+    startDate = new Date(oldestSponsorship.start_date_time);
+    endDate = new Date(latestSponsorshipEndDate.end_date_time!);
+  }
+
+  if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+    return 0;
+  }
+
+  const millisecondsPerDay = 1000 * 60 * 60 * 24;
+
+  return Math.max(
+    0,
+    Math.floor((endDate.getTime() - startDate.getTime()) / millisecondsPerDay),
+  );
 };
 
 const buildSignedUrlMap = async (
@@ -92,13 +160,17 @@ const buildSignedUrlMap = async (
 ) => {
   const map: Record<string, string> = {};
 
-  if (!paths.length) return map;
+  if (!paths.length) {
+    return map;
+  }
 
   const { data, error } = await supabase.storage
     .from(BUCKET)
     .createSignedUrls(paths, IMAGE_EXPIRY_SECONDS);
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
 
   for (const item of data ?? []) {
     if (item.path && item.signedUrl) {
@@ -112,15 +184,24 @@ const buildSignedUrlMap = async (
 /* ---------------- handler ---------------- */
 
 export async function GET() {
+  const supabaseClient = await createClient();
+
+  const {
+    data: { user },
+    error: authError,
+  } = await supabaseClient.auth.getUser();
+
+  if (authError || !user) {
+    return NextResponse.json(
+      {
+        error: "Unauthorized",
+        authError: authError?.message,
+      },
+      { status: 401 },
+    );
+  }
+
   const supabase = createAdminClient();
-
-  // const {
-  //   data: { user },
-  // } = await supabase.auth.getUser();
-
-  // if (!user) {
-  //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  // }
 
   const { data, error } = await supabase
     .from("sponsors")
@@ -136,7 +217,7 @@ export async function GET() {
         amount,
         start_date_time,
         end_date_time,
-        frequency_period,
+        frequency,
         status,
         is_recurring,
 
@@ -161,8 +242,8 @@ export async function GET() {
       )
     `,
     )
-    .eq("id", "ba3bbf2b-49ee-43f4-88eb-35ca7b40ee40"); //Replace with a real ID.
-  // .eq("id", user.id)
+    .eq("id", "ba3bbf2b-49ee-43f4-88eb-35ca7b40ee40");
+  // .eq("id", user.id);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -179,19 +260,22 @@ export async function GET() {
     lastPaymentDate: payments.at(-1)?.created_at,
   }));
 
-  const payments = sponsorships.flatMap((s) =>
-    s.payments.map((payment) => ({
+  const payments = sponsorships.flatMap((sponsorship) =>
+    sponsorship.payments.map((payment) => ({
       ...payment,
-      frequency: s.frequency_period,
+      frequency: sponsorship.frequency,
     })),
   );
 
-  const children: ChildRow[] = sponsorships.flatMap((s) => s.children ?? []);
+  const children: ChildRow[] = sponsorships.flatMap(
+    (sponsorship) => sponsorship.children ?? [],
+  );
 
   const photoPaths = children
-    .map((c) => c.photo_path)
+    .map((child) => child.photo_path)
     .filter(
-      (p): p is string => typeof p === "string" && p.startsWith(S3_PREFIX),
+      (path): path is string =>
+        typeof path === "string" && path.startsWith(S3_PREFIX),
     );
 
   let signedUrls: Record<string, string> = {};
@@ -206,9 +290,11 @@ export async function GET() {
   }
 
   const totalAmount = payments.reduce<number>(
-    (sum, p) => sum + Number(p.amount_value),
+    (sum, payment) => sum + Number(payment.amount_value),
     0,
   );
+
+  const daysSupporting = calculateDaysSupporting(sponsorships);
 
   const paymentsActivities: RecentActivity = {
     payments: payments
@@ -217,7 +303,7 @@ export async function GET() {
           new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
       )
       .slice(-4)
-      .map(({ created_at, frequency }): [string, number] => [
+      .map(({ created_at, frequency }): [string, string] => [
         created_at,
         frequency,
       ]),
@@ -227,12 +313,12 @@ export async function GET() {
     type: "Payment",
   };
 
-  const sponsorData = {
+  const sponsorData: SponsorRow = {
     sponsor_id: sponsors[0]?.id,
-    start_date_time: sponsorships[0]?.start_date_time ?? null,
     status: sponsorships[0]?.status ?? null,
     first_name: sponsors[0]?.first_name,
     amount: +totalAmount.toFixed(2),
+    daysSupporting,
   };
 
   const result: {
@@ -249,16 +335,17 @@ export async function GET() {
     activities: paymentsActivities,
     children: children.map((child, index): SponsoredChild => {
       const sponsorship = sponsorships[index];
+
       return {
         id: child.id,
         name: `${child.first_name} ${child.last_name}`,
         age: calculateAge(child.date_of_birth),
-        date: child?.created_at ?? null,
+        date: child.created_at ?? null,
         costs: sponsorship?.amount ?? 0,
-        frequencyPeriod: sponsorship?.frequency_period ?? 0,
+        frequency: sponsorship?.frequency,
         img: child.photo_path ? (signedUrls[child.photo_path] ?? null) : null,
         status:
-          sponsorship?.status?.toLocaleLowerCase() === "inactive"
+          sponsorship?.status?.toLowerCase() === "inactive"
             ? "Stopped"
             : "Sponsoring",
       };

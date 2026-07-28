@@ -9,7 +9,7 @@ type Child = {
   age: number;
   date: string | null;
   costs: number;
-  frequencyPeriod: number;
+  frequency: string;
   img: string | null;
   status: string;
   location?: string | null;
@@ -23,7 +23,7 @@ type ChildrenLastPayments = {
 };
 
 type DashboardProps = {
-  children: Child[];
+  sponsoredChildren: Child[];
   childrenLastPayments: ChildrenLastPayments[];
 };
 
@@ -34,7 +34,7 @@ type CardProps = {
   img: string | null;
   status: string;
   lastPaymentDate?: string;
-  frequencyPeriod: number;
+  frequency: string;
 };
 
 const formatDate = (date: string | null) => {
@@ -54,7 +54,7 @@ const Card = ({
   img,
   status,
   lastPaymentDate,
-  frequencyPeriod,
+  frequency,
 }: CardProps) => {
   const imageSrc = img ?? "/children/kid1.png";
 
@@ -110,10 +110,10 @@ const Card = ({
           <span className="font-bold ps-3">
             <span className="pr-1">${costs}</span>
             <span>
-              {frequencyPeriod === 30
+              {frequency === "monthly"
                 ? "/ Month"
-                : frequencyPeriod === 365
-                  ? "/ Year"
+                : frequency === "annual"
+                  ? "/ Yearly"
                   : ""}
             </span>
           </span>
@@ -132,12 +132,12 @@ const Card = ({
 };
 
 const SponsoredChildren = ({
-  children,
+  sponsoredChildren,
   childrenLastPayments,
 }: DashboardProps) => {
   const [showMore, setShowMore] = useState<number>(4);
 
-  const numberOfChildren: number = children?.length || 0;
+  const numberOfChildren: number = sponsoredChildren?.length || 0;
 
   const lastPaymentMap = useMemo(
     () =>
@@ -163,7 +163,7 @@ const SponsoredChildren = ({
       )}
 
       <div className={`grid grid-cols-4 gap-6 `}>
-        {children?.slice(0, showMore)?.map((child: Child) => {
+        {sponsoredChildren?.slice(0, showMore)?.map((child: Child) => {
           return (
             <Card
               key={child.id}
@@ -173,7 +173,7 @@ const SponsoredChildren = ({
               img={child.img}
               status={child.status}
               lastPaymentDate={lastPaymentMap.get(child.id)}
-              frequencyPeriod={child?.frequencyPeriod}
+              frequency={child?.frequency}
             />
           );
         })}
