@@ -242,8 +242,8 @@ export async function GET() {
       )
     `,
     )
-    .eq("id", "ba3bbf2b-49ee-43f4-88eb-35ca7b40ee40");
-  // .eq("id", user.id);
+    // .eq("id", "ba3bbf2b-49ee-43f4-88eb-35ca7b40ee40");
+  .eq("id", user.id);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
