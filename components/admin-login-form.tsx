@@ -25,10 +25,16 @@ export function AdminLoginForm() {
       });
       if (error) throw error;
 
-      const role = data.user?.user_metadata?.role;
-      const adminRoles = new Set(["admin", "superadmin", "editor", "viewer"]);
+      const role = data.user?.app_metadata?.role;
+      const adminRoles = new Set(["admin", "super_admin"]);
 
-      if (role && !adminRoles.has(String(role).toLowerCase())) {
+      if (role === "pending_admin") {
+        router.push("/auth/pending-approval");
+        router.refresh();
+        return;
+      }
+
+      if (!role || !adminRoles.has(String(role).toLowerCase())) {
         await supabase.auth.signOut();
         setError("This account does not have admin access.");
         return;

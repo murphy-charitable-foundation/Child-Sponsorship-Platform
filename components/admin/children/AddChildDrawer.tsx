@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import {
   Drawer,
   DrawerContent,
@@ -41,6 +42,7 @@ type AddChildDrawerProps = {
 
 export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps) {
   const router = useRouter();
+  const supabase = createClient();
   const [form, setForm] = useState<AddForm>({
     photoFile: null,
     firstName: "",
@@ -59,6 +61,8 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
     guardianEmail: "",
     guardianAddress: "",
   });
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
 
   function update<K extends keyof AddForm>(key: K, value: AddForm[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -71,9 +75,55 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
     }
   }
 
-  function handleSave() {
-    // TODO: persist to Supabase
-    console.log("Adding child:", form);
+  async function handleSave() {
+    setSaveError("");
+
+    const firstName = form.firstName.trim();
+    const lastName = form.lastName.trim();
+
+    if (!firstName || !lastName) {
+      setSaveError("First and last name are required.");
+      return;
+    }
+
+    if (
+      form.gender === "Select gender" ||
+      form.country === "Select country" ||
+      form.schoolLevel === "Select school level"
+    ) {
+      setSaveError("Please select gender, country, and school level.");
+      return;
+    }
+
+    setIsSaving(true);
+
+    const schoolGradeByLevel: Record<string, number | null> = {
+      "Select school level": null,
+      Primary: 1,
+      Secondary: 7,
+      University: 13,
+    };
+
+    const { error } = await supabase.from("children").insert({
+      first_name: firstName,
+      last_name: lastName,
+      date_of_birth: form.dob || null,
+      gender: form.gender,
+      location: form.country,
+      active: false,
+      school_grade: schoolGradeByLevel[form.schoolLevel] ?? null,
+      favorite_activity: "",
+      dream_job: "",
+    });
+
+    setIsSaving(false);
+
+    if (error) {
+      setSaveError(error.message);
+      return;
+    }
+
+    router.refresh();
     handleClose();
   }
 
@@ -92,6 +142,12 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
             </DrawerHeader>
 
             <DrawerBody className="space-y-6 py-5 overflow-y-auto">
+              {saveError ? (
+                <div className="rounded-lg border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger">
+                  {saveError}
+                </div>
+              ) : null}
+
               {/* Photo Upload */}
               <div>
                 <div className="rounded-xl border-2 border-dashed border-slate-300 p-8 text-center">
@@ -318,11 +374,16 @@ export default function AddChildDrawer({ isOpen, onClose }: AddChildDrawerProps)
                 variant="bordered"
                 onPress={handleClose}
                 className="border-slate-300 text-slate-700"
+                isDisabled={isSaving}
               >
                 Cancel
               </Button>
-              <Button onPress={handleSave} className="bg-primary text-white">
-                Add child
+              <Button
+                onPress={handleSave}
+                className="bg-primary text-white"
+                isLoading={isSaving}
+              >
+                {isSaving ? "Adding..." : "Add child"}
               </Button>
             </DrawerFooter>
           </>

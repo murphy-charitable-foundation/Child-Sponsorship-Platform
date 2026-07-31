@@ -1,21 +1,16 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
-import { Checkbox, Input, Button, Link, Divider } from "@heroui/react";
+import { Button, Link } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export function AdminSignUpForm({
-	className,
-	...props
-}: React.ComponentPropsWithoutRef<"div">) {
-	const [email, setEmail] = useState("");
+export function AdminSignUpForm() {
+	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
-	const [phone, setPhone] = useState("");
 	const [firstName, setFirstName] = useState("");
 	const [lastName, setLastName] = useState("");
-	const [repeatPassword, setRepeatPassword] = useState("");
-	const [agreedToTerms, setAgreedToTerms] = useState(false);
+	const [confirmPassword, setConfirmPassword] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 	const router = useRouter();
@@ -26,13 +21,7 @@ export function AdminSignUpForm({
 		setIsLoading(true);
 		setError(null);
 
-		if (!agreedToTerms) {
-			setError("You must agree to the Terms of Use and Privacy Policy");
-			setIsLoading(false);
-			return;
-		}
-
-		if (password !== repeatPassword) {
+		if (password !== confirmPassword) {
 			setError("Passwords do not match");
 			setIsLoading(false);
 			return;
@@ -40,10 +29,10 @@ export function AdminSignUpForm({
 
 		try {
 			const { error } = await supabase.auth.signUp({
-				email,
+				email: username,
 				password,
 				options: {
-					emailRedirectTo: `${window.location.origin}/protected`,
+					emailRedirectTo: `${window.location.origin}/auth/admin-login`,
 					data: {
 						role: "admin",
 						first_name: firstName,
@@ -62,127 +51,122 @@ export function AdminSignUpForm({
 	};
 
 	return (
-		<div className="">
-			<form onSubmit={handleSignUp}>
-				<div className="flex flex-col gap-6">
-					<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-						<Input
-							id="first-name"
-							label="First Name*"
-							labelPlacement="outside"
-							variant="bordered"
-							radius="md"
-							required
-							onChange={(e) => setFirstName(e.target.value)}
-							value={firstName}
-							classNames={{ inputWrapper: "rounded-[12px]" }}
-						/>
-						<Input
-							id="last-name"
-							label="Last Name*"
-							labelPlacement="outside"
-							variant="bordered"
-							radius="md"
-							required
-							onChange={(e) => setLastName(e.target.value)}
-							value={lastName}
-							classNames={{ inputWrapper: "rounded-[12px]" }}
-						/>
-					</div>
-					<div className="grid gap-2">
-						<Input
-							id="email"
-							type="email"
-							label="Email*"
-							labelPlacement="outside"
-							variant="bordered"
-							radius="md"
-							required
-							value={email}
-							classNames={{ inputWrapper: "rounded-[12px]" }}
-							onChange={(e) => setEmail(e.target.value)}
-						/>
-					</div>
+		<form
+			onSubmit={handleSignUp}
+			className="mt-10 space-y-6"
+		>
+			<div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+				<Field label="First name" htmlFor="admin-first-name">
+					<input
+						id="admin-first-name"
+						type="text"
+						value={firstName}
+						onChange={(e) => setFirstName(e.target.value)}
+						className={inputCls}
+						autoComplete="given-name"
+						required
+					/>
+				</Field>
+				<Field label="Last name" htmlFor="admin-last-name">
+					<input
+						id="admin-last-name"
+						type="text"
+						value={lastName}
+						onChange={(e) => setLastName(e.target.value)}
+						className={inputCls}
+						autoComplete="family-name"
+						required
+					/>
+				</Field>
+			</div>
 
-					<div className="grid gap-2">
-						<Input
-							id="phone-number"
-							type="tel"
-							label="Phone Number*"
-							labelPlacement="outside"
-							variant="bordered"
-							radius="md"
-							required
-							value={phone}
-							classNames={{ inputWrapper: "rounded-[12px]" }}
-							onChange={(e) => setPhone(e.target.value)}
-						/>
-					</div>
-					<div className="grid gap-2">
-						<Divider />
-						<Input
-							id="password"
-							type="password"
-							label="Password*"
-							labelPlacement="outside"
-							variant="bordered"
-							radius="md"
-							required
-							value={password}
-							classNames={{ inputWrapper: "rounded-[12px]" }}
-							onChange={(e) => setPassword(e.target.value)}
-						/>
-					</div>
-					<div className="grid gap-2">
-						<Input
-							id="repeat-password"
-							type="password"
-							label="Repeat Password*"
-							labelPlacement="outside"
-							variant="bordered"
-							radius="md"
-							required
-							value={repeatPassword}
-							classNames={{ inputWrapper: "rounded-[12px]" }}
-							onChange={(e) => setRepeatPassword(e.target.value)}
-						/>
-					</div>
-					{error && <p className="text-sm text-red-500">{error}</p>}
-					<div className="flex">
-						<Checkbox
-							id="terms"
-							isSelected={agreedToTerms}
-							onValueChange={setAgreedToTerms}
-						></Checkbox>
-						<p className="text-sm">
-							I agree to the{" "}
-							<Link
-								href="/terms"
-								className="text-sm"
-							>
-								Terms of Use
-							</Link>{" "}
-							and{" "}
-							<Link
-								href="/privacy"
-								className="text-sm"
-							>
-								Privacy Policy
-							</Link>
-						</p>
-					</div>
+			<Field label="Username" htmlFor="admin-sign-up-username">
+				<input
+					id="admin-sign-up-username"
+					type="email"
+					value={username}
+					onChange={(e) => setUsername(e.target.value)}
+					className={inputCls}
+					autoComplete="email"
+					required
+				/>
+			</Field>
 
-					<Button
-						type="submit"
-						color="primary"
-						radius="md"
-						className="rounded-[12px]"
-						disabled={isLoading}
-					>
-						{isLoading ? "Creating an account..." : "Sign up"}
-					</Button>
-				</div>
-			</form>
-		</div>
+			<Field label="Password" htmlFor="admin-sign-up-password">
+				<input
+					id="admin-sign-up-password"
+					type="password"
+					value={password}
+					onChange={(e) => setPassword(e.target.value)}
+					className={inputCls}
+					autoComplete="new-password"
+					required
+				/>
+			</Field>
+
+			<Field label="Confirm password" htmlFor="admin-confirm-password">
+				<input
+					id="admin-confirm-password"
+					type="password"
+					value={confirmPassword}
+					onChange={(e) => setConfirmPassword(e.target.value)}
+					className={inputCls}
+					autoComplete="new-password"
+					required
+				/>
+			</Field>
+
+			{error ? (
+				<p className="rounded-[12px] bg-danger-50 px-3 py-2 text-sm text-danger">
+					{error}
+				</p>
+			) : null}
+
+			<Button
+				type="submit"
+				color="primary"
+				radius="md"
+				className="h-12 w-full rounded-[12px] text-base font-semibold"
+				isLoading={isLoading}
+				isDisabled={isLoading}
+			>
+				{isLoading ? "Creating account..." : "Create account"}
+			</Button>
+
+			<p className="pt-4 text-center text-base text-default-500">
+				Already have an account?{" "}
+				<Link
+					href="/auth/admin-login"
+					className="text-base font-semibold text-primary"
+				>
+					Log in
+				</Link>
+			</p>
+		</form>
+	);
+}
+
+const inputCls =
+	"h-10 w-full rounded-none border border-default-300 bg-content1 px-3 text-sm text-default-900 outline-none transition focus:border-primary focus:ring-1 focus:ring-primary";
+
+function Field({
+	label,
+	htmlFor,
+	children,
+}: {
+	label: string;
+	htmlFor: string;
+	children: React.ReactNode;
+}) {
+	return (
+		<label
+			htmlFor={htmlFor}
+			className="block"
+		>
+			<span className="mb-2 block text-sm font-medium text-default-700">
+				{label}
+			</span>
+			{children}
+		</label>
 	);
 }

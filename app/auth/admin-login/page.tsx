@@ -29,10 +29,16 @@ export default function Page() {
 
       if (error) throw error;
 
-      const role = data.user?.user_metadata?.role;
-      const adminRoles = new Set(["admin", "superadmin", "editor", "viewer"]);
+      const role = data.user?.app_metadata?.role;
+      const adminRoles = new Set(["admin", "super_admin"]);
 
-      if (role && !adminRoles.has(String(role).toLowerCase())) {
+      if (role === "pending_admin") {
+        router.push("/auth/pending-approval");
+        router.refresh();
+        return;
+      }
+
+      if (!role || !adminRoles.has(String(role).toLowerCase())) {
         await supabase.auth.signOut();
         setError("This account does not have admin access.");
         return;
@@ -48,19 +54,19 @@ export default function Page() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-primary px-5 py-10">
-      <div className="w-full max-w-md rounded-[20px] bg-content1 px-8 py-10 shadow-xl sm:px-10">
-        <div className="flex justify-center">
+    <div className="flex min-h-screen items-center justify-center bg-primary px-5 py-16">
+      <div className="relative w-full max-w-md rounded-[20px] bg-content1 px-8 pb-10 pt-20 shadow-xl sm:px-10">
+        <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2">
           <Image
             src="/children/logo.png"
             alt="Murphy Charitable Foundation"
-            width={104}
-            height={104}
+            width={132}
+            height={132}
             priority
           />
         </div>
 
-        <h1 className="mt-6 text-center text-2xl font-semibold text-primary">
+        <h1 className="text-center text-2xl font-semibold text-primary">
           Admin Portal
         </h1>
 
@@ -142,6 +148,15 @@ export default function Page() {
             className="text-sm font-medium text-default-400 hover:text-default-600 hover:underline"
           >
             Forgot password?
+          </Link>
+        </div>
+
+        <div className="mt-7 text-center">
+          <Link
+            href="/auth/admin-sign-up"
+            className="text-base font-semibold text-primary hover:text-primary/80 hover:underline"
+          >
+            Create account
           </Link>
         </div>
       </div>
