@@ -64,7 +64,7 @@ export default function MeetTheChildrenUI({
 			.from("children_with_ages")
 			.select("location")
 			.neq("location", null)
-			.eq("active", true);
+			.eq("status", "Active");
 
 		if (countriesError) {
 			console.log(countriesError);
@@ -98,7 +98,7 @@ export default function MeetTheChildrenUI({
 		const { data: newChildren, error: childrenError } = await supabase
 			.from("children_with_ages")
 			.select("*")
-			.eq("active", true)
+			.eq("status", "Active")
 			.in("location", Array.from(selectedCountries))
 			.gte("age", ageRange[0])
 			.lte("age", ageRange[1])
@@ -137,7 +137,7 @@ export default function MeetTheChildrenUI({
 		const { count, error: countError } = await supabase
 			.from("children_with_ages")
 			.select("id", { count: "exact", head: true })
-			.eq("active", true)
+			.eq("status", "Active")
 			.in("location", Array.from(selectedCountries))
 			.gte("age", ageRange[0])
 			.lte("age", ageRange[1])
