@@ -163,10 +163,10 @@ const SponsoredChildren = ({
       )}
 
       <div className={`grid grid-cols-4 gap-6 `}>
-        {sponsoredChildren?.slice(0, showMore)?.map((child: Child) => {
+        {sponsoredChildren?.slice(0, showMore)?.map((child: Child , index:number) => {
           return (
             <Card
-              key={child.id}
+              key={index}
               name={child.name}
               age={child.age}
               costs={child.costs}
