@@ -19,7 +19,7 @@ import {
 	Sparkles,
 	Heart,
 } from "lucide-react";
-import { Child } from "@/components/admin/children/types";
+import { ChildProfile } from "@/components/admin/children/types";
 
 export default function ChildProfilePageWrapper() {
 	return (
@@ -60,7 +60,7 @@ const sponsorshipItems = [
 
 function ChildProfilePage() {
 	const { childId } = useParams<{ childId: string }>();
-	const [child, setChild] = useState<Child>();
+	const [child, setChild] = useState<ChildProfile>();
 	const [loading, setLoading] = useState(true);
 	const [notFound, setNotFound] = useState(false);
 	const [showFullBio, setShowFullBio] = useState(false);

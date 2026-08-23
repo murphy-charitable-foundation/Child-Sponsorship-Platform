@@ -24,7 +24,7 @@ import {
 	PopoverTrigger,
 	PopoverContent,
 } from "@heroui/react";
-import { Child } from "./admin/children/types";
+import { ChildProfile } from "./admin/children/types";
 
 const pageCapacities = ["20", "60", "100"];
 
@@ -42,7 +42,7 @@ export default function MeetTheChildrenUI({
 	);
 	const [page, setPage] = React.useState(1);
 
-	const [children, setChildren] = React.useState<Child[]>([]);
+	const [children, setChildren] = React.useState<ChildProfile[]>([]);
 	const [count, setCount] = React.useState(0);
 	const [ageRange, setAgeRange] = React.useState<number[]>([0, 25]);
 	const [genders, setGenders] = React.useState<string[]>(["Male", "Female"]);
@@ -64,6 +64,7 @@ export default function MeetTheChildrenUI({
 			.from("children_with_ages")
 			.select("location")
 			.neq("location", null)
+			.eq("status", "Active");
 			.eq("status", "Active");
 
 		if (countriesError) {
@@ -88,14 +89,17 @@ export default function MeetTheChildrenUI({
 		const { from, to } = calculateRange();
 
 		if (selectedCountries.size === 0) {
-			console.log("no countries selected, skipping fetch");
 			setChildren([]);
 			setCount(0);
 			setIsLoaded(true);
 			return; // to resolve race condition between fetchData and fetchUniqueCountries, resulting in list being inaccurately filtered
 		}
 
-		const { data: newChildren, error: childrenError } = await supabase
+		const {
+			data: newChildren,
+			count: newCount,
+			error: childrenError,
+		} = await supabase
 			.from("children_with_ages")
 			.select("*")
 			.eq("status", "Active")
@@ -176,10 +180,8 @@ export default function MeetTheChildrenUI({
 	]);
 
 	useEffect(() => {
-		console.log("fetching unique countries");
 		fetchUniqueCountries();
-		console.log("fetched unique countries");
-	}, []); // Fetch unique countries on component mount
+	}, []);
 
 	return (
 		<main className="min-h-screen bg-background text-foreground">
@@ -334,7 +336,7 @@ export default function MeetTheChildrenUI({
 					id="children-grid"
 					className="gap-2 grid grid-cols-2 sm:grid-cols-4"
 				>
-					{children.map((item, index) => (
+					{children.map((item) => (
 						/* eslint-disable no-console */
 						<Card
 							key={item.id}

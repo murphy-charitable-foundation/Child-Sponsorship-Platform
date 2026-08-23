@@ -48,6 +48,7 @@ const formatDate = (date: string | null) => {
 };
 
 const Card = ({
+  id,
   name,
   age,
   costs,
@@ -123,6 +124,7 @@ const Card = ({
         className="border-2 flex flex-row items-center
         justify-center border-secondary text-secondary rounded-xl py-2"
         aria-label={`View details for ${name}`}
+        onClick={() => router.push(`/dashboard/child/${id}`)}
       >
         <Image src="/dashboard/heart.svg" alt="" width={20} height={20} />
         <span className="ps-2 font-semibold">View Details</span>

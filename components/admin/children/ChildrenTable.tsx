@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
 	Table,
@@ -8,100 +7,26 @@ import {
 	TableBody,
 	TableRow,
 	TableCell,
-	Button,
-	Chip,
+	Link,
 } from "@heroui/react";
-import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
-import { Child } from "./types";
 
-const supabase = createClient();
-
-//TODO: Previously the status is has "active", "waiting", "exited". however, in supabase children table doesn't have "status"
-//Only has "active" column. so we need to check it. either we add status in the table or just use active column.
-//If we use "active" (boolean), we need to identify what is the waiting and exited.
-//For now, I use active and set waiting if the active value is false
-
-export function statusChipColor(status: boolean) {
-	if (status) return "success";
-	if (!status) return "warning";
-	return "default"; // for Exited
-}
+import { ChildTableData } from "./types";
+import { tableCls } from "../shared/styleConstants";
 
 type ChildrenTableProps = {
-	selectedStatus: Set<string>;
-	selectedGender: Set<string>;
-	searchQuery: string;
+	data: ChildTableData[];
+	onEdit: (id: string) => void;
 };
 
-export default function ChildrenTable({
-	selectedStatus,
-	selectedGender,
-	searchQuery,
-}: ChildrenTableProps) {
+export default function ChildrenTable({ data, onEdit }: ChildrenTableProps) {
 	const router = useRouter();
-	const [children, setChildren] = useState<Child[]>([]);
-
-	useEffect(() => {
-		async function fetchChildren() {
-			try {
-				const [{ data, error: childrenError }, { data: ageData }] =
-					await Promise.all([
-						supabase.from("children").select("*"),
-						supabase.from("children_with_ages").select("id, age"),
-					]);
-
-				if (childrenError) {
-					console.log(childrenError);
-				}
-				if (data?.length) {
-					const ageMap = new Map(
-						(ageData ?? []).map((r: { id: string; age: number }) => [
-							r.id,
-							r.age,
-						]),
-					);
-
-					const childrenWithAge = data.map((child) => ({
-						...child,
-						age: ageMap.get(child.id) ?? null,
-					}));
-					setChildren(childrenWithAge as Child[]);
-				}
-			} catch (err) {
-				console.error("Failed to fetch children:", err);
-			}
-		}
-		fetchChildren();
-	}, []);
-
-	// Filter rows based on selection
-	const filtered = children.filter((c) => {
-		// Status filter
-		const statusKey = c.active ? "active" : "waiting";
-		const statusMatches =
-			selectedStatus.has("all") || selectedStatus.has(statusKey);
-
-		// Gender filter
-		const genderMatches =
-			selectedGender.size === 0 || selectedGender.has(c.gender.toLowerCase());
-
-		// Search filter
-		const searchMatches =
-			!searchQuery ||
-			c.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-			c.last_name.toLowerCase().includes(searchQuery.toLowerCase());
-
-		return statusMatches && genderMatches && searchMatches;
-	});
 
 	return (
 		<div className="w-full">
 			<Table
 				aria-label="Children table"
-				removeWrapper
 				onRowAction={(key) => router.push(`/admin/children/${key}`)}
-				classNames={{ tr: "cursor-pointer" }}
+				classNames={tableCls}
 			>
 				<TableHeader>
 					<TableColumn>LAST NAME</TableColumn>
@@ -117,54 +42,50 @@ export default function ChildrenTable({
 
 				<TableBody
 					emptyContent={"No children found"}
-					items={filtered}
+					items={data}
 				>
 					{(r) => (
 						<TableRow key={r.id}>
-							<TableCell>{r.last_name}</TableCell>
-							<TableCell>{r.first_name}</TableCell>
-							<TableCell>{r.id}</TableCell>
-							<TableCell>{r.age}</TableCell>
-							<TableCell>{r.gender}</TableCell>
-							<TableCell>{r.location}</TableCell>
-							<TableCell>
-								<Chip
-									size="md"
-									radius="full"
-									variant="flat"
-									color={statusChipColor(r.active)}
-									className="px-4 text-base"
-								>
-									{r.active === true ? "Active" : "Waiting"}
-								</Chip>
+							<TableCell className="text-slate-800">{r.last_name}</TableCell>
+							<TableCell className="text-slate-800">{r.first_name}</TableCell>
+							<TableCell
+								className="whitespace-nowrap text-slate-600"
+								title={r.id}
+							>
+								{r.id.slice(0, 10)}...
+							</TableCell>
+							<TableCell className="text-slate-600">{r.age}</TableCell>
+							<TableCell className="text-slate-600">{r.gender}</TableCell>
+							<TableCell className="text-slate-600">{r.location}</TableCell>
+							<TableCell
+								className={
+									r.status === "Active"
+										? "text-success"
+										: r.status === "Waiting"
+											? "text-warning"
+											: "text-default"
+								}
+							>
+								{r.status}
+							</TableCell>
+							<TableCell className="text-slate-600">
+								{r.created_at.split("T")[0]}
 							</TableCell>
 							<TableCell>
-								{new Date(r.created_at).toLocaleDateString("en-US", {
-									month: "short",
-									day: "numeric",
-									year: "numeric",
-								})}
-							</TableCell>
-							<TableCell>
-								<div className="flex gap-2">
-									<Button
-										as={Link}
+								<div className="flex items-center whitespace-nowrap">
+									<Link
 										href={`/admin/children/${r.id}`}
-										size="sm"
-										radius="md"
-										color="primary"
+										className="cursor-pointer text-primary hover:underline"
 									>
 										View
-									</Button>
-									<Button
-										as={Link}
-										href="/admin/children/editpage"
-										size="sm"
-										radius="md"
-										color="primary"
+									</Link>
+									<span className="mx-1 text-slate-300">|</span>
+									<Link
+										onPress={() => onEdit(r.id)}
+										className="cursor-pointer text-primary hover:underline"
 									>
 										Edit
-									</Button>
+									</Link>
 								</div>
 							</TableCell>
 						</TableRow>
