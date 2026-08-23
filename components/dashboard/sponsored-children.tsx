@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import Image from "next/image";
 type Child = {
@@ -28,6 +29,7 @@ type DashboardProps = {
 };
 
 type CardProps = {
+  id: string;
   name: string;
   age: number;
   costs: number;
@@ -59,6 +61,7 @@ const Card = ({
 }: CardProps) => {
   const imageSrc = img ?? "/children/kid1.png";
 
+  const router = useRouter();
   return (
     <article
       aria-label={`Child card for ${name}, status ${status}`}
@@ -165,20 +168,23 @@ const SponsoredChildren = ({
       )}
 
       <div className={`grid grid-cols-4 gap-6 `}>
-        {sponsoredChildren?.slice(0, showMore)?.map((child: Child , index:number) => {
-          return (
-            <Card
-              key={index}
-              name={child.name}
-              age={child.age}
-              costs={child.costs}
-              img={child.img}
-              status={child.status}
-              lastPaymentDate={lastPaymentMap.get(child.id)}
-              frequency={child?.frequency}
-            />
-          );
-        })}
+        {sponsoredChildren
+          ?.slice(0, showMore)
+          ?.map((child: Child, index: number) => {
+            return (
+              <Card
+                key={index}
+                id={child.id}
+                name={child.name}
+                age={child.age}
+                costs={child.costs}
+                img={child.img}
+                status={child.status}
+                lastPaymentDate={lastPaymentMap.get(child.id)}
+                frequency={child?.frequency}
+              />
+            );
+          })}
       </div>
 
       {numberOfChildren > 4 && (
