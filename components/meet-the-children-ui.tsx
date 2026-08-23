@@ -65,7 +65,6 @@ export default function MeetTheChildrenUI({
 			.select("location")
 			.neq("location", null)
 			.eq("status", "Active");
-			.eq("status", "Active");
 
 		if (countriesError) {
 			console.log(countriesError);
@@ -136,7 +135,7 @@ export default function MeetTheChildrenUI({
 			...child,
 			image_url: child.photo_path ? signedUrls[child.photo_path] : undefined,
 		}));
-		setChildren(childrenWithUrls as Child[]);
+		setChildren(childrenWithUrls as ChildProfile[]);
 
 		const { count, error: countError } = await supabase
 			.from("children_with_ages")
