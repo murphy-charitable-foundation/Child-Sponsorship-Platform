@@ -1,11 +1,13 @@
 "use client";
 
 import Compressor from "compressorjs";
+import NextImage from "next/image";
 import { useRef, useState, useEffect, useCallback } from "react";
 import { Camera } from "lucide-react";
 import Cropper from "react-easy-crop";
 import type { Area, Point } from "react-easy-crop";
 import { Button } from "@heroui/react";
+import { Camera as CameraIcon } from "lucide-react";
 
 type Props = {
 	currentUrl?: string;
@@ -94,9 +96,8 @@ async function cropImageToFile(
 
 export default function ProfileImageUpload({
 	currentUrl,
-	name,
 	onChange,
-	size = 96,
+	size = 200,
 }: Props) {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [preview, setPreview] = useState<string | null>(null);
@@ -158,15 +159,6 @@ export default function ProfileImageUpload({
 		}
 	}
 
-	const initials = name
-		? name
-				.split(" ")
-				.map((w) => w[0])
-				.join("")
-				.toUpperCase()
-				.slice(0, 2)
-		: "?";
-
 	const displaySrc = preview ?? currentUrl;
 
 	return (
@@ -189,6 +181,7 @@ export default function ProfileImageUpload({
 					</div>
 					<input
 						type="range"
+						aria-label="Zoom"
 						min={1}
 						max={3}
 						step={0.01}
@@ -221,23 +214,27 @@ export default function ProfileImageUpload({
 				style={{ width: size, height: size }}
 				onClick={() => !compressing && inputRef.current?.click()}
 			>
-				<div className="w-full h-full rounded-full overflow-hidden bg-gray-100 border-2 border-gray-200 flex items-center justify-center">
+				<div className="relative w-full h-full flex items-center justify-center overflow-hidden border-2 border-dashed border-slate-300 text-center">
 					{displaySrc ? (
-						<img
+						<NextImage
 							src={displaySrc}
 							alt="Profile"
-							className="w-full h-full object-cover"
+							fill
+							unoptimized
+							className="object-cover"
+							loading="eager"
 						/>
 					) : (
-						<span className="text-gray-500 font-semibold text-2xl select-none">
-							{initials}
-						</span>
+						<div className="flex flex-col items-center justify-center p-8">
+							<CameraIcon size={24} />
+							<p className="mt-3 text-xs text-gray-400">Click to add photo</p>
+						</div>
 					)}
 				</div>
 
-				<div className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+				<div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
 					{compressing ? (
-						<div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+						<div className=" border-2 border-white border-t-transparent  animate-spin" />
 					) : (
 						<Camera
 							size={20}
@@ -247,7 +244,6 @@ export default function ProfileImageUpload({
 				</div>
 			</div>
 
-			<span className="text-xs text-gray-400">Click to change photo</span>
 			{error && (
 				<span className="text-xs text-red-500 text-center max-w-[160px]">
 					{error}
@@ -257,6 +253,7 @@ export default function ProfileImageUpload({
 			<input
 				ref={inputRef}
 				type="file"
+				aria-label="Upload profile photo"
 				accept="image/jpeg,image/png,image/webp"
 				className="hidden"
 				onChange={handleFile}
