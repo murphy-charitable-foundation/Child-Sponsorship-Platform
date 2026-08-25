@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import ChildDetailsPage from "@/components/dashboard/child-details/page";
 
 interface PageProps {
@@ -7,7 +8,9 @@ interface PageProps {
 export default async function ChildPage({ params }: PageProps) {
   const { id } = await params;
 
-  if (!id) return <div>Child record not found</div>;
+  if (!id) {
+    notFound();
+  }
 
   return <ChildDetailsPage childId={id} />;
 }

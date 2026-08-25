@@ -1,158 +1,172 @@
 "use client";
 
-import React from "react";
 import { Select, SelectItem, Input } from "@heroui/react";
+import { filterInputCls, filterSelectCls } from "../shared/styleConstants";
+import { SP_STATUS, SPONSOR_TYPE_LABELS } from "@/lib/constants";
 
 interface SponsorsFilterProps {
 	activeTab: "individuals" | "groups";
 	searchValue: string;
-	onSearchChange: (value: string) => void;
+	setSearchValue: (value: string) => void;
 	locationValue: string;
-	onLocationChange: (value: string) => void;
+	setLocationValue: (value: string) => void;
 	statusValue: string;
-	onStatusChange: (value: string) => void;
+	setStatusValue: (value: string) => void;
 	typeValue: string;
-	onTypeChange: (value: string) => void;
-	onResetFilters: () => void;
+	setTypeValue: (value: string) => void;
+	countries: Set<string>;
 }
 
 export function SponsorsFilter({
 	activeTab,
 	searchValue,
-	onSearchChange,
+	setSearchValue,
 	locationValue,
-	onLocationChange,
+	setLocationValue,
 	statusValue,
-	onStatusChange,
+	setStatusValue,
 	typeValue,
-	onTypeChange,
-	onResetFilters,
+	setTypeValue,
+	countries,
 }: SponsorsFilterProps) {
-	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		onSearchChange(e.target.value);
-	};
-
-	const handleLocationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		onLocationChange(e.target.value);
-	};
-
-	const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		onStatusChange(e.target.value);
-	};
-
-	const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		onTypeChange(e.target.value);
-	};
-
-	const handleReset = () => {
-		onResetFilters();
-	};
-
 	const isGroupsTab = activeTab === "groups";
 
+	function handelReset() {
+		setSearchValue("");
+		setLocationValue("all");
+		setStatusValue("all");
+		setTypeValue("all");
+	}
+
 	return (
-		<div className="bg-gray-100 p-6 rounded-md">
-			<div className="space-y-3">
-				<div className="flex gap-4">
+		<div className="bg-gray-100 p-5">
+			<div className="space-y-1">
+				<div className="flex gap-5">
 					<div className={isGroupsTab ? "flex-1" : "flex-1"}>
-						<label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+						<label className="text-xs font-semibold text-gray-600 tracking-wider">
 							Search
 						</label>
 					</div>
 					{isGroupsTab && (
 						<div className="w-1/5">
-							<label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+							<label className="text-xs font-semibold text-gray-600 tracking-wider">
 								Type
 							</label>
 						</div>
 					)}
 					<div className={isGroupsTab ? "w-1/5" : "w-1/4"}>
-						<label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+						<label className="text-xs font-semibold text-gray-600 tracking-wider">
 							Location
 						</label>
 					</div>
 					<div className={isGroupsTab ? "w-1/5" : "w-1/4"}>
-						<label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+						<label className="text-xs font-semibold text-gray-600 tracking-wider">
 							Status
 						</label>
 					</div>
 				</div>
 
-				<div className="flex gap-4 items-end">
+				<div className="flex gap-6 mt-2 items-end">
 					<div className="flex-1">
 						<Input
+							aria-label="Search"
 							placeholder={
 								isGroupsTab
 									? "Search by group name"
 									: "Search by first or last name"
 							}
 							value={searchValue}
-							onChange={handleSearchChange}
+							onChange={(e) => setSearchValue(e.target.value)}
 							className="w-full"
-							classNames={{
-								input: "bg-white text-gray-900 placeholder-gray-500",
-								mainWrapper: "w-full",
-								inputWrapper:
-									"h-10 bg-white border-gray-200 hover:border-gray-300",
-							}}
+							radius="none"
+							classNames={filterInputCls}
 						/>
 					</div>
 
 					{isGroupsTab && (
 						<div className="w-1/5">
 							<Select
+								aria-label="Type"
+								disallowEmptySelection
 								selectedKeys={[typeValue]}
-								onChange={handleTypeChange}
+								onChange={(e) => setTypeValue(e.target.value)}
+								radius="none"
 								className="w-full"
-								classNames={{
-									trigger:
-										"h-10 bg-white border-gray-200 hover:border-gray-300",
-								}}
+								classNames={filterSelectCls}
 							>
-								<SelectItem key="all">All types</SelectItem>
-								<SelectItem key="company">Company</SelectItem>
-								<SelectItem key="organization">Organization</SelectItem>
-								<SelectItem key="religious">Religious</SelectItem>
+								{[
+									["all", "All types"],
+									...Object.entries(SPONSOR_TYPE_LABELS).filter(
+										([key]) => key !== "individual",
+									),
+								].map(([key, label]) => (
+									<SelectItem key={key}>{label}</SelectItem>
+								))}
 							</Select>
 						</div>
 					)}
 
 					<div className={isGroupsTab ? "w-1/5" : "w-1/4"}>
 						<Select
+							aria-label="Location"
+							disallowEmptySelection
 							selectedKeys={[locationValue]}
-							onChange={handleLocationChange}
+							onChange={(e) => setLocationValue(e.target.value)}
 							className="w-full"
-							classNames={{
-								trigger: "h-10 bg-white border-gray-200 hover:border-gray-300",
-							}}
+							radius="none"
+							classNames={filterSelectCls}
 						>
-							<SelectItem key="all">All locations</SelectItem>
-							<SelectItem key="usa">USA</SelectItem>
-							<SelectItem key="uk">UK</SelectItem>
-							<SelectItem key="canada">Canada</SelectItem>
-							<SelectItem key="australia">Australia</SelectItem>
-							<SelectItem key="spain">Spain</SelectItem>
+							{["all", ...countries].map((c) => (
+								<SelectItem key={c === "all" ? "all" : c.toLowerCase()}>
+									{c === "all" ? "All locations" : c}
+								</SelectItem>
+							))}
 						</Select>
 					</div>
 
 					<div className={isGroupsTab ? "w-1/5" : "w-1/4"}>
 						<Select
+							aria-label="Status"
+							disallowEmptySelection
 							selectedKeys={[statusValue]}
-							onChange={handleStatusChange}
+							onChange={(e) => setStatusValue(e.target.value)}
 							className="w-full"
-							classNames={{
-								trigger: "h-10 bg-white border-gray-200 hover:border-gray-300",
-							}}
+							radius="none"
+							classNames={filterSelectCls}
+							renderValue={(items) => (
+								<span className="flex gap-2">
+									{items.length === 0 ? (
+										<span className="text-default-500">No status selected</span>
+									) : items.some((item) => item.key === "all") ? (
+										<span className="text-default-700">All statuses</span>
+									) : (
+										items.map((item) => (
+											<span
+												key={item.key}
+												className={
+													item.key === "active"
+														? "text-success"
+														: "text-warning"
+												}
+											>
+												{item.textValue}
+											</span>
+										))
+									)}
+								</span>
+							)}
 						>
-							<SelectItem key="all">All statuses</SelectItem>
-							<SelectItem key="active">Active</SelectItem>
-							<SelectItem key="inactive">Inactive</SelectItem>
+							{["all", ...SP_STATUS].map((s) => (
+								<SelectItem key={s === "all" ? "all" : s.toLowerCase()}>
+									{s === "all" ? "All statuses" : s}
+								</SelectItem>
+							))}
 						</Select>
 					</div>
 				</div>
 				<div className="flex-1 pt-2">
 					<button
-						onClick={handleReset}
+						onClick={handelReset}
 						className="text-sm font-semibold text-primary hover:underline cursor-pointer transition-all"
 					>
 						Reset filters

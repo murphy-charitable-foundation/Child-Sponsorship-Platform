@@ -1,89 +1,294 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Drawer, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter, Button,
-} from "@heroui/react";
+import { useEffect, useState } from "react";
+import { Input, Select, SelectItem } from "@heroui/react";
+import { CreateSponsorship, EditSponsorship, Frequencies } from "./types";
+import FormDrawer, { Field } from "../shared/FormDrawer";
+import { filterInputCls, filterSelectCls } from "../shared/styleConstants";
+import { ChildTableData } from "../children/types";
+import { SponsorGroupTableData, SponsorTableData } from "../sponsors/types";
+import { FREQUENCIES } from "@/lib/constants";
 
-const FREQUENCIES = ["Monthly", "One-time", "Annual"];
+//TODO: This is not finalized version. we need design team create UI for this.
+type Option = { id: string; name: string };
 
 type CreateSponsorshipDrawerProps = {
-  isOpen: boolean;
-  onClose: () => void;
+	isOpen: boolean;
+	onClose: () => void;
+	onSaved: (id: string) => void;
+	child?: Option | null;
+	sponsor?: Option | null;
 };
 
-export default function CreateSponsorshipDrawer({ isOpen, onClose }: CreateSponsorshipDrawerProps) {
-  const [sponsorName,  setSponsorName]  = useState("");
-  const [childName,    setChildName]    = useState("");
-  const [amount,       setAmount]       = useState("");
-  const [frequency,    setFrequency]    = useState("Monthly");
-  const [startDate,    setStartDate]    = useState("");
+export const SPS_EMPTY_FORM: CreateSponsorship | EditSponsorship = {
+	sponsorship_id: "",
+	sponsor_id: "",
+	child_id: "",
+	amount: null,
+	frequency: "",
+	start_date: "",
+	end_date: "",
+};
 
-  function handleClose() {
-    setSponsorName(""); setChildName(""); setAmount("");
-    setFrequency("Monthly"); setStartDate("");
-    onClose();
-  }
+export default function CreateSponsorshipDrawer({
+	isOpen,
+	onClose,
+	onSaved,
+	child,
+	sponsor,
+}: CreateSponsorshipDrawerProps) {
+	const [sponsors, setSponsors] = useState<Option[]>([]);
+	const [children, setChildren] = useState<Option[]>([]);
+	const [form, setForm] = useState<CreateSponsorship>(
+		SPS_EMPTY_FORM as CreateSponsorship,
+	);
+	const [isSaving, setIsSaving] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string | null>(null);
 
-  return (
-    <Drawer isOpen={isOpen} onOpenChange={handleClose} size="md" placement="right">
-      <DrawerContent>
-        {(closeDrawer) => (
-          <>
-            <DrawerHeader className="border-b border-slate-200 text-lg font-semibold text-slate-900">
-              Create Sponsorship
-            </DrawerHeader>
+	const requiresEndDate =
+		form.frequency === "monthly" || form.frequency === "annual";
 
-            <DrawerBody className="space-y-4 py-6">
-              <Field label="Sponsor name">
-                <input className={cls} value={sponsorName}
-                  onChange={(e) => setSponsorName(e.target.value)} placeholder="Search sponsor..." />
-              </Field>
-              <Field label="Child name">
-                <input className={cls} value={childName}
-                  onChange={(e) => setChildName(e.target.value)} placeholder="Search child..." />
-              </Field>
-              <div className="grid grid-cols-2 gap-4">
-                <Field label="Amount ($)">
-                  <input type="number" className={cls} value={amount}
-                    onChange={(e) => setAmount(e.target.value)} placeholder="0" />
-                </Field>
-                <Field label="Frequency">
-                  <select className={cls} value={frequency}
-                    onChange={(e) => setFrequency(e.target.value)}>
-                    {FREQUENCIES.map((f) => <option key={f}>{f}</option>)}
-                  </select>
-                </Field>
-              </div>
-              <Field label="Start date">
-                <input type="date" className={cls} value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)} />
-              </Field>
-            </DrawerBody>
+	function update<K extends keyof CreateSponsorship>(
+		key: K,
+		value: CreateSponsorship[K],
+	) {
+		setForm((prev) => ({ ...prev, [key]: value }));
+	}
 
-            <DrawerFooter className="border-t border-slate-200">
-              <Button variant="light" onPress={closeDrawer} className="text-slate-700">
-                Cancel
-              </Button>
-              <Button className="bg-primary text-white" onPress={closeDrawer}>
-                Create Sponsorship
-              </Button>
-            </DrawerFooter>
-          </>
-        )}
-      </DrawerContent>
-    </Drawer>
-  );
+	useEffect(() => {
+		if (!isOpen) return;
+
+		async function fetchSponsors() {
+			try {
+				const [individualsRes, groupsRes] = await Promise.all([
+					fetch("/api/supabase/sponsors?tab=individuals&status=Active"),
+					fetch("/api/supabase/sponsors?tab=groups&status=Active"),
+				]);
+
+				if (!individualsRes.ok || !groupsRes.ok) {
+					setError("Failed to get sponsors data");
+					return;
+				}
+
+				const { sponsors: individuals } = await individualsRes.json();
+				const { sponsors: groups } = await groupsRes.json();
+
+				const individualOptions = (individuals as SponsorTableData[]).map(
+					(s) => ({ id: s.id, name: `${s.first_name} ${s.last_name}` }),
+				);
+				const groupOptions = (groups as SponsorGroupTableData[]).map((s) => ({
+					id: s.id,
+					name: s.group_name,
+				}));
+
+				setSponsors([...individualOptions, ...groupOptions]);
+			} catch (err) {
+				setError("Failed to get sponsors data");
+				console.error("Failed to fetch sponsors:", err);
+			}
+		}
+
+		async function fetchChildren() {
+			try {
+				const res = await fetch("/api/supabase/children?status=Active,Waiting");
+
+				if (!res.ok) {
+					setError("Failed to get children data");
+					return;
+				}
+
+				const { children: data } = await res.json();
+
+				setChildren(
+					data.map((c: ChildTableData) => ({
+						id: c.id,
+						name: `${c.first_name} ${c.last_name}`,
+					})),
+				);
+			} catch (err) {
+				setError("Failed to get children data");
+				console.error("Failed to fetch children:", err);
+			}
+		}
+
+		if (!sponsor) {
+			fetchSponsors();
+		} else {
+			update("sponsor_id", sponsor.id);
+			setSponsors([{ id: sponsor.id, name: sponsor.name }]);
+		}
+
+		if (!child) {
+			fetchChildren();
+		} else {
+			update("child_id", child.id);
+			setChildren([{ id: child.id, name: child.name }]);
+		}
+	}, [isOpen, child, sponsor]);
+
+	async function handleSave(e: React.FormEvent) {
+		e.preventDefault();
+		setIsSaving(true);
+		setError(null);
+		setSuccess(null);
+
+		try {
+			const res = await fetch("/api/supabase/sponsorships", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					...form,
+					end_date: requiresEndDate ? form.end_date : null,
+				}),
+			});
+
+			const data = await res.json().catch(() => ({}));
+
+			if (!res.ok) {
+				setError(data.error ?? "Failed to create sponsorship.");
+				return;
+			}
+
+			onSaved?.(form.child_id);
+
+			setSuccess("Sponsorship created successfully.");
+			setTimeout(handleClose, 1500);
+		} finally {
+			setIsSaving(false);
+		}
+	}
+
+	function handleClose() {
+		setForm(SPS_EMPTY_FORM as CreateSponsorship);
+		setError(null);
+		setSuccess(null);
+		onClose();
+	}
+
+	return (
+		<FormDrawer
+			isOpen={isOpen}
+			onClose={handleClose}
+			title="Create Sponsorship"
+			formId="create-sponsorship-form"
+			onSubmit={handleSave}
+			isSaving={isSaving}
+			error={error}
+			success={success}
+			saveDisabled={!!success}
+			saveLabel="Create sponsorship"
+			bodyClassName="space-y-6 py-5 overflow-y-auto"
+		>
+			<section>
+				<h3 className="mb-4 text-sm font-semibold text-slate-800">
+					Sponsorship Details
+				</h3>
+				<div className="space-y-4">
+					<Field label="Sponsor">
+						<Select
+							aria-label="Sponsor"
+							isRequired
+							placeholder="Select sponsor"
+							selectedKeys={form.sponsor_id ? [form.sponsor_id] : []}
+							onChange={(e) => update("sponsor_id", e.target.value)}
+							classNames={filterSelectCls}
+						>
+							{sponsors.map((s) => (
+								<SelectItem
+									key={s.id}
+									textValue={s.name}
+								>
+									{s.name}
+								</SelectItem>
+							))}
+						</Select>
+					</Field>
+
+					<Field label="Child">
+						<Select
+							aria-label="Child"
+							isRequired
+							placeholder="Select child"
+							selectedKeys={form.child_id ? [form.child_id] : []}
+							onChange={(e) => update("child_id", e.target.value)}
+							classNames={filterSelectCls}
+						>
+							{children.map((c) => (
+								<SelectItem
+									key={c.id}
+									textValue={c.name}
+								>
+									{c.name}
+								</SelectItem>
+							))}
+						</Select>
+					</Field>
+
+					<div className="grid grid-cols-2 gap-4">
+						<Field label="Amount ($)">
+							<Input
+								type="number"
+								required
+								value={form.amount != null ? String(form.amount) : ""}
+								onChange={(e) => update("amount", e.target.value)}
+								classNames={filterInputCls}
+								placeholder="0"
+							/>
+						</Field>
+
+						<Field label="Frequency">
+							<Select
+								isRequired
+								aria-label="Frequency"
+								placeholder="Select Frequency"
+								selectedKeys={form?.frequency ? [form.frequency] : []}
+								onSelectionChange={(keys) => {
+									const [value] = Array.from(keys as Set<string>);
+									const nextFrequency = value as Frequencies;
+
+									update("frequency", nextFrequency);
+									if (nextFrequency === "onetime") update("end_date", "");
+								}}
+								classNames={filterSelectCls}
+							>
+								{Object.entries(FREQUENCIES).map(([key, value]) => (
+									<SelectItem
+										key={key}
+										textValue={value}
+									>
+										{value}
+									</SelectItem>
+								))}
+							</Select>
+						</Field>
+					</div>
+
+					<div className="grid grid-cols-2 gap-4">
+						<Field label="Start date">
+							<Input
+								type="date"
+								required
+								value={form.start_date}
+								onChange={(e) => update("start_date", e.target.value)}
+								classNames={filterInputCls}
+							/>
+						</Field>
+
+						{requiresEndDate && (
+							<Field label="End date">
+								<Input
+									type="date"
+									required
+									value={form.end_date ?? ""}
+									onChange={(e) => update("end_date", e.target.value)}
+									classNames={filterInputCls}
+								/>
+							</Field>
+						)}
+					</div>
+				</div>
+			</section>
+		</FormDrawer>
+	);
 }
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <label className="block">
-      <span className="mb-1 block text-xs text-slate-500">{label}</span>
-      {children}
-    </label>
-  );
-}
-
-const cls =
-  "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20";

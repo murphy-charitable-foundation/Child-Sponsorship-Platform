@@ -1,155 +1,200 @@
 "use client";
 
-import { useState } from "react";
-import { ChildProfile } from "./types";
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import { Avatar } from "@heroui/react";
 import { ChildTabHeader } from "./ChildTabHeader";
 import CreateSponsorshipDrawer from "@/components/admin/sponsorships/CreateSponsorshipDrawer";
 
-type Sponsor = {
-  id: string;
-  name: string;
-  sponsorType: string;
-  address: string[];
-  primaryContact?: string;
-  phoneNumber?: string;
-  email?: string;
-  startDate: string;
-  status: string;
-};
-
-const sponsors: Sponsor[] = [
-  {
-    id: "SP23-0011",
-    name: "Howard & Associates",
-    sponsorType: "Business",
-    address: ["1001 Tennessee Street", "Suite 400", "Anytown, IL 60131"],
-    primaryContact: "Daniel Howard",
-    phoneNumber: "1-312-321-7654 ext 180",
-    email: "daniel.howard@howard.com",
-    startDate: "2023-01-30",
-    status: "Active",
-  },
-  {
-    id: "SP20-0122",
-    name: "Michelle Smith",
-    sponsorType: "Individual",
-    address: ["598 40th Avenue", "Apt 1212", "Anytown, CA 60265"],
-    primaryContact: "",
-    phoneNumber: "",
-    email: "",
-    startDate: "2020-12-06",
-    status: "Active",
-  },
-];
+import { ChildProfile, ChildSponsor } from "./types";
+import { SPONSOR_TYPE_LABELS } from "@/lib/constants";
 
 type ChildSponsorsTabProps = {
-  child: ChildProfile;
+	child: ChildProfile;
 };
 
-export default function ChildSponsorsTab({ child }: ChildSponsorsTabProps) {
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
-
-  return (
-    <div className="space-y-6">
-      <ChildTabHeader
-        child={child}
-        subtitle={`Active sponsors: ${sponsors.length}`}
-        actionLabel="Create sponsorship"
-        onActionClick={() => setIsCreateOpen(true)}
-      />
-
-      {sponsors.map((sponsor) => (
-        <div
-          key={sponsor.id}
-          className="overflow-hidden rounded-2xl border border-gray-200 bg-white"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-3">
-            {/* Left section */}
-            <div className="md:col-span-2 border-b md:border-b-0 md:border-r border-gray-200 p-6">
-              <h3 className="text-2xl font-semibold text-gray-800">
-                {sponsor.name}
-              </h3>
-
-              <div className="mt-8 grid grid-cols-1 gap-6 text-sm text-gray-700 md:grid-cols-3">
-                <div>
-                  <p className="mb-1 text-xs uppercase tracking-wide text-gray-400">
-                    Sponsor type
-                  </p>
-                  <p>{sponsor.sponsorType}</p>
-                </div>
-
-                <div>
-                  <p className="mb-1 text-xs uppercase tracking-wide text-gray-400">
-                    Primary contact
-                  </p>
-                  <p>{sponsor.primaryContact || "-"}</p>
-                </div>
-
-                <div>
-                  <p className="mb-1 text-xs uppercase tracking-wide text-gray-400">
-                    Phone number
-                  </p>
-                  <p>{sponsor.phoneNumber || "-"}</p>
-                </div>
-
-                <div>
-                  <p className="mb-1 text-xs uppercase tracking-wide text-gray-400">
-                    Address
-                  </p>
-                  <div className="space-y-1">
-                    {sponsor.address.map((line, index) => (
-                      <p key={index}>{line}</p>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <p className="mb-1 text-xs uppercase tracking-wide text-gray-400">
-                    Email
-                  </p>
-                  <p>{sponsor.email || "-"}</p>
-                </div>
-              </div>
-
-              <button className="mt-8 rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200">
-                Go to full profile
-              </button>
-            </div>
-
-            {/* Right section */}
-            <div className="p-6">
-              <div className="space-y-3">
-                <InfoRow label="ID" value={sponsor.id} />
-                <InfoRow label="Sponsorship start date" value={sponsor.startDate} />
-                <InfoRow
-                  label="Sponsorship status"
-                  value={sponsor.status}
-                  valueClassName="text-green-600"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      ))}
-
-      <CreateSponsorshipDrawer isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} />
-    </div>
-  );
+export function formatSinceDate(date: string) {
+	return new Date(date).toLocaleDateString("en-US", {
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+	});
 }
 
-function InfoRow({
-  label,
-  value,
-  valueClassName = "text-gray-700",
-}: {
-  label: string;
-  value: string;
-  valueClassName?: string;
-}) {
-  return (
-    <div className="flex items-center justify-between rounded-md border border-gray-200 px-4 py-3 text-sm">
-      <span className="font-semibold uppercase text-gray-500">{label}</span>
-      <span className={valueClassName}>{value}</span>
-    </div>
-  );
+export default function ChildSponsorsTab({ child }: ChildSponsorsTabProps) {
+	const [isCreateOpen, setIsCreateOpen] = useState(false);
+	const [sponsors, setSponsors] = useState<ChildSponsor[]>([]);
+	const [loading, setLoading] = useState(true);
+
+	async function fetchSponsors(id: string) {
+		try {
+			const res = await fetch(`/api/supabase/sponsorships/child/${id}`);
+
+			if (!res.ok) {
+				setSponsors([]);
+				return;
+			}
+
+			const { sponsors } = await res.json();
+			setSponsors(sponsors ?? []);
+		} catch {
+			setSponsors([]);
+		}
+	}
+
+	useEffect(() => {
+		setLoading(true);
+		fetchSponsors(child.id).finally(() => setLoading(false));
+	}, [child]);
+
+	return (
+		<div className="space-y-6">
+			<ChildTabHeader
+				subtitle={`Active sponsors: ${sponsors.filter((s) => s.status === "Active").length}`}
+				actionLabel="Create sponsorship"
+				onActionClick={() => setIsCreateOpen(true)}
+			/>
+
+			{loading && <p className="text-sm text-gray-500">Loading sponsors...</p>}
+
+			{!loading && sponsors.length === 0 && (
+				<p className="text-sm text-gray-500">No sponsors yet.</p>
+			)}
+
+			{sponsors.map((sponsor, i) => {
+				const address = [
+					sponsor.address_line1,
+					sponsor.address_line2,
+					[sponsor.city, sponsor.state, sponsor.zip].filter(Boolean).join(", "),
+				].filter(Boolean) as string[];
+
+				const isGroupSponsor = sponsor.sponsor_type !== "individual";
+
+				const freq =
+					sponsor.frequency == "annual"
+						? "year"
+						: sponsor.frequency === "monthly"
+							? "month"
+							: "one-time";
+
+				return (
+					<div
+						key={i}
+						className="overflow-hidden rounded-2xl border border-gray-200 bg-white p-6"
+					>
+						<div className="flex">
+							{/* Left section */}
+							<div className="pr-6">
+								{sponsor.image_url ? (
+									<Image
+										src={sponsor.image_url}
+										alt={`${sponsor.first_name} ${sponsor.last_name}`}
+										className="object-cover object-[center_30%] h-[120px] w-[120px] rounded-xl "
+										width={120}
+										height={120}
+										unoptimized
+										loading="eager"
+									/>
+								) : (
+									<Avatar
+										radius="none"
+										color="primary"
+										className="object-cover object-[center_30%] h-[120px] w-[120px] rounded-xl "
+									/>
+								)}
+							</div>
+
+							<div className="flex-1">
+								<div className="flex items-start justify-between">
+									<div>
+										<h3 className="text-2xl font-semibold text-gray-800">
+											{!isGroupSponsor
+												? `${sponsor.first_name} ${sponsor.last_name}`
+												: sponsor.group_name}
+										</h3>
+										<div className="text-sm text-slate-600 flex gap-2 pt-1">
+											<p>{SPONSOR_TYPE_LABELS[sponsor.sponsor_type]}</p>
+											<span>•</span>
+											<p>{sponsor.id}</p>
+											<span>•</span>
+											<p className="text-green-600 uppercase">
+												{sponsor.status}
+											</p>
+										</div>
+									</div>
+
+									{/* Right section */}
+									<div>
+										<p className="text-lg font-semibold">
+											$ {sponsor.amount} / {freq}
+										</p>
+										<p className="text-sm text-gray-400">
+											{freq !== "one-time" ? "Since " : null}
+											{formatSinceDate(sponsor.start_date_time)}
+										</p>
+									</div>
+								</div>
+
+								<div className="mt-8 grid grid-cols-1 gap-10 text-sm text-gray-700 md:grid-cols-3">
+									{isGroupSponsor && (
+										<div>
+											<p className="mb-1 text-xs tracking-wide text-gray-400">
+												Primary contact
+											</p>
+											<p>
+												{sponsor.first_name} {sponsor.last_name}
+											</p>
+										</div>
+									)}
+
+									<div>
+										<p className="mb-1 text-xs tracking-wide text-gray-400">
+											Phone number
+										</p>
+										<p>{sponsor.phone_number || "-"}</p>
+									</div>
+
+									<div>
+										<p className="mb-1 text-xs tracking-wide text-gray-400">
+											Email
+										</p>
+										<p>{sponsor.email || "-"}</p>
+									</div>
+								</div>
+
+								<div className="mt-6 grid grid-cols-1 gap-10 text-sm text-gray-700 md:grid-cols-3">
+									<div>
+										<p className="mb-1 text-xs tracking-wide text-gray-400">
+											Country
+										</p>
+										<p>{sponsor.country || "-"}</p>
+									</div>
+
+									<div>
+										<p className="mb-1 text-xs tracking-wide text-gray-400">
+											Address
+										</p>
+										<div className="space-y-1">
+											{address.length > 0 ? (
+												address.map((line, index) => <p key={index}>{line}</p>)
+											) : (
+												<p>-</p>
+											)}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				);
+			})}
+
+			<CreateSponsorshipDrawer
+				isOpen={isCreateOpen}
+				onClose={() => setIsCreateOpen(false)}
+				child={{ id: child.id, name: `${child.first_name} ${child.last_name}` }}
+				onSaved={() => fetchSponsors(child.id)}
+			/>
+		</div>
+	);
 }

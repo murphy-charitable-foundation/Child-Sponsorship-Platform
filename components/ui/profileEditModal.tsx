@@ -14,15 +14,15 @@ import { useState, useEffect, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 import ProfileImageUpload from "@/components/profile-image-upload";
-import { Sponsor } from "../admin/sponsors/types";
-import { Child } from "../admin/children/types";
+import { ChildProfile } from "../admin/children/types";
+import { SponsorProfile } from "../admin/sponsors/types";
 
 type Props = {
 	type: "Child" | "Sponsor";
-	target: Child | Sponsor | null;
+	target: ChildProfile | SponsorProfile | null;
 	isOpen: boolean;
 	onOpenChange: (open: boolean) => void;
-	onSave: (updated: Child | Sponsor) => void;
+	onSave: (updated: ChildProfile | SponsorProfile) => void;
 };
 
 export default function ProfileEditModal({
@@ -32,7 +32,7 @@ export default function ProfileEditModal({
 	onOpenChange,
 	onSave,
 }: Props) {
-	const [form, setForm] = useState<Child | Sponsor | null>(null);
+	const [form, setForm] = useState<ChildProfile | SponsorProfile | null>(null);
 	const [imageFile, setImageFile] = useState<File | null>(null);
 	const [isSaving, setIsSaving] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -46,7 +46,7 @@ export default function ProfileEditModal({
 		setError(null);
 	}, [target]);
 
-	function handleChange(field: keyof Child, value: string) {
+	function handleChange(field: keyof ChildProfile, value: string) {
 		setForm((prev) => {
 			if (!prev) return prev;
 			return { ...prev, [field]: value };
@@ -78,6 +78,7 @@ export default function ProfileEditModal({
 			body.append("image", imageFile);
 			body.append("targetId", form.id);
 			body.append("targetType", type === "Child" ? "children" : "sponsors");
+			body.append("bucketFile", type === "Child" ? "children" : "sponsors");
 
 			const res = await fetch("/api/supabase/admin-upload-profile-image", {
 				method: "POST",
@@ -141,7 +142,7 @@ export default function ProfileEditModal({
 								<div className="flex flex-col gap-4">
 									<div className="flex justify-center pt-1">
 										<ProfileImageUpload
-											currentUrl={form.image_url}
+											currentUrl={form.image_url ?? undefined}
 											name={`${form.first_name} ${form.last_name}`}
 											onChange={(file) => setImageFile(file)}
 											size={96}

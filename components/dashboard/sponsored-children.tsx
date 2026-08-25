@@ -24,7 +24,7 @@ type ChildrenLastPayments = {
 };
 
 type DashboardProps = {
-  children: Child[];
+  sponsoredChildren: Child[];
   childrenLastPayments: ChildrenLastPayments[];
 };
 
@@ -139,12 +139,12 @@ const Card = ({
 };
 
 const SponsoredChildren = ({
-  children,
+  sponsoredChildren,
   childrenLastPayments,
 }: DashboardProps) => {
   const [showMore, setShowMore] = useState<number>(4);
 
-  const numberOfChildren: number = children?.length || 0;
+  const numberOfChildren: number = sponsoredChildren?.length || 0;
 
   const lastPaymentMap = useMemo(
     () =>
@@ -170,21 +170,23 @@ const SponsoredChildren = ({
       )}
 
       <div className={`grid grid-cols-4 gap-6 `}>
-        {children?.slice(0, showMore)?.map((child: Child) => {
-          return (
-            <Card
-              key={child.id}
-              id={child?.id}
-              name={child.name}
-              age={child.age}
-              costs={child.costs}
-              img={child.img}
-              status={child.status}
-              lastPaymentDate={lastPaymentMap.get(child.id)}
-              frequencyPeriod={child?.frequencyPeriod}
-            />
-          );
-        })}
+        {sponsoredChildren
+          ?.slice(0, showMore)
+          ?.map((child: Child, index: number) => {
+            return (
+              <Card
+                key={index}
+                id={child?.id}
+                name={child.name}
+                age={child.age}
+                costs={child.costs}
+                img={child.img}
+                status={child.status}
+                lastPaymentDate={lastPaymentMap.get(child.id)}
+                frequencyPeriod={child?.frequencyPeriod}
+              />
+            );
+          })}
       </div>
 
       {numberOfChildren > 4 && (

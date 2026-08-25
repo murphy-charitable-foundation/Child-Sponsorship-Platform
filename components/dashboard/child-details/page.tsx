@@ -26,7 +26,8 @@ export default async function ChildDetailsPage({
   let child = await getChild(childId);
 
   const profile = {
-    status: child?.status === "Active" ? true : false,
+    // status: child?.status === "Active" ? true : false,
+    status: child?.status,
     name: child?.first_name + " " + child?.last_name,
     age: child?.age,
     location: child?.location,

@@ -5,6 +5,8 @@ const BUCKET = "profiles";
 const IMAGE_EXPIRY_SECONDS = 60 * 60;
 const S3_PREFIX = "children/";
 
+type Frequency = "annual" | "monthly" | "onetime";
+
 type RouteContext = {
   params: Promise<{
     childId: string;
@@ -31,7 +33,7 @@ type Payment = {
 };
 type Sponsorship = {
   start_date_time: string | null;
-  frequency: string;
+  frequency: Frequency;
   amount: number | null;
   payments: Payment[] | null;
   sponsors: Sponsor | null;

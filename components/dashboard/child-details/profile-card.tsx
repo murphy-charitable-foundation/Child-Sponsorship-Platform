@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 type ProfileProps = {
-  status: boolean;
+  status: string;
   name: string;
   age: number;
   location: string;
@@ -25,12 +25,15 @@ const ProfileCard = ({ status, name, age, location, photo }: ProfileProps) => {
           priority
         />
       </div>
-      <div
+
+      <span
         role="status"
-        className="absolute right-2 top-2 rounded-sm bg-[--secondary-500-flat] px-4 py-1 font-medium text-white"
+        aria-label={`Status: ${status}`}
+        className={`${status === "Active" ? "bg-[--green-500]" : "bg-[--zinc-600]"}
+        text-white py-1.5 px-4 rounded-sm text-base font-semibold absolute top-2 right-2`}
       >
-        Sponsoring{status}
-      </div>
+        {status}
+      </span>
 
       <div className="pt-3 pb-8 text-center text-[--zinc-900]">
         <h2 className="text-2xl font-semibold leading-8">{name}</h2>
