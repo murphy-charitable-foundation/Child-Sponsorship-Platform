@@ -31,7 +31,7 @@ type Payment = {
 };
 type Sponsorship = {
   start_date_time: string | null;
-  frequency_period: number | null;
+  frequency: string;
   amount: number | null;
   payments: Payment[] | null;
   sponsors: Sponsor | null;
@@ -101,7 +101,7 @@ export async function GET(_req: Request, context: RouteContext) {
 
         sponsorships (
           start_date_time,
-          frequency_period,
+          frequency,
           amount,
 
           payments (
@@ -153,7 +153,7 @@ export async function GET(_req: Request, context: RouteContext) {
 
     const sponsorshipDetails =
       Child.sponsorships?.map((sponsorship) => ({
-        frequency_period: sponsorship.frequency_period,
+        frequency_period: sponsorship.frequency,
         donations: sponsorship.sponsors?.donations ?? [],
       })) ?? [];
     const photoPaths: string[] = [];

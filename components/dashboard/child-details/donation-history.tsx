@@ -14,7 +14,7 @@ type Donation = {
 };
 
 type SponsorshipHistory = {
-  frequency_period: number | null;
+  frequency_period: string;
   donations: Donation[];
 };
 
@@ -22,22 +22,10 @@ type DonationHistoryProps = {
   donationHistory: SponsorshipHistory[];
 };
 
-const SectionTitle = ({
-  icon,
-  title,
-}: {
-  icon: string;
-  title: string;
-}) => {
+const SectionTitle = ({ icon, title }: { icon: string; title: string }) => {
   return (
     <div className="flex items-center gap-2">
-      <Image
-        src={icon}
-        width={20}
-        height={20}
-        alt=""
-        aria-hidden="true"
-      />
+      <Image src={icon} width={20} height={20} alt="" aria-hidden="true" />
 
       <h3 className="text-2xl font-semibold leading-8 text-[--zinc-900]">
         {title}
@@ -46,18 +34,16 @@ const SectionTitle = ({
   );
 };
 
-const getSponsorshipLabel = (frequencyPeriod: number | null) => {
-  if (frequencyPeriod === 365) {
+const getSponsorshipLabel = (frequencyPeriod: string) => {
+  if (frequencyPeriod === "annual") {
     return "Annual Sponsorship";
   }
 
-  if (frequencyPeriod === 30) {
+  if (frequencyPeriod === "monthly") {
     return "Monthly Sponsorship";
   }
 
-  return frequencyPeriod
-    ? `Every ${frequencyPeriod} Days`
-    : "Sponsorship";
+  return frequencyPeriod ? `One Time` : "Sponsorship";
 };
 
 const formatDate = (date: string | null) => {
@@ -78,9 +64,7 @@ const formatDate = (date: string | null) => {
   }).format(parsedDate);
 };
 
-const DonationHistory = ({
-  donationHistory,
-}: DonationHistoryProps) => {
+const DonationHistory = ({ donationHistory }: DonationHistoryProps) => {
   return (
     <Card className="bg-white p-6">
       <SectionTitle
@@ -100,9 +84,7 @@ const DonationHistory = ({
                 <div className="flex items-center justify-between py-6">
                   <div>
                     <span className="inline-flex rounded-sm bg-[--blue-200] px-3 py-2 text-base font-normal text-[--blue-700]">
-                      {getSponsorshipLabel(
-                        sponsorship.frequency_period,
-                      )}
+                      {getSponsorshipLabel(sponsorship.frequency_period)}
                     </span>
 
                     <p className="my-2 text-lg font-medium leading-7 text-[--blue-700]">
@@ -114,10 +96,7 @@ const DonationHistory = ({
                     </p>
                   </div>
 
-                  <Button
-                    asChild
-                    className="bg-[--green-500] text-white"
-                  >
+                  <Button asChild className="bg-[--green-500] text-white">
                     <Link
                       href="#"
                       aria-label={`Download invoice ${donation.id}`}
@@ -134,9 +113,7 @@ const DonationHistory = ({
                   </Button>
                 </div>
 
-                {!isLastDonation && (
-                  <Divider role="presentation" />
-                )}
+                {!isLastDonation && <Divider role="presentation" />}
               </li>
             );
           }),

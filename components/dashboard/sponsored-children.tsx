@@ -82,6 +82,7 @@ const Card = ({
         width={0}
         height={164}
         sizes="100vw"
+        preload
         unoptimized={imageSrc.startsWith("http")}
         className="w-full h-[164px] rounded-xl object-cover"
       />

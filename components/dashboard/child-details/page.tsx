@@ -111,10 +111,7 @@ export default async function ChildDetailsPage({
             </section>
 
             <section aria-label="Donation history">
-              <DonationHistory
-                donationHistory={child?.donation}
-                // frequency={child?.donation?.frequency}
-              />
+              <DonationHistory donationHistory={child?.donation} />
             </section>
           </main>
         </div>
