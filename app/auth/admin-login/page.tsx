@@ -67,7 +67,7 @@ export default function Page() {
         </div>
 
         <h1 className="text-center text-2xl font-semibold text-primary">
-          Admin Portal
+          Admin Portal Login
         </h1>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-5">
@@ -125,6 +125,12 @@ export default function Page() {
               autoComplete="current-password"
               required
             />
+            <Link
+              href="/auth/forgot-password"
+              className="mt-2 inline-block text-sm font-semibold text-primary hover:text-primary/80 hover:underline"
+            >
+              Forgot password?
+            </Link>
           </div>
 
           {error && (
@@ -138,18 +144,9 @@ export default function Page() {
             className="h-12 w-full rounded-[12px] bg-primary text-base font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
             disabled={isLoading}
           >
-            {isLoading ? "Signing in..." : "Sign In"}
+            {isLoading ? "Signing in..." : "Log In"}
           </button>
         </form>
-
-        <div className="mt-7 text-center">
-          <Link
-            href="/auth/forgot-password"
-            className="text-sm font-medium text-default-400 hover:text-default-600 hover:underline"
-          >
-            Forgot password?
-          </Link>
-        </div>
 
         <div className="mt-7 text-center">
           <Link
