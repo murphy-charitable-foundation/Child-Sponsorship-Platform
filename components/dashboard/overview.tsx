@@ -1,12 +1,19 @@
 import { ReactNode } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
+type OverviewProps = {
+  amount: number;
+  first_name: string;
+  children: number;
+  daysSupporting: number;
+};
 const Card = ({
   num,
   text,
   icon,
 }: {
-  num: string;
+  num: string | number;
   text: string;
   icon: ReactNode;
 }) => {
@@ -31,26 +38,31 @@ const Card = ({
   );
 };
 
-const Overview = () => {
+const Overview = ({
+  amount,
+  first_name,
+  children,
+  daysSupporting,
+}: OverviewProps) => {
   return (
     <section className="bg-[linear-gradient(86deg,var(--primary-500)_0%,_var(--primary-700)_99.7%)] text-white px-8 py-6  rounded-3xl w-full mx-auto grid grid-cols-4 gap-16">
       <article>
-        <h2 className="text-xl font-semibold mb-4">Hi John</h2>
+        <h2 className="text-xl font-semibold mb-4">Hi {first_name}</h2>
         <p className="text-3xl font-semibold mb-10">
-          You have sponsored 3 children!
+          You have sponsored {children} children!
         </p>
         <button className="bg-white text-primary px-6 py-2 rounded-lg mt-2 font-medium">
-          Sponsor More
+          <Link href="/sponsorship/children">Sponsor More</Link>
         </button>
       </article>
       <Card
-        num="3"
+        num={children}
         text="Sponsored Children"
         icon={<Image src="/dashboard/user.svg" alt="" width={28} height={28} />}
       />
       <Card
-        num="$90"
-        text="Sponsored Children"
+        num={`$${amount}`}
+        text="Total Donated"
         icon={
           <Image
             src="/dashboard/blue-Dollar.svg"
@@ -61,8 +73,8 @@ const Overview = () => {
         }
       />
       <Card
-        num="3"
-        text="Sponsored Children"
+        num={daysSupporting}
+        text="Days Supporting"
         icon={
           <Image
             src="/dashboard/blue-Calendar.svg"
