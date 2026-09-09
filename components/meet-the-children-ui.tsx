@@ -100,7 +100,7 @@ export default function MeetTheChildrenUI({
 			error: childrenError,
 		} = await supabase
 			.from("children_with_ages")
-			.select("*", { count: "exact" })
+			.select("*")
 			.eq("status", "Active")
 			.in("location", Array.from(selectedCountries))
 			.gte("age", ageRange[0])
@@ -136,7 +136,24 @@ export default function MeetTheChildrenUI({
 			image_url: child.photo_path ? signedUrls[child.photo_path] : undefined,
 		}));
 		setChildren(childrenWithUrls as ChildProfile[]);
-		setCount(newCount || 0);
+
+		const { count, error: countError } = await supabase
+			.from("children_with_ages")
+			.select("id", { count: "exact", head: true })
+			.eq("status", "Active")
+			.in("location", Array.from(selectedCountries))
+			.gte("age", ageRange[0])
+			.lte("age", ageRange[1])
+			.in("gender", genders)
+			.ilike("full_name", `%${searchTerm}%`);
+
+		if (requestId !== requestIdRef.current) return;
+
+		if (countError) {
+			console.log(countError);
+			throw countError;
+		}
+		setCount(count || 0);
 
 		setIsLoaded(true);
 	};

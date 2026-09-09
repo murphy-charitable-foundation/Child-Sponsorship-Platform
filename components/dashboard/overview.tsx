@@ -4,9 +4,9 @@ import Link from "next/link";
 
 type OverviewProps = {
   amount: number;
-  start_date_time: string;
   first_name: string;
   children: number;
+  daysSupporting: number;
 };
 const Card = ({
   num,
@@ -40,9 +40,9 @@ const Card = ({
 
 const Overview = ({
   amount,
-  start_date_time,
   first_name,
   children,
+  daysSupporting,
 }: OverviewProps) => {
   return (
     <section className="bg-[linear-gradient(86deg,var(--primary-500)_0%,_var(--primary-700)_99.7%)] text-white px-8 py-6  rounded-3xl w-full mx-auto grid grid-cols-4 gap-16">
@@ -73,14 +73,7 @@ const Overview = ({
         }
       />
       <Card
-        num={
-          start_date_time
-            ? Math.floor(
-                (new Date().getTime() - new Date(start_date_time).getTime()) /
-                  (1000 * 60 * 60 * 24),
-              )
-            : 0
-        }
+        num={daysSupporting}
         text="Days Supporting"
         icon={
           <Image

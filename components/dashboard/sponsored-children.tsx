@@ -10,7 +10,7 @@ type Child = {
   age: number;
   date: string | null;
   costs: number;
-  frequencyPeriod: number;
+  frequency: string;
   img: string | null;
   status: string;
   location?: string | null;
@@ -36,7 +36,7 @@ type CardProps = {
   img: string | null;
   status: string;
   lastPaymentDate?: string;
-  frequencyPeriod: number;
+  frequency: string;
 };
 
 const formatDate = (date: string | null) => {
@@ -57,12 +57,13 @@ const Card = ({
   img,
   status,
   lastPaymentDate,
-  frequencyPeriod,
+  frequency,
 }: CardProps) => {
   const router = useRouter();
 
   const imageSrc = img ?? "/children/kid1.png";
 
+  const router = useRouter();
   return (
     <article
       aria-label={`Child card for ${name}, status ${status}`}
@@ -116,10 +117,10 @@ const Card = ({
           <span className="font-bold ps-3">
             <span className="pr-1">${costs}</span>
             <span>
-              {frequencyPeriod === 30
+              {frequency === "monthly"
                 ? "/ Month"
-                : frequencyPeriod === 365
-                  ? "/ Year"
+                : frequency === "annual"
+                  ? "/ Yearly"
                   : ""}
             </span>
           </span>
@@ -176,14 +177,14 @@ const SponsoredChildren = ({
             return (
               <Card
                 key={index}
-                id={child?.id}
+                id={child.id}
                 name={child.name}
                 age={child.age}
                 costs={child.costs}
                 img={child.img}
                 status={child.status}
                 lastPaymentDate={lastPaymentMap.get(child.id)}
-                frequencyPeriod={child?.frequencyPeriod}
+                frequency={child?.frequency}
               />
             );
           })}

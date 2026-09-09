@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Button } from "../../components/ui/button";
 import { Card } from "../../components/ui/card";
 
-type Payment = [string, number];
+type Payment = [string, string];
 
 type RecentActivityProps = {
   payments?: Payment[];
@@ -21,16 +21,8 @@ const formatDate = (date?: string) => {
   }).format(new Date(date));
 };
 
-const getReportType = (frequency: number) => {
-  switch (frequency) {
-    case 365:
-      return "Annual";
-    case 30:
-      return "Monthly";
-    default:
-      return "";
-  }
-};
+const capitalize = (str: string) =>
+  str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
 const RecentActivity = ({
   payments = [],
@@ -62,7 +54,7 @@ const RecentActivity = ({
                     {type}
                   </span>
                   <span className="text-lg font-medium">
-                    {`${getReportType(frequency)} Report - ${sponsorName}`}
+                    {`${capitalize(frequency)} Report - ${sponsorName}`}
                   </span>
                 </div>
                 <p className="text-default-700 text-lg">{formatDate(date)}</p>
