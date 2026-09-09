@@ -63,7 +63,6 @@ const Card = ({
 
   const imageSrc = img ?? "/children/kid1.png";
 
-  const router = useRouter();
   return (
     <article
       aria-label={`Child card for ${name}, status ${status}`}
