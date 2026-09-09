@@ -61,7 +61,7 @@ const Card = ({
 }: CardProps) => {
   const router = useRouter();
 
-  const imageSrc = img ?? "/children/kid1.png";
+  const imageSrc = img ?? "/children/Kid1.png";
 
   return (
     <article
