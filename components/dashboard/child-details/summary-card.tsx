@@ -1,12 +1,15 @@
 import { Card } from "@/components/ui/card";
 
-const sponsorshipSummary = [
-  { label: "Start Date", value: "December 15, 2025" },
-  { label: "Monthly Amount", value: "$30" },
-  { label: "Total Donated", value: "$90" },
-];
+type SponsorshipSummaryItem = {
+  label: string;
+  value: string;
+};
 
-const SummaryCard = () => {
+type SponsorshipSummaryProps = {
+  sponsorshipSummary: SponsorshipSummaryItem[];
+};
+
+const SummaryCard = ({ sponsorshipSummary }: SponsorshipSummaryProps) => {
   return (
     <Card className="bg-[--blue-200] p-6">
       <h3 className="text-2xl font-semibold leading-8 text-black">
@@ -23,6 +26,7 @@ const SummaryCard = () => {
               {item.label}
             </dt>
             <dd className="mt-2 text-xl font-semibold leading-7 text-black">
+              {typeof item.value === "number" ? "$" : null}
               {item.value}
             </dd>
           </div>

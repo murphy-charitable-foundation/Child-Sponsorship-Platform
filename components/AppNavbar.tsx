@@ -4,16 +4,16 @@ import Image from "next/image";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 import {
-	Navbar,
-	NavbarBrand,
-	NavbarContent,
-	NavbarItem,
-	Button,
-	Avatar,
-	Dropdown,
-	DropdownItem,
-	DropdownMenu,
-	DropdownTrigger,
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
+  Button,
+  Avatar,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
 } from "@heroui/react";
 
 import { useRouter } from "next/navigation";
@@ -27,7 +27,7 @@ export function AppNavbar() {
   const pathname = usePathname();
   const { user, loading } = useAuth();
   const { avatarUrl, refreshAvatar } = useUserProfile();
-	const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const isActive = (href: string) => pathname === href;
 
@@ -37,29 +37,29 @@ export function AppNavbar() {
     await supabase.auth.signOut();
     router.push("/auth/login");
   };
-  
+
   useEffect(() => {
-		setMounted(true);
-	}, []);
+    setMounted(true);
+  }, []);
 
-	useEffect(() => {
-		//get the sponsors data from db
-		if (!user) return;
-		const role = user.app_metadata.role;
+  useEffect(() => {
+    //get the sponsors data from db
+    if (!user) return;
+    const role = user.app_metadata.role;
 
-		let convertedRole = "";
-		if (role === "sponsor") {
-			convertedRole = "sponsors";
-		} else if (role === "admin") {
-			convertedRole = "admins";
-		} else if (role === "super_admin") {
-			convertedRole = "super_admins";
-		}
+    let convertedRole = "";
+    if (role === "sponsor") {
+      convertedRole = "sponsors";
+    } else if (role === "admin") {
+      convertedRole = "admins";
+    } else if (role === "super_admin") {
+      convertedRole = "super_admins";
+    }
 
-		if (!convertedRole) return;
+    if (!convertedRole) return;
 
-		refreshAvatar(convertedRole, user.id);
-	}, [user, refreshAvatar]);
+    refreshAvatar(convertedRole, user.id);
+  }, [user, refreshAvatar]);
 
   const userFirstName =
     user?.user_metadata.first_name || user?.email?.split("@")[0] || "User";
@@ -132,7 +132,9 @@ export function AppNavbar() {
           <NextLink
             href="/dashboard"
             className={`text-sm transition-colors text-primary ${
-              isActive("/dashboard") && "font-semibold"
+              (isActive("/dashboard") ||
+                pathname.startsWith("/dashboard/child/")) &&
+              "font-semibold"
             }`}
           >
             Dashboard
@@ -174,10 +176,7 @@ export function AppNavbar() {
                   Profile
                 </DropdownItem>
 
-                <DropdownItem
-                  key="logout"
-                  onClick={logout}
-                >
+                <DropdownItem key="logout" onClick={logout}>
                   Logout
                 </DropdownItem>
               </DropdownMenu>

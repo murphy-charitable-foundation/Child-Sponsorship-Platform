@@ -1,14 +1,27 @@
 import { Card } from "@/components/ui/card";
-import SectionTitle from "./shared/section-title";
+import Image from "next/image";
 
-const basicInformation = [
-  { label: "Birthday", value: "June 12, 2018" },
-  { label: "Gender", value: "Female" },
-  { label: "Education", value: "Grade 2" },
-  { label: "Family", value: "Lived with mother and 2 siblings" },
-];
+type BasicInfoItem = {
+  label: string;
+  value: string;
+};
 
-const InfoGrid = () => {
+type BasicInfoProps = {
+  basicInformation: BasicInfoItem[];
+};
+
+const SectionTitle = ({ icon, title }: { icon: string; title: string }) => {
+  return (
+    <div className="flex items-center gap-2">
+      <Image src={icon} width={20} height={20} alt="" aria-hidden="true" />
+      <h3 className="text-2xl font-semibold leading-8 text-[--zinc-900]">
+        {title}
+      </h3>
+    </div>
+  );
+};
+
+const InfoGrid = ({ basicInformation }: BasicInfoProps) => {
   return (
     <Card className="bg-white p-6">
       <SectionTitle

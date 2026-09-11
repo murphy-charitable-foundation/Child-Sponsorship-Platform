@@ -4,25 +4,34 @@ import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+type BioProps = {
+  name: string;
+  note: string;
+};
 
-import SectionTitle from "./shared/section-title";
+const SectionTitle = ({ icon, title }: { icon: string; title: string }) => {
+  return (
+    <div className="flex items-center gap-2">
+      <Image src={icon} width={20} height={20} alt="" aria-hidden="true" />
+      <h3 className="text-2xl font-semibold leading-8 text-[--zinc-900]">
+        {title}
+      </h3>
+    </div>
+  );
+};
 
-const BioCard = () => {
+const BioCard = ({ name, note }: BioProps) => {
   const [showMore, setShowMore] = useState<boolean>(false);
   return (
     <Card className="bg-white p-6">
       <div>
-        <SectionTitle icon="/dashboard/child-details/smile.svg" title="Amara" />
+        <SectionTitle icon="/dashboard/child-details/smile.svg" title={name} />
         <p
           id="amara-bio"
           className={` text-base leading-6 text-[--zinc-800] pe-1
           ${showMore ? "line-clamp-none" : "line-clamp-2"}`}
         >
-          Amara is a bright and enthusiastic 9-year-old girl from Kenya. She
-          loves spending time reading books and helping her younger siblings
-          with their homework. Despite the challenges her family faces, Amara
-          maintains a positive attitude and dreams of becoming a teacher one day
-          to help other children in her community.
+          {note}
         </p>
 
         <div className="ml-auto mt-3 w-fit">

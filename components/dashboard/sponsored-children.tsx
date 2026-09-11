@@ -59,9 +59,10 @@ const Card = ({
   lastPaymentDate,
   frequency,
 }: CardProps) => {
-  const imageSrc = img ?? "/children/kid1.png";
-
   const router = useRouter();
+
+  const imageSrc = img ?? "/children/Kid1.png";
+
   return (
     <article
       aria-label={`Child card for ${name}, status ${status}`}
@@ -81,6 +82,7 @@ const Card = ({
         width={0}
         height={164}
         sizes="100vw"
+        preload
         unoptimized={imageSrc.startsWith("http")}
         className="w-full h-[164px] rounded-xl object-cover"
       />
