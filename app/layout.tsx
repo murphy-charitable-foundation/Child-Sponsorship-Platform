@@ -1,3 +1,4 @@
+import { Noto_Sans } from "next/font/google";
 import "./globals.css";
 
 import { Suspense } from "react";
@@ -7,10 +8,17 @@ import PublicShell from "@/components/admin/layout/PublicShell";
 import { AuthProvider } from "@/components/AuthProvider";
 import { UserProfileProvider } from "@/components/UserProfileContext";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  display: "swap",
+// const geistSans = Geist({
+//   variable: "--font-geist-sans",
+//   display: "swap",
+//   subsets: ["latin"],
+// });
+
+const notoSans = Noto_Sans({
   subsets: ["latin"],
+  variable: "--font-noto-sans",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -61,12 +69,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.className} antialiased`}>
+      <body className={`${notoSans.variable} antialiased`}>
         <Suspense fallback={null}>
-
-        <AuthProvider>
-          <PublicShell>{children}</PublicShell>
-        </AuthProvider>
+          <AuthProvider>
+            <PublicShell>{children}</PublicShell>
+          </AuthProvider>
         </Suspense>
       </body>
     </html>
